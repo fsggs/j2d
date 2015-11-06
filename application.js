@@ -1,3 +1,19 @@
+/**
+ * J2D (jQuery plugin of the fork j2ds)
+ *
+ * @authors DeVinterX, Skaner(j2ds)
+ * @license BSD, zlib(j2ds)
+ * @version 0.1, j2ds(0.1.0.81c859)
+ */
+
+/*
+ * TODO:: Bugs from j2ds
+ * TODO:: Bug with context line(width)
+ * TODO:: Storage
+ * TODO:: KeysHandler, not keysHook.prevent()!
+ * TODO:: FPS as part of Debug module!
+ */
+
 var global;
 
 requirejs.config({
@@ -38,7 +54,7 @@ define('Application', [
         var size = vec2df(25, 25);
         var a = scene.addRectNode(vec2df(40, 40), size, 'white');
         var b = scene.addRectNode(vec2df(140, 140), size, 'green');
-        var s = scene.addLineNode(vec2df(65, 65), [ [0, 0], [100, 100] ], 1, 'red', 2);
+        var s = scene.addLineNode(vec2df(65, 65), [[0, 0], [100, 100]], 1, 'red', 2);
 
         var _fps = scene.addTextNode(vec2df(5, 5), '', 12, 'white');
 

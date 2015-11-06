@@ -1,3 +1,12 @@
+/**
+ * J2D (jQuery plugin of the fork j2ds)
+ *
+ * @authors Skaner, likerRr, DeVinterX
+ * @license zlib
+ * @version 0.1.0
+ * @see https://github.com/SkanerSoft/J2ds/commit/81c85984b36cfd7ff413577737e10e8a81b0263c
+ */
+
 define([
     'jquery.j2d'
 ], function (J2D) {
