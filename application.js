@@ -3,7 +3,7 @@
  *
  * @authors DeVinterX, Skaner(j2ds)
  * @license BSD, zlib(j2ds)
- * @version 0.1, j2ds(0.1.0.81c859)
+ * @version 0.1.1, j2ds(0.1.1.d91880)
  */
 
 /*
@@ -60,26 +60,34 @@ define('Application', [
 
         var _fps = scene.addTextNode(vec2df(5, 5), '', 12, 'white');
 
-        var Game = function () {
-            fps.start();
-            scene.clear();
-
-            s.draw();
-
+        var move_controller = function () {
             if (io.data.lClick) {
                 a.setPosition(io.getPosition());
                 s.setPosition(io.getPosition());
             }
+        };
+
+        var draw_viewport = function () {
+            fps.start();
+            scene.clear();
+
+            s.draw();
+            b.setRotation(20);
 
             a.draw();
             b.draw();
             //a.drawBox();
             //b.drawBox();
-
             _fps.drawSimpleText('Текущий FPS: ' + fps.getFPS());
             fps.end();
         };
-        scene.start(Game, 30);
+
+        var Game = function () {
+            // Запускаем контроллеры асинхронно!
+            setTimeout(draw_viewport, 0);
+            setTimeout(move_controller, 0);
+        };
+        scene.start(Game, 60);
     });
 });
 

@@ -3,8 +3,8 @@
  *
  * @authors Skaner, likerRr, DeVinterX
  * @license zlib
- * @version 0.1.0
- * @see https://github.com/SkanerSoft/J2ds/commit/81c85984b36cfd7ff413577737e10e8a81b0263c
+ * @version 0.1.1
+ * @see https://github.com/SkanerSoft/J2ds/commit/d91880bd189a29b364cc6fd2a3af069f139c5f8a
  */
 
 define([], function () {
@@ -12,7 +12,7 @@ define([], function () {
 
     var FPSMeter = function (j2d) {
         this.j2d = j2d;
-        this.fps = j2d.options.framelimit;
+        this.fps = j2d.options.frameLimit;
         this.tmp_of_fps = 1;
         this.tmp_of_time = Date.now();
     };

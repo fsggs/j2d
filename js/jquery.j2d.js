@@ -3,8 +3,8 @@
  *
  * @authors Skaner, likerRr, DeVinterX
  * @license zlib
- * @version 0.1.0
- * @see https://github.com/SkanerSoft/J2ds/commit/81c85984b36cfd7ff413577737e10e8a81b0263c
+ * @version 0.1.1
+ * @see https://github.com/SkanerSoft/J2ds/commit/d91880bd189a29b364cc6fd2a3af069f139c5f8a
  */
 !function (root, factory) {
     if (typeof define === 'function' && define.amd) {
@@ -23,7 +23,7 @@
         now: 0,
         dt: 0,
         io: undefined,
-        framelimit: 60,
+        frameLimit: 60,
         sceneStartTime: 0,
         sceneSkipTime: 0,
         engine: false,
@@ -51,7 +51,7 @@
                     j2d.options.dt = 0;
                 }
                 j2d.options.sceneStartTime = j2d.options.now;
-                j2d.options.engine();
+                setTimeout(j2d.options.engine, 0);
                 j2d.options.lastTime = j2d.options.now;
                 if (j2d.options.io) {
                     j2d.options.io.data.keyPress = [];
@@ -59,7 +59,7 @@
                 }
 
                 nextJ2dsGameStep(j2d.gameEngine);
-            }, (j2d.options.framelimit < 60 ? j2d.options.sceneSkipTime : 0));
+            }, (j2d.options.frameLimit < 60 ? j2d.options.sceneSkipTime : 0));
         };
 
         var nextJ2dsGameStep = (function () {
@@ -69,7 +69,7 @@
                 window.oRequestAnimationFrame ||
                 window.msRequestAnimationFrame ||
                 function (callback) {
-                    window.setTimeout(callback, 1000 / j2d.options.framelimit);
+                    window.setTimeout(callback, 1000 / j2d.options.frameLimit);
                 };
         })();
     };
@@ -94,14 +94,14 @@
     };
 
     // старт игры
-    J2D.prototype.start = function (engine, framelimit) {
+    J2D.prototype.start = function (engine, frameLimit) {
         var j2d = this;
 
         j2d.options.engine = engine || function () {
             j2d.element.html('Пожалуйста, инициализируйте игровую функцию!');
         };
-        j2d.options.framelimit = framelimit || 60;
-        j2d.options.sceneSkipTime = 1000.0 / j2d.options.framelimit;
+        j2d.options.frameLimit = frameLimit || 60;
+        j2d.options.sceneSkipTime = 1000.0 / j2d.options.frameLimit;
         j2d.options.lastTime = Date.now();
         j2d.options.dt = 0;
         j2d.options.sceneStartTime = j2d.options.lastTime;
@@ -258,12 +258,12 @@
         this.parent.element.trigger('changedGameState');
     };
 
-    J2D.prototype.scene.start = function (engine, framelimit) {
+    J2D.prototype.scene.start = function (engine, frameLimit) {
         if (this.parent.options.io) {
             this.parent.options.io.init();
         }
         this.parent.element.trigger('beforeStart');
-        this.parent.start(engine, framelimit);
+        this.parent.start(engine, frameLimit);
         this.parent.element.trigger('afterStart');
     };
 
