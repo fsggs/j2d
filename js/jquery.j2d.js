@@ -3,7 +3,7 @@
  *
  * @authors Skaner, likerRr, DeVinterX
  * @license zlib
- * @version 0.1.1
+ * @version 0.1.2a
  * @see https://github.com/SkanerSoft/J2ds/commit/d91880bd189a29b364cc6fd2a3af069f139c5f8a
  */
 !function (root, factory) {
@@ -249,8 +249,13 @@
     /** +Scene **/
     J2D.prototype.scene = {
         parent: undefined,
+        enableFullscreen: false,
         layerName: 'sceneNode',
         layers: (parent.layers) ? parent.layers : {}
+    };
+
+    J2D.prototype.scene.async = function (callback) {
+        setTimeout(callback, 0);
     };
 
     J2D.prototype.scene.setGameState = function (engine) {
@@ -272,19 +277,34 @@
         if (fullscreen) {
             for (i in this.parent.layers.list) {
                 if (this.parent.layers.list.hasOwnProperty(i)) {
-                    layer = this.parent.layers.list[i].canvas;
-                    layer.style.width = this.parent.device.width + 'px';
-                    layer.style.height = this.parent.device.height + 'px';
+                    layer = this.parent.layers.list[i];
+                    layer.width = layer.canvas.width = this.parent.device.width;
+                    layer.height = layer.canvas.height = this.parent.device.height;
                 }
             }
+            this.enableFullscreen = true;
+            this.parent.element.width(this.parent.device.width).height(this.parent.device.height);
         } else {
             for (i in this.parent.layers.list) {
                 if (this.parent.layers.list.hasOwnProperty(i)) {
-                    layer = this.parent.layers.list[i].canvas;
-                    layer.style.width = this.parent.scene.width + 'px';
-                    layer.style.height = this.parent.scene.height + 'px';
+                    layer = this.parent.layers.list[i];
+                    layer.width = layer.canvas.width = this.width;
+                    layer.height = layer.canvas.height = this.height;
                 }
             }
+            this.enableFullscreen = false;
+            this.parent.element.width(this.width).height(this.height);
+        }
+    };
+
+    J2D.prototype.scene.fullScreenToggle = function (j2d, data) {
+        if (data === undefined) {
+            data = {fullscreen: undefined};
+        }
+        if (!j2d.scene.enableFullscreen || data.fullscreen) {
+            j2d.scene.fullScreen(true);
+        } else {
+            j2d.scene.fullScreen(false);
         }
     };
 
@@ -323,6 +343,8 @@
         this.width = width;
         this.height = heigth;
 
+        this.parent.element.width(width).height(heigth);
+
         j2d.layers.add('sceneNode', 0);
 
         this.context = j2d.layers.getLayer('sceneNode').context;
@@ -352,8 +374,12 @@
         $.fn.j2d = function (options) {
             options = $.extend(true, {}, defaults, options);
 
-            this.filter('div.canvas:not(.j2d)').each(function () {
+            this.filter('div.canvas:not([giud])').each(function () {
                 $(this).data('j2d', new J2D($(this), options)).addClass('j2d');
+                $(this).attr('guid', 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function (c) {
+                    var r = Math.random() * 16 | 0, v = c == 'x' ? r : (r & 0x3 | 0x8);
+                    return v.toString(16);
+                }));
             });
 
             if (1 === $(this).length) {
@@ -362,7 +388,7 @@
         };
 
         $(window).on('resize', function () {
-            $('div.canvas.j2d').each(function () {
+            $('div.canvas[guid]').each(function () {
                 $(this).data('j2d').device.resize();
             });
         });

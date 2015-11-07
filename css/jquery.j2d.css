@@ -1,5 +1,6 @@
 .j2d {
-    border: 1px solid #000;
+    border: 0;
+    cursor: none;
 }
 
 .j2d-fullscreen {

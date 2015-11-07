@@ -3,7 +3,7 @@
  *
  * @authors DeVinterX, Skaner(j2ds)
  * @license BSD, zlib(j2ds)
- * @version 0.1.1, j2ds(0.1.1.d91880)
+ * @version 0.1.2a, j2ds(0.1.1.d91880)
  */
 
 /*
@@ -26,7 +26,7 @@ requirejs.config({
 define('Application', [
     'jquery',
     'jquery.j2d',
-    'j2d/j2d.io.legacy',
+    'j2d/j2d.input',
     'j2d/j2d.fps',
     'j2d/j2d.rect',
     'j2d/j2d.line',
@@ -39,6 +39,12 @@ define('Application', [
     $(document).ready(function () {
         var j2d = $('#j2d').j2d();
         var io = j2d.IOHandler(new IO(j2d));
+        io.cursorToggle(true);
+
+        io.setKeys({
+            ACTION: [IO.key.KEY_MOUSE_LEFT, true],
+            ALT_ACTION: [IO.key.KEY_MOUSE_RIGHT, true]
+        });
 
         //var device = j2d.device;
         var scene = j2d.scene;
@@ -54,14 +60,15 @@ define('Application', [
         background.fill('black');
 
         var size = vec2df(25, 25);
-        var a = scene.addRectNode(vec2df(40, 40), size, 'white');
+        var a = scene.addRectNode(vec2df(40, 40), size, 'red');
         var b = scene.addRectNode(vec2df(140, 140), size, 'green');
+        b.setLayer('background');
         var s = scene.addLineNode(vec2df(65, 65), [[0, 0], [100, 100]], 1, 'red', 2);
 
         var _fps = scene.addTextNode(vec2df(5, 5), '', 12, 'white');
 
         var move_controller = function () {
-            if (io.data.lClick) {
+            if (io.checkPressedKeyList(IO.key.KEY_MOUSE_LEFT)) {
                 a.setPosition(io.getPosition());
                 s.setPosition(io.getPosition());
             }
@@ -83,9 +90,9 @@ define('Application', [
         };
 
         var Game = function () {
-            // Запускаем контроллеры асинхронно!
-            setTimeout(draw_viewport, 0);
-            setTimeout(move_controller, 0);
+            // Запускаем контроллеры асинхронно! Но следим чтобы отрисовка была в одном сопроцессе!
+            scene.async(draw_viewport);
+            scene.async(move_controller);
         };
         scene.start(Game, 60);
     });
