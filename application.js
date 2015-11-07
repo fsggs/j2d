@@ -26,17 +26,19 @@ requirejs.config({
 define('Application', [
     'jquery',
     'jquery.j2d',
+    'j2d/j2d.io.legacy',
     'j2d/j2d.fps',
     'j2d/j2d.rect',
     'j2d/j2d.line',
     'j2d/j2d.text'
-], function ($, J2D, FPS) {
+], function ($, J2D, IO, FPS) {
     "use strict";
 
     J2D.initJQueryPlugin();
 
     $(document).ready(function () {
         var j2d = $('#j2d').j2d();
+        var io = j2d.IOHandler(new IO(j2d));
 
         //var device = j2d.device;
         var scene = j2d.scene;
@@ -63,6 +65,11 @@ define('Application', [
             scene.clear();
 
             s.draw();
+
+            if (io.data.lClick) {
+                a.setPosition(io.getPosition());
+                s.setPosition(io.getPosition());
+            }
 
             a.draw();
             b.draw();

@@ -22,6 +22,7 @@
         dom: {},
         now: 0,
         dt: 0,
+        io: undefined,
         framelimit: 60,
         sceneStartTime: 0,
         sceneSkipTime: 0,
@@ -42,7 +43,9 @@
             j2d.options.now = Date.now();
 
             setTimeout(function () {
-                //j2ds.input.upd();
+                if (j2d.options.io) {
+                    j2d.options.io.update();
+                }
                 j2d.options.dt = (j2d.options.now - j2d.options.lastTime) / 100.0;
                 if (j2d.options.dt > j2d.options.sceneSkipTime) {
                     j2d.options.dt = 0;
@@ -50,8 +53,10 @@
                 j2d.options.sceneStartTime = j2d.options.now;
                 j2d.options.engine();
                 j2d.options.lastTime = j2d.options.now;
-                //j2d.input.keyPress = [];
-                //j2d.input.keyUp = [];
+                if (j2d.options.io) {
+                    j2d.options.io.data.keyPress = [];
+                    j2d.options.io.data.keyUp = [];
+                }
 
                 nextJ2dsGameStep(j2d.gameEngine);
             }, (j2d.options.framelimit < 60 ? j2d.options.sceneSkipTime : 0));
@@ -71,9 +76,17 @@
 
     /** +GameEngine **/
     J2D.prototype.init = function () {
-        this.layers.parent = this;
-        this.scene.parent = this;
+        if (this.layers) {
+            this.layers.parent = this;
+        }
+        if (this.scene) {
+            this.scene.parent = this;
+        }
         delete this.init;
+    };
+
+    J2D.prototype.IOHandler = function (handler) {
+        return this.options.io = handler;
     };
 
     J2D.prototype.setWindow = function (customWindow) {
@@ -246,7 +259,9 @@
     };
 
     J2D.prototype.scene.start = function (engine, framelimit) {
-        //j2ds.input.init();
+        if (this.parent.options.io) {
+            this.parent.options.io.init();
+        }
         this.parent.element.trigger('beforeStart');
         this.parent.start(engine, framelimit);
         this.parent.element.trigger('afterStart');
