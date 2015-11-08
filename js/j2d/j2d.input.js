@@ -3,14 +3,13 @@
  *
  * @authors DeVinterX
  * @license BSD
- * @version 0.1.2b
+ * @version 0.1.2c
  */
 
 /*
  * TODO:: Режим сохраненения и загрузки keyMap
  * TODO:: Touch
  * TODO:: Write Mode Chars
- * TODO:: MouseWheel(Key_SCROLL) -> disable keys
  * TODO:: time.Pressed, mouse.Distance
  */
 define(['jquery', 'vanilla.override-1.0.3'],
@@ -23,10 +22,15 @@ define(['jquery', 'vanilla.override-1.0.3'],
 
             this.data = {
                 mouse: {
-                    position: {
+                    startPosition: {
                         x: 0,
                         y: 0
-                    }
+                    },
+                    currentPosition: {
+                        x: 0,
+                        y: 0
+                    },
+                    distance: 0
                 },
                 viewport: {
                     position: {
@@ -35,7 +39,9 @@ define(['jquery', 'vanilla.override-1.0.3'],
                     }
                 },
                 enabled: false,
+                enableAdditionalData: false,
                 keysPressed: [],
+                timePressed: 0,
 
                 cursor: {
                     enabled: false,
@@ -48,7 +54,9 @@ define(['jquery', 'vanilla.override-1.0.3'],
             };
         };
 
-        var checkKeyMap = function (e) {
+        var checkKeyMap = function (e, enableCallback) {
+            if (enableCallback === undefined) enableCallback = true;
+
             var j2d = e.data.manager.j2d,
                 manager = e.data.manager,
                 keyCode = e.which,
@@ -58,14 +66,14 @@ define(['jquery', 'vanilla.override-1.0.3'],
                 if (keyMap.hasOwnProperty(index)) {
                     var value = keyMap[index];
                     if (!$.isArray(value[0]) && value[0] === keyCode && !!value[1]) {
-                        if (typeof value[1] === 'function') {
+                        if (typeof value[1] === 'function' && enableCallback) {
                             value[1](j2d, value[2]);
                         }
                         return true;
                     } else if ($.isArray(value[0])
                         && manager.data.keysPressed.equals(value[0]) && !!value[1]
                     ) {
-                        if (typeof value[1] === 'function') {
+                        if (typeof value[1] === 'function' && enableCallback) {
                             value[1](j2d, value[2]);
                         }
                         return true
@@ -79,16 +87,41 @@ define(['jquery', 'vanilla.override-1.0.3'],
             onMouseClick: function (e) {
                 var keysPressed = e.data.manager.data.keysPressed;
                 var keyCode = getKey(InputManager.key, e.which) || 'KEY_UNKNOWN_' + e.which;
+                var mouse = e.data.manager.data.mouse;
+                var time = e.data.manager.data.timePressed;
 
                 if (e.data.event !== 2) {
                     if (e.data.event === 0) {
                         if (-1 === $.inArray(InputManager.key[keyCode], keysPressed)) {
                             keysPressed.push(InputManager.key[keyCode]);
+
+                            var x, y;
+                            if (document.all) {
+                                x = e.x + document.body.scrollLeft;
+                                y = e.y + document.body.scrollTop;
+                            } else {
+                                x = e.pageX;
+                                y = e.pageY;
+                            }
+                            mouse.startPosition.x = x;
+                            mouse.startPosition.y = y;
+
+                            e.data.manager.data.timePressed = Date.now();
                         }
                     } else {
                         if (checkKeyMap(e)) {
                             e.preventDefault();
                         }
+
+                        var distance = Math.sqrt(
+                            Math.pow((mouse.currentPosition.x - mouse.startPosition.x), 2)
+                            + Math.pow((mouse.currentPosition.y - mouse.startPosition.y), 2)
+                        ).toFixed(2);
+
+                        mouse.startPosition.x = 0;
+                        mouse.startPosition.y = 0;
+
+                        mouse.distance = distance;
 
                         keysPressed.splice(
                             keysPressed.indexOf(InputManager.key[keyCode]), 1
@@ -97,6 +130,10 @@ define(['jquery', 'vanilla.override-1.0.3'],
                     e.data.manager.element.trigger(e.data.event === 0 ?
                             'mouseKeyDown' : 'mouseKeyUp', {key: keyCode}
                     );
+                } else {
+                    if (checkKeyMap(e, false)) {
+                        e.preventDefault();
+                    }
                 }
             },
 
@@ -104,9 +141,25 @@ define(['jquery', 'vanilla.override-1.0.3'],
                 var keysPressed = e.data.manager.data.keysPressed;
                 var keyCode = (e.originalEvent.wheelDelta / 120 > 0) ?
                     getKey(InputManager.key, 4) : getKey(InputManager.key, 5);
-                //console.log(keyCode);
+
+                e.which = (e.originalEvent.wheelDelta / 120 > 0) ? 4 : 5;
+
+                if (-1 === $.inArray(InputManager.key[keyCode], keysPressed)) {
+                    keysPressed.push(InputManager.key[keyCode]);
+                }
+
+                if (checkKeyMap(e)) {
+                    e.preventDefault();
+                    e.data.manager.fixMouseWheel();
+                }
 
                 e.data.manager.element.trigger('mouseWheel', {key: keyCode});
+            },
+
+            mouseWheelCancel: function (keysPressed, keyCode) {
+                keysPressed.splice(
+                    keysPressed.indexOf(InputManager.key[keyCode]), 1
+                );
             },
 
             onMouseMove: function (e) {
@@ -120,8 +173,8 @@ define(['jquery', 'vanilla.override-1.0.3'],
                     x = e.pageX;
                     y = e.pageY;
                 }
-                manager.data.mouse.x = x;
-                manager.data.mouse.y = y;
+                manager.data.mouse.currentPosition.x = x;
+                manager.data.mouse.currentPosition.y = y;
             },
 
             onKeyboardPress: function (e) {
@@ -136,6 +189,8 @@ define(['jquery', 'vanilla.override-1.0.3'],
                     if (e.data.event === 0) {
                         if (-1 === $.inArray(InputManager.key[keyCode], keysPressed)) {
                             keysPressed.push(InputManager.key[keyCode]);
+
+                            e.data.manager.data.timePressed = Date.now();
                         }
                     } else {
                         if (checkKeyMap(e)) {
@@ -195,11 +250,24 @@ define(['jquery', 'vanilla.override-1.0.3'],
 
             var dX = this.j2d.scene.canvas.offsetWidth / this.j2d.scene.width,
                 dY = this.j2d.scene.canvas.offsetHeight / this.j2d.scene.height,
-                x = this.data.mouse.x / dX,
-                y = this.data.mouse.y / dY;
+                x = this.data.mouse.currentPosition.x / dX,
+                y = this.data.mouse.currentPosition.y / dY;
 
             this.data.viewport.x = this.j2d.scene.viewport.x + x;
             this.data.viewport.y = this.j2d.scene.viewport.y + y;
+        };
+
+
+        InputManager.prototype.clear = function () {
+        };
+
+        InputManager.prototype.fixMouseWheel = function () {
+            var keyPressed = this.data.keysPressed;
+            if (-1 !== $.inArray(InputManager.key.SCROLL_MOUSE_UP, keyPressed)) {
+                events.mouseWheelCancel(keyPressed, InputManager.key.SCROLL_MOUSE_UP);
+            } else if (-1 !== $.inArray(InputManager.key.SCROLL_MOUSE_DOWN, keyPressed)) {
+                events.mouseWheelCancel(keyPressed, InputManager.key.SCROLL_MOUSE_DOWN);
+            }
         };
 
         InputManager.prototype.enable = function () {
@@ -230,17 +298,41 @@ define(['jquery', 'vanilla.override-1.0.3'],
         };
         /** -KeyMap Manager **/
 
+        var getPressData = function (manager, keyList) {
+            return {
+                keyList: keyList,
+                distance: manager.data.mouse.distance,
+                time: Date.now() - manager.data.timePressed
+            };
+        };
 
         /** +Input Checkers **/
         InputManager.prototype.checkPressedKeyList = function (keyList) {
             if ($.isArray(keyList)) {
                 if (keyList.length !== this.data.keysPressed.length) {
                     return false;
+                } else if (this.data.keysPressed.equals(keyList)) {
+                    this.fixMouseWheel();
+                    return getPressData(this, keyList);
                 }
-                return this.data.keysPressed.equals(keyList);
+                this.fixMouseWheel();
+                return false;
             }
+            //if (!this.data.keysPressed.equals([])) console.log(this.data.keysPressed);
             if (isNaN(keyList)) return false;
-            return (-1 !== this.data.keysPressed.indexOf(keyList));
+            if (-1 !== this.data.keysPressed.indexOf(keyList)) {
+                this.fixMouseWheel();
+                return getPressData(this, keyList);
+            }
+            this.fixMouseWheel();
+            return false;
+        };
+
+        InputManager.prototype.checkPressedKeyMap = function (key) {
+            if (this.keyMap[key] === undefined) return false;
+            var keyList = this.keyMap[key][0];
+
+            return this.checkPressedKeyList(keyList);
         };
 
         InputManager.prototype.getPosition = function () {

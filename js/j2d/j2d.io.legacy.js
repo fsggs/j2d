@@ -3,7 +3,7 @@
  *
  * @authors Skaner, likerRr, DeVinterX
  * @license zlib
- * @version 0.1.0
+ * @version 0.1.2c
  * @see https://github.com/SkanerSoft/J2ds/commit/81c85984b36cfd7ff413577737e10e8a81b0263c
  */
 
@@ -80,6 +80,11 @@ define([
 
         this.data.pos.x = this.j2d.scene.viewport.x + this.data.x;
         this.data.pos.y = this.j2d.scene.viewport.y + this.data.y;
+    };
+
+    IO.prototype.clear = function() {
+        this.data.keyPress = [];
+        this.data.keyUp = [];
     };
 
     IO.prototype.keyList = function () {

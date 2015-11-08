@@ -3,7 +3,7 @@
  *
  * @authors DeVinterX, Skaner(j2ds)
  * @license BSD, zlib(j2ds)
- * @version 0.1.2b, j2ds(0.1.1.d91880)
+ * @version 0.1.2c, j2ds(0.1.1.d91880)
  */
 
 /*
@@ -12,6 +12,7 @@
  * TODO:: Storage
  * TODO:: KeysHandler, not keysHook.prevent()!
  * TODO:: FPS as part of Debug module!
+ * TODO:: blur & focus element
  */
 
 var global;
@@ -43,7 +44,8 @@ define('Application', [
 
         io.setKeys({
             ACTION: [IO.key.KEY_MOUSE_LEFT, true],
-            ALT_ACTION: [IO.key.KEY_MOUSE_RIGHT, true]
+            ALT_ACTION: [IO.key.KEY_MOUSE_RIGHT, true],
+            TEST_BUTTON: [IO.key.KEY_W, true]
         });
 
         //var device = j2d.device;
@@ -69,9 +71,15 @@ define('Application', [
         var _fps = scene.addTextNode(vec2df(5, 5), '', 12, 'white');
 
         var move_controller = function () {
-            if (io.checkPressedKeyList(IO.key.KEY_MOUSE_LEFT)) {
+            var keyData;
+            if (keyData = io.checkPressedKeyMap('ACTION')) {
                 a.setPosition(io.getPosition());
                 s.setPosition(io.getPosition());
+
+                //console.log(keyData);
+            }
+            if (keyData = io.checkPressedKeyMap('TEST_BUTTON')) {
+                //console.log(keyData);
             }
         };
 

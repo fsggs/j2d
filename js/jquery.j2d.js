@@ -3,7 +3,7 @@
  *
  * @authors Skaner, likerRr, DeVinterX
  * @license zlib
- * @version 0.1.2a
+ * @version 0.1.2c
  * @see https://github.com/SkanerSoft/J2ds/commit/d91880bd189a29b364cc6fd2a3af069f139c5f8a
  */
 !function (root, factory) {
@@ -54,8 +54,7 @@
                 setTimeout(j2d.options.engine, 0);
                 j2d.options.lastTime = j2d.options.now;
                 if (j2d.options.io) {
-                    j2d.options.io.data.keyPress = [];
-                    j2d.options.io.data.keyUp = [];
+                    j2d.options.io.clear();
                 }
 
                 nextJ2dsGameStep(j2d.gameEngine);
