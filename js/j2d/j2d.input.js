@@ -3,7 +3,7 @@
  *
  * @authors DeVinterX
  * @license BSD
- * @version 0.1.2a
+ * @version 0.1.2b
  */
 
 /*
@@ -43,7 +43,7 @@ define(['jquery', 'vanilla.override-1.0.3'],
             };
             this.keyMap = {
                 //DEBUG_INFO: [InputManager.key.KEY_F1, j2d.debug.screenToggle, {}],
-                //FULLSCREEN: [InputManager.key.KEY_F11, j2d.scene.fullScreenToggle, {}]
+                FULLSCREEN: [[InputManager.key.KEY_CTRL, InputManager.key.KEY_F11], j2d.scene.fullScreenToggle, {}]
             };
         };
 
@@ -56,15 +56,15 @@ define(['jquery', 'vanilla.override-1.0.3'],
             for (var index in keyMap) {
                 if (keyMap.hasOwnProperty(index)) {
                     var value = keyMap[index];
-                    if (!$.isArray(value[0]) && value[0] === keyCode && value[1]) {
-                        if (typeof value[1] === 'function' && e.data.event == 1) {
+                    if (!$.isArray(value[0]) && value[0] === keyCode && !!value[1]) {
+                        if (typeof value[1] === 'function') {
                             value[1](j2d, value[2]);
                         }
                         return true;
                     } else if ($.isArray(value[0])
-                        && manager.data.keysPressed.equals(value[0]) && value[1]
+                        && manager.data.keysPressed.equals(value[0]) && !!value[1]
                     ) {
-                        if (typeof value[1] === 'function' && e.data.event == 1) {
+                        if (typeof value[1] === 'function') {
                             value[1](j2d, value[2]);
                         }
                         return true
@@ -85,6 +85,10 @@ define(['jquery', 'vanilla.override-1.0.3'],
                             keysPressed.push(InputManager.key[keyCode]);
                         }
                     } else {
+                        if (checkKeyMap(e)) {
+                            e.preventDefault();
+                        }
+
                         keysPressed.splice(
                             keysPressed.indexOf(InputManager.key[keyCode]), 1
                         );
@@ -92,10 +96,6 @@ define(['jquery', 'vanilla.override-1.0.3'],
                     e.data.manager.element.trigger(e.data.event === 0 ?
                             'mouseKeyDown' : 'mouseKeyUp', {key: keyCode}
                     );
-                }
-
-                if (checkKeyMap(e)) {
-                    e.preventDefault();
                 }
             },
 
@@ -137,6 +137,10 @@ define(['jquery', 'vanilla.override-1.0.3'],
                             keysPressed.push(InputManager.key[keyCode]);
                         }
                     } else {
+                        if (checkKeyMap(e)) {
+                            e.preventDefault();
+                        }
+
                         keysPressed.splice(
                             keysPressed.indexOf(InputManager.key[keyCode]), 1
                         );
@@ -145,10 +149,6 @@ define(['jquery', 'vanilla.override-1.0.3'],
                     e.data.manager.element.trigger(e.data.event === 0 ?
                             'keyboardKeyDown' : 'keyboardKeyUp', {key: keyCode}
                     );
-
-                    if (checkKeyMap(e)) {
-                        e.preventDefault();
-                    }
                 }
             }
         };

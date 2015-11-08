@@ -3,7 +3,7 @@
  *
  * @authors DeVinterX, Skaner(j2ds)
  * @license BSD, zlib(j2ds)
- * @version 0.1.2a, j2ds(0.1.1.d91880)
+ * @version 0.1.2b, j2ds(0.1.1.d91880)
  */
 
 /*
