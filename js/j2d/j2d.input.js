@@ -11,6 +11,7 @@
  * TODO:: Touch
  * TODO:: Write Mode Chars
  * TODO:: MouseWheel(Key_SCROLL) -> disable keys
+ * TODO:: time.Pressed, mouse.Distance
  */
 define(['jquery', 'vanilla.override-1.0.3'],
     function ($) {

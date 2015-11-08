@@ -55,6 +55,7 @@ define('Application', [
         var vec2df = j2d.vector.vec2df;
 
         scene.init(400, 300);
+        //scene.init(device.width, device.height);
 
         var background = layers.add('background', -1);
         background.fill('black');

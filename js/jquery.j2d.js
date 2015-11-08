@@ -272,14 +272,19 @@
         this.parent.element.trigger('afterStart');
     };
 
+    /**
+     * TODO:: Refactor this to layer.resize(), scene.resize()
+     * @deprecated
+     * @param fullscreen
+     */
     J2D.prototype.scene.fullScreen = function (fullscreen) {
         var layer, i;
         if (fullscreen) {
             for (i in this.parent.layers.list) {
                 if (this.parent.layers.list.hasOwnProperty(i)) {
-                    layer = this.parent.layers.list[i];
-                    layer.width = layer.canvas.width = this.parent.device.width;
-                    layer.height = layer.canvas.height = this.parent.device.height;
+                    layer = this.parent.layers.list[i].canvas;
+                    layer.style.width = this.parent.device.width + 'px';
+                    layer.style.height = this.parent.device.height + 'px';
                 }
             }
             this.enableFullscreen = true;
@@ -287,9 +292,9 @@
         } else {
             for (i in this.parent.layers.list) {
                 if (this.parent.layers.list.hasOwnProperty(i)) {
-                    layer = this.parent.layers.list[i];
-                    layer.width = layer.canvas.width = this.width;
-                    layer.height = layer.canvas.height = this.height;
+                    layer = this.parent.layers.list[i].canvas;
+                    layer.style.width = this.width + 'px';
+                    layer.style.height = this.height + 'px';
                 }
             }
             this.enableFullscreen = false;
