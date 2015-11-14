@@ -3,8 +3,8 @@
  *
  * @authors Skaner, likerRr, DeVinterX
  * @license zlib
- * @version 0.1.2c
- * @see https://github.com/SkanerSoft/J2ds/commit/d91880bd189a29b364cc6fd2a3af069f139c5f8a
+ * @version 0.1.4
+ * @see https://github.com/SkanerSoft/J2ds/commit/501b8993fc41960794572dc481a5f2fe492da349
  */
 !function (root, factory) {
     if (typeof define === 'function' && define.amd) {
@@ -23,6 +23,7 @@
         now: 0,
         dt: 0,
         io: undefined,
+        pause: false,
         frameLimit: 60,
         sceneStartTime: 0,
         sceneSkipTime: 0,
@@ -43,20 +44,21 @@
             j2d.options.now = Date.now();
 
             setTimeout(function () {
-                if (j2d.options.io) {
-                    j2d.options.io.update();
+                if (!j2d.options.pause) {
+                    if (j2d.options.io) {
+                        j2d.options.io.update();
+                    }
+                    j2d.options.dt = (j2d.options.now - j2d.options.lastTime) / 100.0;
+                    if (j2d.options.dt > j2d.options.sceneSkipTime) {
+                        j2d.options.dt = 0;
+                    }
+                    j2d.options.sceneStartTime = j2d.options.now;
+                    setTimeout(j2d.options.engine, 0);
+                    j2d.options.lastTime = j2d.options.now;
+                    if (j2d.options.io) {
+                        j2d.options.io.clear();
+                    }
                 }
-                j2d.options.dt = (j2d.options.now - j2d.options.lastTime) / 100.0;
-                if (j2d.options.dt > j2d.options.sceneSkipTime) {
-                    j2d.options.dt = 0;
-                }
-                j2d.options.sceneStartTime = j2d.options.now;
-                setTimeout(j2d.options.engine, 0);
-                j2d.options.lastTime = j2d.options.now;
-                if (j2d.options.io) {
-                    j2d.options.io.clear();
-                }
-
                 nextJ2dsGameStep(j2d.gameEngine);
             }, (j2d.options.frameLimit < 60 ? j2d.options.sceneSkipTime : 0));
         };
@@ -72,6 +74,22 @@
                 };
         })();
     };
+
+    /** +links getters **/
+    J2D.prototype.getInfo = function () {
+        return {
+            'name': 'jquery.j2d',
+            'version': '0.1.4',
+            'site': 'https://github.com/fsggs/jquery.j2d',
+            'info': 'jquery.j2d - jQuery plugin of the fork j2ds.',
+            'author': 'DeVinterX, Skaner(j2ds)'
+        };
+    };
+
+    J2D.prototype.getIO = function () {
+        return this.options.io;
+    };
+    /** -links getters **/
 
     /** +GameEngine **/
     J2D.prototype.init = function () {
@@ -114,6 +132,11 @@
     /** -GameEngine **/
 
     /** Device **/
+
+    J2D.prototype.getDevice = function () {
+        return this.device;
+    };
+
     J2D.prototype.device = {
         width: parseInt($(document).width()) < parseInt(screen.width) ? parseInt($(document).width()) : parseInt(screen.width),
         height: parseInt($(document).height()) < parseInt(screen.height) ? parseInt($(document).height()) : parseInt(screen.height),
@@ -152,6 +175,10 @@
     };
 
     /** +Layers **/
+    J2D.prototype.getLayers = function () {
+        return this.layers;
+    };
+
     J2D.prototype.layers = {
         parent: undefined,
         list: {}
@@ -178,8 +205,8 @@
         layer.context.shadowColor = 'rgba(0,0,0,0)';
         layer.canvas.style.zIndex = 1000 + zIndex;
         layer.canvas.style.position = 'fixed';
-        layer.canvas.style.left = '0px';
-        layer.canvas.style.top = '0px';
+        layer.canvas.style.left = '0';
+        layer.canvas.style.top = '0';
         layer.canvas.id = id;
         layer.opacity = 1;
         layer.angle = 0;
@@ -246,6 +273,10 @@
     /** -Layers **/
 
     /** +Scene **/
+    J2D.prototype.getScene = function () {
+        return this.scene;
+    };
+
     J2D.prototype.scene = {
         parent: undefined,
         enableFullscreen: false,
@@ -271,12 +302,45 @@
         this.parent.element.trigger('afterStart');
     };
 
-    /**
-     * TODO:: Refactor this to layer.resize(), scene.resize()
-     * @deprecated
-     * @param fullscreen
-     */
-    J2D.prototype.scene.fullScreen = function (fullscreen) {
+    J2D.prototype.scene.resizeToFullScreen = function (fullscreen) {
+        var j2d = this.parent;
+        var scene = this;
+
+        var layer;
+        var tmpCanvas = document.createElement('canvas'); // Нужны для копирования содержимого
+        var tmpContext = tmpCanvas.getContext('2d');      // При изменении размера
+        if (fullscreen) {
+            scene.originalWidth = scene.width;
+            scene.originalHeight = scene.height;
+            scene.width = j2d.device.width;
+            scene.height = j2d.device.height;
+            for (var i in j2d.layers.list) {
+                layer = j2d.layers.list[i];
+                tmpCanvas.width = layer.width;
+                tmpCanvas.height = layer.height;
+                tmpContext.drawImage(layer.canvas, 0, 0);
+                layer.canvas.width = scene.width;
+                layer.canvas.height = scene.height;
+                layer.width = scene.width;
+                layer.height = scene.height;
+                layer.context.drawImage(tmpCanvas, 0, 0, layer.width, layer.height);
+            }
+            scene.enableFullscreen = true;
+        } else {
+            scene.width = scene.originalWidth;
+            scene.height = scene.originalHeight;
+            for (var i in j2d.layers.list) {
+                layer = j2d.layers.list[i];
+                layer.width = scene.originalWidth;
+                layer.height = scene.originalHeight;
+                layer.canvas.width = scene.originalWidth;
+                layer.canvas.height = scene.originalHeight;
+            }
+            scene.enableFullscreen = false;
+        }
+    };
+
+    J2D.prototype.scene.scaleToFullScreen = function (fullscreen) {
         var layer, i;
         if (fullscreen) {
             for (i in this.parent.layers.list) {
@@ -306,9 +370,9 @@
             data = {fullscreen: undefined};
         }
         if (!j2d.scene.enableFullscreen || data.fullscreen) {
-            j2d.scene.fullScreen(true);
+            j2d.scene.resizeToFullScreen(true);
         } else {
-            j2d.scene.fullScreen(false);
+            j2d.scene.resizeToFullScreen(false);
         }
     };
 
@@ -344,8 +408,8 @@
         var j2d = this.parent;
         j2d.element.trigger('beforeInit');
 
-        this.width = width;
-        this.height = heigth;
+        this.width = this.originalWidth = width;
+        this.height = this.originalHeight = heigth;
 
         this.parent.element.width(width).height(heigth);
 
@@ -378,7 +442,7 @@
         $.fn.j2d = function (options) {
             options = $.extend(true, {}, defaults, options);
 
-            this.filter('div.canvas:not([giud])').each(function () {
+            this.filter('div.canvas:not([guid])').each(function () {
                 $(this).data('j2d', new J2D($(this), options)).addClass('j2d');
                 $(this).attr('guid', 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function (c) {
                     var r = Math.random() * 16 | 0, v = c == 'x' ? r : (r & 0x3 | 0x8);
@@ -390,6 +454,18 @@
                 return $(this).data('j2d');
             }
         };
+
+        $(window).on('focus', function () {
+            $('div.canvas[guid]').each(function () {
+                    $(this).data('j2d').options.pause = false;
+                    $(this).addClass('focus');
+            });
+        }).on('blur', function () {
+            $('div.canvas[guid]').each(function () {
+                $(this).data('j2d').options.pause = true;
+                $(this).removeClass('focus');
+            });
+        });
 
         $(window).on('resize', function () {
             $('div.canvas[guid]').each(function () {

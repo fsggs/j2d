@@ -3,8 +3,8 @@
  *
  * @authors Skaner, likerRr, DeVinterX
  * @license zlib
- * @version 0.1.0
- * @see https://github.com/SkanerSoft/J2ds/commit/81c85984b36cfd7ff413577737e10e8a81b0263c
+ * @version 0.1.4
+ * @see https://github.com/SkanerSoft/J2ds/commit/501b8993fc41960794572dc481a5f2fe492da349
  */
 
 define([
@@ -30,7 +30,10 @@ define([
         this.color = color ? color : 'black';
 
         this.family = family ? family : 'sans-serif';
-        this.sizePx = sizePx;
+        this.sizePx = sizePx ? sizePx : 20;
+
+        this.box.offset.y = this.j2d.math.toInt(this.sizePx * 0.26);
+        this.box.size.y = -this.j2d.math.toInt(this.sizePx * 0.26);
 
         this.lineWidth = width ? width : 0;
         this.colorL = colorL ? colorL : 'black';
@@ -61,6 +64,9 @@ define([
         this.font = this.sizePx + 'px ' + this.family;
         this.j2d.scene.context.font = this.font;
 
+        this.box.offset.y = this.j2d.math.toInt(this.sizePx * 0.26);
+        this.box.size.y = -this.j2d.math.toInt(this.sizePx * 0.26);
+
         for (var i = 0, len = this.lines.length; i < len; i += 1) {
             this.maxWidth = (this.maxWidth < this.j2d.scene.context.measureText(this.lines[i]).width ?
                 this.j2d.scene.context.measureText(this.lines[i]).width :
@@ -74,7 +80,7 @@ define([
         return this.sizePx;
     };
 
-    TextNode.prototype.drawSimpleText = function (text, color, colorL, pos) {
+    TextNode.prototype.drawSimpleText = function (text, pos, color, colorL) {
         var context = this.layer.context;
         context.fillStyle = color ? color : this.color;
         context.textAlign = this.hAlign;
@@ -107,6 +113,9 @@ define([
         this.lines = text.split("\n");
 
         this.j2d.scene.context.font = this.font;
+
+        this.box.offset.y = this.j2d.math.toInt(this.sizePx * 0.26);
+        this.box.size.y = -this.j2d.math.toInt(this.sizePx * 0.26);
 
         for (var i = 0, len = this.lines.length; i < len; i += 1) {
             this.maxWidth = (this.maxWidth < this.j2d.scene.context.measureText(this.lines[i]).width ?

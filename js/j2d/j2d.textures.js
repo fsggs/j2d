@@ -3,23 +3,23 @@
  *
  * @authors Skaner, likerRr, DeVinterX
  * @license zlib
- * @version 0.1.0
- * @see https://github.com/SkanerSoft/J2ds/commit/81c85984b36cfd7ff413577737e10e8a81b0263c
+ * @version 0.1.4
+ * @see https://github.com/SkanerSoft/J2ds/commit/501b8993fc41960794572dc481a5f2fe492da349
  */
 
 define([
     'jquery.j2d',
     'j2d/j2d.base'
-], function (J2D, BaseNode) {
+], function (J2D) {
     "use strict";
 
-    var Texture = {
+    var TextureManager = {
         loadImageMap: false,   // загрузка из файла
         createImageMap: false,    // создание анимации напрямую, минуя imageMap
         templates: {}
     };
 
-    Texture.createImageMap = function (width, height, callback) {
+    TextureManager.createImageMap = function (width, height, callback) {
         var imageObject = {
             img: undefined,
             width: width,
@@ -48,7 +48,7 @@ define([
         return imageObject;
     };
 
-    Texture.loadImageMap = function (path) {
+    TextureManager.loadImageMap = function (path) {
         var imageObject = {
             img: undefined,
             width: 0,
@@ -83,22 +83,22 @@ define([
 
     /*----------- шаблоны текстур -------------*/
 
-    Texture.templates.ellipsis = function (context, size, color) {
+    TextureManager.templates.ellipsis = function (context, size, color) {
 
     };
 
-    Texture.templates.fillRect = function (context, size, color) {
+    TextureManager.templates.fillRect = function (context, size, color) {
         context.fillStyle = color;
         context.fillRect(0, 0, size.x, size.y);
     };
 
-    Texture.templates.strokeRect = function (context, size, color, lineWidth) {
+    TextureManager.templates.strokeRect = function (context, size, color, lineWidth) {
         context.strokeStyle = color;
         context.lineWidth = lineWidth;
         context.strokeRect(0, 0, size.x, size.y);
     };
 
-    Texture.templates.gradientL = function (context, size, colors, izHorizontal) {
+    TextureManager.templates.gradientL = function (context, size, colors, izHorizontal) {
         var gradient = context.createLinearGradient(0, 0, size.x, 0);
         var step = 1 / colors.length;
         if (!izHorizontal) {
@@ -111,7 +111,7 @@ define([
         context.fillRect(0, 0, size.x, size.y);
     };
 
-    Texture.templates.gradientR = function (context, size, pos1, r1, pos2, r2, colors) {
+    TextureManager.templates.gradientR = function (context, size, pos1, r1, pos2, r2, colors) {
         var gradient = context.createRadialGradient(pos1.x, pos1.y, r1, pos2.x, pos2.y, r2);
         var step = 1 / colors.length;
         for (var i = step / 2, j = 0; j < colors.length; j += 1, i += step) {
@@ -121,5 +121,9 @@ define([
         context.fillRect(0, 0, size.x, size.y);
     };
 
-    return Texture;
+    J2D.prototype.getTextureManager = function () {
+        return TextureManager;
+    };
+
+    return TextureManager;
 });

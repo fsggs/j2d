@@ -3,15 +3,15 @@
  *
  * @authors DeVinterX, Skaner(j2ds)
  * @license BSD, zlib(j2ds)
- * @version 0.1.3, j2ds(0.1.1.d91880)
+ * @version 0.1.4, j2ds(0.1.2.501b89)
  */
 
 /*
  * TODO:: Bugs from j2ds
- * TODO:: Bug with context line(width)
  * TODO:: Storage
  * TODO:: FPS as part of Debug module!
- * TODO:: blur & focus element, +!keyboard
+ * TODO:: *blur & focus element, +!keyboard
+ * TODO:: normal fullscreen without bugs(fills, objects on others layers)
  */
 
 var global;
@@ -39,11 +39,11 @@ define('Application', [
     $(document).ready(function () {
         var j2d = $('#j2d').j2d();
         var io = j2d.IOHandler(new IO(j2d));
-        io.toggleCursor(true);
+        io.toggleCursor(true); // enable cursor
 
         io.setKeys({
             ACTION: [IO.key.KEY_MOUSE_LEFT, true],
-            ALT_ACTION: [IO.key.KEY_MOUSE_RIGHT, true],
+            ALT_ACTION: [IO.key.KEY_MOUSE_RIGHT, true], // disable context menu
             TEST_BUTTON: [IO.key.KEY_W, true]
         });
 
@@ -97,12 +97,12 @@ define('Application', [
             b.draw();
             //a.drawBox();
             //b.drawBox();
-            _fps.drawSimpleText('Текущий FPS: ' + fps.getFPS());
+            _fps.drawSimpleText('Current FPS: ' + fps.getFPS());
             fps.end();
         };
 
         var Game = function () {
-            // Запускаем контроллеры асинхронно! Но следим чтобы отрисовка была в одном сопроцессе!
+            // Run controllers async! But all draw process in one corutine!
             scene.async(draw_animation);
             scene.async(draw_viewport);
             scene.async(move_controller);

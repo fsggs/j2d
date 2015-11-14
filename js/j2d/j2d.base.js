@@ -3,8 +3,8 @@
  *
  * @authors Skaner, likerRr, DeVinterX
  * @license zlib
- * @version 0.1.0
- * @see https://github.com/SkanerSoft/J2ds/commit/81c85984b36cfd7ff413577737e10e8a81b0263c
+ * @version 0.1.4
+ * @see https://github.com/SkanerSoft/J2ds/commit/501b8993fc41960794572dc481a5f2fe492da349
  */
 
 define([
@@ -201,6 +201,7 @@ define([
 
     BaseNode.prototype.drawBox = function () {
         var context = this.layer.context;
+        context.lineWidth = 2;
         context.strokeStyle = 'black';
 
         context.beginPath();
