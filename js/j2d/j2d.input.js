@@ -3,15 +3,9 @@
  *
  * @authors DeVinterX
  * @license BSD
- * @version 0.1.2c
+ * @version 0.1.3
  */
 
-/*
- * TODO:: Режим сохраненения и загрузки keyMap
- * TODO:: Touch
- * TODO:: Write Mode Chars
- * TODO:: time.Pressed, mouse.Distance
- */
 define(['jquery', 'vanilla.override-1.0.3'],
     function ($) {
         "use strict";
@@ -30,6 +24,7 @@ define(['jquery', 'vanilla.override-1.0.3'],
                         x: 0,
                         y: 0
                     },
+                    previousDistance: 0,
                     distance: 0
                 },
                 viewport: {
@@ -41,7 +36,9 @@ define(['jquery', 'vanilla.override-1.0.3'],
                 enabled: false,
                 enableAdditionalData: false,
                 keysPressed: [],
+                writeMode: false,
                 timePressed: 0,
+                preventAll: false,
 
                 cursor: {
                     enabled: false,
@@ -49,8 +46,8 @@ define(['jquery', 'vanilla.override-1.0.3'],
                 }
             };
             this.keyMap = {
-                //DEBUG_INFO: [InputManager.key.KEY_F1, j2d.debug.screenToggle, {}],
-                FULLSCREEN: [[InputManager.key.KEY_CTRL, InputManager.key.KEY_F11], j2d.scene.fullScreenToggle, {}]
+                //DEBUG_INFO: [[InputManager.key.KEY_CTRL, InputManager.key.KEY_F1], 'j2d.debug.toggleScreen', {}],
+                FULLSCREEN: [[InputManager.key.KEY_CTRL, InputManager.key.KEY_F11], 'j2d.scene.toggleFullScreen', {}]
             };
         };
 
@@ -66,13 +63,19 @@ define(['jquery', 'vanilla.override-1.0.3'],
                 if (keyMap.hasOwnProperty(index)) {
                     var value = keyMap[index];
                     if (!$.isArray(value[0]) && value[0] === keyCode && !!value[1]) {
-                        if (typeof value[1] === 'function' && enableCallback) {
+                        if (typeof value[1] === 'string') {
+                            value[1] = eval('(' + value[1] + ')');
+                        }
+                        if ((typeof value[1] === 'function') && enableCallback) {
                             value[1](j2d, value[2]);
                         }
                         return true;
                     } else if ($.isArray(value[0])
                         && manager.data.keysPressed.equals(value[0]) && !!value[1]
                     ) {
+                        if (typeof value[1] === 'string') {
+                            value[1] = eval('(' + value[1] + ')');
+                        }
                         if (typeof value[1] === 'function' && enableCallback) {
                             value[1](j2d, value[2]);
                         }
@@ -88,40 +91,33 @@ define(['jquery', 'vanilla.override-1.0.3'],
                 var keysPressed = e.data.manager.data.keysPressed;
                 var keyCode = getKey(InputManager.key, e.which) || 'KEY_UNKNOWN_' + e.which;
                 var mouse = e.data.manager.data.mouse;
-                var time = e.data.manager.data.timePressed;
 
                 if (e.data.event !== 2) {
                     if (e.data.event === 0) {
                         if (-1 === $.inArray(InputManager.key[keyCode], keysPressed)) {
                             keysPressed.push(InputManager.key[keyCode]);
 
-                            var x, y;
-                            if (document.all) {
-                                x = e.x + document.body.scrollLeft;
-                                y = e.y + document.body.scrollTop;
-                            } else {
-                                x = e.pageX;
-                                y = e.pageY;
-                            }
-                            mouse.startPosition.x = x;
-                            mouse.startPosition.y = y;
+                            if (e.data.manager.data.enableAdditionalData) {
+                                mouse.startPosition.x = e.pageX;
+                                mouse.startPosition.y = e.pageY;
+                                mouse.distance = 0;
 
-                            e.data.manager.data.timePressed = Date.now();
+                                e.data.manager.data.timePressed = e.timeStamp;
+                            }
+                        }
+                        if (checkKeyMap(e, false) || e.data.manager.data.preventAll) {
+                            e.preventDefault();
                         }
                     } else {
-                        if (checkKeyMap(e)) {
+                        if (checkKeyMap(e) || e.data.manager.data.preventAll) {
                             e.preventDefault();
                         }
 
-                        var distance = Math.sqrt(
-                            Math.pow((mouse.currentPosition.x - mouse.startPosition.x), 2)
-                            + Math.pow((mouse.currentPosition.y - mouse.startPosition.y), 2)
-                        ).toFixed(2);
-
-                        mouse.startPosition.x = 0;
-                        mouse.startPosition.y = 0;
-
-                        mouse.distance = distance;
+                        if (e.data.manager.data.enableAdditionalData) {
+                            mouse.previousDistance = mouse.distance;
+                            mouse.startPosition.x = 0;
+                            mouse.startPosition.y = 0;
+                        }
 
                         keysPressed.splice(
                             keysPressed.indexOf(InputManager.key[keyCode]), 1
@@ -148,7 +144,7 @@ define(['jquery', 'vanilla.override-1.0.3'],
                     keysPressed.push(InputManager.key[keyCode]);
                 }
 
-                if (checkKeyMap(e)) {
+                if (checkKeyMap(e) || e.data.manager.data.preventAll) {
                     e.preventDefault();
                     e.data.manager.fixMouseWheel();
                 }
@@ -164,36 +160,39 @@ define(['jquery', 'vanilla.override-1.0.3'],
 
             onMouseMove: function (e) {
                 var manager = e.data.manager;
-                var x, y;
+                var mouse = e.data.manager.data.mouse;
 
-                if (document.all) {
-                    x = e.x + document.body.scrollLeft;
-                    y = e.y + document.body.scrollTop;
-                } else {
-                    x = e.pageX;
-                    y = e.pageY;
+                manager.data.mouse.currentPosition.x = e.pageX;
+                manager.data.mouse.currentPosition.y = e.pageY;
+
+                if (e.data.manager.data.enableAdditionalData) {
+                    mouse.distance = Math.sqrt(
+                        Math.pow((mouse.currentPosition.x - mouse.startPosition.x), 2)
+                        + Math.pow((mouse.currentPosition.y - mouse.startPosition.y), 2)
+                    ).toFixed(1);
                 }
-                manager.data.mouse.currentPosition.x = x;
-                manager.data.mouse.currentPosition.y = y;
             },
 
             onKeyboardPress: function (e) {
                 var keysPressed = e.data.manager.data.keysPressed;
                 var keyCode = getKey(InputManager.key, e.which) || 'KEY_UNKNOWN_' + e.which;
-                if (e.data.event === 2) {
+                if (e.data.event === 2 && true === e.data.manager.data.writeMode) {
                     var char = String.fromCharCode(e.which || e.keyCode);
-                    //console.log({char: char});
-
+                    e.preventDefault();
                     e.data.manager.element.trigger('keyboardCharPress', {char: char});
                 } else {
                     if (e.data.event === 0) {
                         if (-1 === $.inArray(InputManager.key[keyCode], keysPressed)) {
                             keysPressed.push(InputManager.key[keyCode]);
-
-                            e.data.manager.data.timePressed = Date.now();
+                            if (e.data.manager.data.enableAdditionalData) {
+                                e.data.manager.data.timePressed = e.timeStamp;
+                            }
+                        }
+                        if (checkKeyMap(e, false) || e.data.manager.data.preventAll) {
+                            e.preventDefault();
                         }
                     } else {
-                        if (checkKeyMap(e)) {
+                        if (checkKeyMap(e) || e.data.manager.data.preventAll) {
                             e.preventDefault();
                         }
 
@@ -205,6 +204,62 @@ define(['jquery', 'vanilla.override-1.0.3'],
                     e.data.manager.element.trigger(e.data.event === 0 ?
                             'keyboardKeyDown' : 'keyboardKeyUp', {key: keyCode}
                     );
+                }
+            },
+
+            onTouchTap: function (e) {
+                var keysPressed = e.data.manager.data.keysPressed;
+                var keyCode = getKey(InputManager.key, e.which + 1) || 'KEY_UNKNOWN_' + e.which;
+                var touch = e.originalEvent.touches[0] || e.originalEvent.changedTouches[0];
+                var mouse = e.data.manager.data.mouse;
+
+                if (e.data.event === 0) {
+                    if (-1 === $.inArray(InputManager.key[keyCode], keysPressed)) {
+                        keysPressed.push(InputManager.key[keyCode]);
+                        if (e.data.manager.data.enableAdditionalData) {
+                            mouse.startPosition.x = touch.pageX;
+                            mouse.startPosition.y = touch.pageY;
+                            mouse.distance = 0;
+
+                            e.data.manager.data.timePressed = e.timeStamp;
+                        }
+                    }
+                    if (checkKeyMap(e, false) || e.data.manager.data.preventAll) {
+                        e.preventDefault();
+                    }
+                } else {
+                    if (checkKeyMap(e) || e.data.manager.data.preventAll) {
+                        e.preventDefault();
+                    }
+
+                    if (e.data.manager.data.enableAdditionalData) {
+                        mouse.previousDistance = mouse.distance;
+                        mouse.startPosition.x = 0;
+                        mouse.startPosition.y = 0;
+                    }
+
+                    keysPressed.splice(
+                        keysPressed.indexOf(InputManager.key[keyCode]), 1
+                    );
+                }
+
+                e.data.manager.element.trigger(e.data.event === 0 ?
+                        'mouseKeyDown' : 'mouseKeyUp', {key: keyCode}
+                );
+            },
+
+            onTouchMove: function (e) {
+                var touch = e.originalEvent.touches[0] || e.originalEvent.changedTouches[0];
+                var mouse = e.data.manager.data.mouse;
+
+                mouse.currentPosition.x = touch.pageX.toFixed(0);
+                mouse.currentPosition.y = touch.pageY.toFixed(0);
+
+                if (e.data.manager.data.enableAdditionalData) {
+                    mouse.distance = Math.sqrt(
+                        Math.pow((mouse.currentPosition.x - mouse.startPosition.x), 2)
+                        + Math.pow((mouse.currentPosition.y - mouse.startPosition.y), 2)
+                    ).toFixed(1);
                 }
             }
         };
@@ -221,6 +276,10 @@ define(['jquery', 'vanilla.override-1.0.3'],
             $(document).on('keydown', null, {manager: manager, event: 0}, events.onKeyboardPress);
             $(document).on('keyup', null, {manager: manager, event: 1}, events.onKeyboardPress);
             $(document).on('keypress', null, {manager: manager, event: 2}, events.onKeyboardPress);
+
+            $(document).on('touchstart', selector, {manager: manager, event: 0}, events.onTouchTap);
+            $(document).on('touchend', selector, {manager: manager, event: 1}, events.onTouchTap);
+            $(document).on('touchmove ', selector, {manager: manager}, events.onTouchMove);
         };
 
         var unbindEvents = function (manager) {
@@ -232,9 +291,13 @@ define(['jquery', 'vanilla.override-1.0.3'],
             $(document).off('mousewheel', selector, {manager: manager}, events.onMouseWheel);
             $(document).off('mousemove', selector, {manager: manager}, events.onMouseMove);
 
-            $(document).off('keydown', selector, {manager: manager, event: 0}, events.onKeyboardPress);
-            $(document).off('keyup', selector, {manager: manager, event: 1}, events.onKeyboardPress);
-            $(document).off('keypress', selector, {manager: manager, event: 2}, events.onKeyboardPress);
+            $(document).off('keydown', null, {manager: manager, event: 0}, events.onKeyboardPress);
+            $(document).off('keyup', null, {manager: manager, event: 1}, events.onKeyboardPress);
+            $(document).off('keypress', null, {manager: manager, event: 2}, events.onKeyboardPress);
+
+            $(document).off('touchstart', selector, {manager: manager, event: 0}, events.onTouchTap);
+            $(document).off('touchend', selector, {manager: manager, event: 1}, events.onTouchTap);
+            $(document).off('touchmove ', selector, {manager: manager}, events.onTouchMove);
         };
 
         InputManager.prototype.init = function () {
@@ -284,12 +347,14 @@ define(['jquery', 'vanilla.override-1.0.3'],
             }
         };
 
-        InputManager.prototype.load = function () {
-
+        InputManager.prototype.load = function (newKeyMap) {
+            var oldKeyMap = JSON.stringify(this.keyMap);
+            this.keyMap = JSON.parse(newKeyMap);
+            return oldKeyMap;
         };
 
         InputManager.prototype.save = function () {
-
+            return JSON.stringify(this.keyMap);
         };
 
         /** +KeyMap Manager **/
@@ -299,11 +364,16 @@ define(['jquery', 'vanilla.override-1.0.3'],
         /** -KeyMap Manager **/
 
         var getPressData = function (manager, keyList) {
+            if (!manager.data.enableAdditionalData) return true;
             return {
                 keyList: keyList,
-                distance: manager.data.mouse.distance,
                 time: Date.now() - manager.data.timePressed
             };
+        };
+
+        InputManager.prototype.getMouseMoveDistance = function () {
+            if (!this.data.enableAdditionalData) return 0;
+            return {current: this.data.mouse.distance, previous: this.data.mouse.previousDistance};
         };
 
         /** +Input Checkers **/
@@ -342,7 +412,7 @@ define(['jquery', 'vanilla.override-1.0.3'],
         InputManager.prototype.onNode = function (id) {
             if (!id.layer.visible) return false;
             return (this.data.viewport.x > id.pos.x && this.data.viewport.x < id.pos.x + id.size.x) &&
-                (this.data.viewportos.y > id.pos.y && this.data.viewport.y < id.pos.y + id.size.y);
+                (this.data.viewport.y > id.pos.y && this.data.viewport.y < id.pos.y + id.size.y);
         };
         /** +Input Checkers **/
 
@@ -353,7 +423,7 @@ define(['jquery', 'vanilla.override-1.0.3'],
             $(this.element).css('cursor', this.data.cursor.image);
         };
 
-        InputManager.prototype.cursorToggle = function (enable) {
+        InputManager.prototype.toggleCursor = function (enable) {
             if (enable !== undefined) {
                 this.data.cursor.enable = enable;
             } else {

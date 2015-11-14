@@ -253,8 +253,8 @@
         layers: (parent.layers) ? parent.layers : {}
     };
 
-    J2D.prototype.scene.async = function (callback) {
-        setTimeout(callback, 0);
+    J2D.prototype.scene.async = function (callback, data) {
+        setTimeout(callback.call(callback, data), 0);
     };
 
     J2D.prototype.scene.setGameState = function (engine) {
@@ -301,7 +301,7 @@
         }
     };
 
-    J2D.prototype.scene.fullScreenToggle = function (j2d, data) {
+    J2D.prototype.scene.toggleFullScreen = function (j2d, data) {
         if (data === undefined) {
             data = {fullscreen: undefined};
         }
