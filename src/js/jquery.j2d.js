@@ -29,7 +29,9 @@
         sceneSkipTime: 0,
         engine: false,
         ready: false,
-        window: window
+        window: window,
+
+        webGL: false
     };
 
     J2D = function J2D(element, options) {
@@ -124,6 +126,24 @@
         j2d.options.sceneStartTime = j2d.options.lastTime;
 
         j2d.gameEngine();
+    };
+
+    J2D.prototype.pause = function () {
+        this.options.pause = true;
+        this.element.addClass('pause');
+    };
+
+    J2D.prototype.resume = function () {
+        this.options.pause = false;
+        this.element.removeClass('pause').focus();
+    };
+
+    J2D.prototype.isPlay = function () {
+        return !this.options.pause;
+    };
+
+    J2D.prototype.enableWebGL = function () {
+        this.options.webGL = true;
     };
 
     J2D.prototype.setActiveEngine = function (engine) {
@@ -444,10 +464,20 @@
 
             this.filter('div.canvas:not([guid])').each(function () {
                 $(this).data('j2d', new J2D($(this), options)).addClass('j2d');
-                $(this).attr('guid', 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function (c) {
+                var guid = 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function (c) {
                     var r = Math.random() * 16 | 0, v = c == 'x' ? r : (r & 0x3 | 0x8);
                     return v.toString(16);
-                }));
+                });
+                $(this).attr('guid', guid);
+                var id = $(this).attr('id');
+                if (typeof id === typeof undefined || id === false) {
+                    $(this).attr('id', guid);
+                }
+                var tabIndex = $(this).attr('tabindex');
+                if (typeof tabIndex === typeof undefined || tabIndex === false) {
+                    $(this).attr('tabindex', '-1');
+                }
+                $(this).focus();
             });
 
             if (1 === $(this).length) {
@@ -455,15 +485,17 @@
             }
         };
 
+        $(document).on('click', 'div.canvas[guid].pause', function () {
+            $(this).data('j2d').resume();
+        });
+
         $(window).on('focus', function () {
             $('div.canvas[guid]').each(function () {
-                    $(this).data('j2d').options.pause = false;
-                    $(this).addClass('focus');
+                $(this).data('j2d').resume();
             });
         }).on('blur', function () {
             $('div.canvas[guid]').each(function () {
-                $(this).data('j2d').options.pause = true;
-                $(this).removeClass('focus');
+                $(this).data('j2d').pause();
             });
         });
 

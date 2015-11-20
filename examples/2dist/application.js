@@ -10,9 +10,7 @@
  * TODO:: Bugs from j2ds
  * TODO:: Storage
  * TODO:: FPS as part of Debug module!
- * TODO:: *blur & focus element, +!keyboard
  * TODO:: normal fullscreen without bugs(fills, objects on others layers)
- * TODO:: WebGL
  */
 
 var global;
@@ -34,8 +32,7 @@ requirejs.config({
         'j2d.text': 'j2d/j2d.text.min',
         'j2d.textures': 'j2d/j2d.textures.min',
 
-        'vanilla.override': 'vanilla.override-1.0.3.min',
-        'webgl2d.api': 'webgl2d.api.min',
+        'vanilla.override': 'vanilla.override-1.0.3.min'
     }
 });
 
@@ -55,6 +52,7 @@ define('Application', [
 
     $(document).ready(function () {
         var j2d = $('#j2d').j2d();
+        j2d.enableWebGL();
         var io = j2d.IOHandler(new IO(j2d));
         io.toggleCursor(true); // enable cursor
 

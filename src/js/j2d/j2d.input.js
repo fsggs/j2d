@@ -88,6 +88,7 @@ define('j2d.input', ['jquery', 'vanilla.override'],
 
         var events = {
             onMouseClick: function (e) {
+                if (!e.data.manager.j2d.isPlay()) return true;
                 var keysPressed = e.data.manager.data.keysPressed;
                 var keyCode = getKey(InputManager.key, e.which) || 'KEY_UNKNOWN_' + e.which;
                 var mouse = e.data.manager.data.mouse;
@@ -134,6 +135,7 @@ define('j2d.input', ['jquery', 'vanilla.override'],
             },
 
             onMouseWheel: function (e) {
+                if (!e.data.manager.j2d.isPlay()) return true;
                 var keysPressed = e.data.manager.data.keysPressed;
                 var keyCode = (e.originalEvent.wheelDelta / 120 > 0) ?
                     getKey(InputManager.key, 4) : getKey(InputManager.key, 5);
@@ -174,6 +176,7 @@ define('j2d.input', ['jquery', 'vanilla.override'],
             },
 
             onKeyboardPress: function (e) {
+                if (!e.data.manager.j2d.isPlay()) return true;
                 var keysPressed = e.data.manager.data.keysPressed;
                 var keyCode = getKey(InputManager.key, e.which) || 'KEY_UNKNOWN_' + e.which;
                 if (e.data.event === 2 && true === e.data.manager.data.writeMode) {
@@ -208,6 +211,7 @@ define('j2d.input', ['jquery', 'vanilla.override'],
             },
 
             onTouchTap: function (e) {
+                if (!e.data.manager.j2d.isPlay()) return true;
                 var keysPressed = e.data.manager.data.keysPressed;
                 var keyCode = getKey(InputManager.key, e.which + 1) || 'KEY_UNKNOWN_' + e.which;
                 var touch = e.originalEvent.touches[0] || e.originalEvent.changedTouches[0];

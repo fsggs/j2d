@@ -50,13 +50,9 @@ gulp.task('example-dist', ['clean'], function () {
 /** JS Scripts **/
 gulp.task('js-scripts', ['clean'], function () {
     gulp.src(paths.scripts)
-        .pipe(jshint())
+        //.pipe(jshint())
         .pipe(sourcemaps.init({loadMaps: true}))
-        .pipe(uglify({
-            compress: {
-                negate_iife: false
-            }
-        }))
+        .pipe(uglify())
         .pipe(rename(function (path) {
             if (path.extname === '.js') {
                 path.extname = '.min';
@@ -73,11 +69,7 @@ gulp.task('js-scripts', ['clean'], function () {
 
     gulp.src(['vendor/requirejs/require.js'])
         .pipe(sourcemaps.init({loadMaps: true}))
-        .pipe(uglify({
-            compress: {
-                negate_iife: false
-            }
-        }))
+        .pipe(uglify())
         .pipe(rename(function (path) {
             if (path.extname === '.js') {
                 path.extname = '.min';
