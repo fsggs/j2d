@@ -1,0 +1,41 @@
+{
+  "name": "jquery.j2d",
+  "version": "0.1.5",
+  "homepage": "https://github.com/fsggs/jquery.j2d",
+  "authors": [
+    "DeVinterX",
+    "Skaner(j2ds)"
+  ],
+  "description": "2D engine",
+  "main": "src/js/jquery.j2d.js",
+  "moduleType": [
+    "amd"
+  ],
+  "keywords": [
+    "AMD",
+    "javascript",
+    "library",
+    "canvas",
+    "webgl",
+    "jquery",
+    "j2d",
+    "j2ds"
+  ],
+  "license": [
+    "BSD-4-Clause",
+    "Zlib"
+  ],
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "tests"
+  ],
+  "dependencies": {
+    "jquery": "",
+    "requirejs": ""
+  },
+  "resolutions": {
+    "jquery": "",
+    "requirejs": ""
+  }
+}
