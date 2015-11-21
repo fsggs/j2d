@@ -126,5 +126,8 @@ gulp.task('browser', function () {
     opn('http://127.0.0.1:' + server.port, {app: 'chrome'});
 });
 
+/** Make **/
+gulp.task('make', ['js-scripts', 'css-style', 'images', 'example-dist']);
+
 /** Default **/
-gulp.task('default', ['js-scripts', 'css-style', 'images', 'example-dist']);
+gulp.task('default', ['make']);

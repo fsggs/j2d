@@ -224,7 +224,7 @@
         layer.context = layer.canvas.getContext('2d');
         layer.context.shadowColor = 'rgba(0,0,0,0)';
         layer.canvas.style.zIndex = 1000 + zIndex;
-        layer.canvas.style.position = 'fixed';
+        layer.canvas.style.position = 'absolute';
         layer.canvas.style.left = '0';
         layer.canvas.style.top = '0';
         layer.canvas.id = id;
@@ -232,11 +232,14 @@
         layer.angle = 0;
         layer.visible = 1;
 
+        layer.fillColor = false;
+
         layer.onContext = function (callback) {
             callback(this.context);
         };
 
         layer.fill = function (color) {
+            this.fillColor = color;
             this.context.fillStyle = color;
             this.context.fillRect(0, 0, this.width, this.height);
         };
@@ -282,6 +285,22 @@
             this.context.clearRect(pos.x - j2d.scene.viewport.x, pos.y - j2d.scene.viewport.y, size.x, size.y);
         };
 
+        layer.resize = function (width, height) {
+            this.canvas.width = width;
+            this.canvas.height = height;
+            this.width = width;
+            this.height = height;
+
+            if (this.fillColor) {
+                this.context.save();
+
+                this.context.fillStyle = this.fillColor;
+                this.context.fillRect(0, 0, this.width, this.height);
+
+                this.context.restore();
+            }
+        };
+
         this.list[id] = layer;
 
         if (j2d.options.ready) {
@@ -304,6 +323,19 @@
         layers: (parent.layers) ? parent.layers : {}
     };
 
+    J2D.prototype.scene.resize = function (width, height) {
+        var j2d = this.parent;
+
+        this.width = width;
+        this.height = height;
+
+        for (var i in j2d.layers.list) {
+            if (j2d.layers.list.hasOwnProperty(i)) {
+                j2d.layers.list[i].resize(width, height);
+            }
+        }
+    };
+
     J2D.prototype.scene.async = function (callback, data) {
         setTimeout(callback.call(callback, data), 0);
     };
@@ -322,40 +354,41 @@
         this.parent.element.trigger('afterStart');
     };
 
-    J2D.prototype.scene.resizeToFullScreen = function (fullscreen) {
+    J2D.prototype.scene.fullScreen = function (fullscreen) {
+        var element = document.getElementById(this.parent.element.attr('id'));
+
+        if (undefined === element.requestFullscreen) {
+            element.requestFullscreen = element.webkitRequestFullscreen
+            || element.webkitRequestFullScreen
+            || element.mozRequestFullScreen
+            || element.msRequestFullscreen;
+        }
+
+        if (undefined === document.exitFullscreen) {
+            document.exitFullscreen = document.webkitExitFullscreen
+            || document.webkitCancelFullScreen
+            || document.mozCancelFullScreen
+            || document.msExitFullscreen;
+        }
+        if (fullscreen) {
+            element.requestFullscreen();
+        } else {
+            document.exitFullscreen();
+        }
+    };
+
+    J2D.prototype.scene.resizeToFullPage = function (fullscreen) {
         var j2d = this.parent;
         var scene = this;
 
-        var layer;
-        var tmpCanvas = document.createElement('canvas'); // Нужны для копирования содержимого
-        var tmpContext = tmpCanvas.getContext('2d');      // При изменении размера
         if (fullscreen) {
             scene.originalWidth = scene.width;
             scene.originalHeight = scene.height;
-            scene.width = j2d.device.width;
-            scene.height = j2d.device.height;
-            for (var i in j2d.layers.list) {
-                layer = j2d.layers.list[i];
-                tmpCanvas.width = layer.width;
-                tmpCanvas.height = layer.height;
-                tmpContext.drawImage(layer.canvas, 0, 0);
-                layer.canvas.width = scene.width;
-                layer.canvas.height = scene.height;
-                layer.width = scene.width;
-                layer.height = scene.height;
-                layer.context.drawImage(tmpCanvas, 0, 0, layer.width, layer.height);
-            }
+
+            scene.resize(j2d.device.width, j2d.device.height);
             scene.enableFullscreen = true;
         } else {
-            scene.width = scene.originalWidth;
-            scene.height = scene.originalHeight;
-            for (var i in j2d.layers.list) {
-                layer = j2d.layers.list[i];
-                layer.width = scene.originalWidth;
-                layer.height = scene.originalHeight;
-                layer.canvas.width = scene.originalWidth;
-                layer.canvas.height = scene.originalHeight;
-            }
+            scene.resize(scene.originalWidth, scene.originalHeight);
             scene.enableFullscreen = false;
         }
     };
@@ -390,9 +423,9 @@
             data = {fullscreen: undefined};
         }
         if (!j2d.scene.enableFullscreen || data.fullscreen) {
-            j2d.scene.resizeToFullScreen(true);
+            j2d.scene.fullScreen(true);
         } else {
-            j2d.scene.resizeToFullScreen(false);
+            j2d.scene.fullScreen(false);
         }
     };
 
@@ -485,6 +518,19 @@
             }
         };
 
+        var isFullScreen = false;
+        $(document).on('fullscreenchange webkitfullscreenchange mozfullscreenchange msfullscreenchange', 'div.canvas[guid]', function (e) {
+            isFullScreen = !!(document.webkitFullscreenElement
+            || document.webkitCurrentFullScreenElement
+            || document.mozFullScreenElement
+            || document.msFullscreenElement
+            );
+
+            if (!isFullScreen) {
+                $(this).data('j2d').scene.resizeToFullPage(isFullScreen);
+            }
+        });
+
         $(document).on('click', 'div.canvas[guid].pause', function () {
             $(this).data('j2d').resume();
         });
@@ -502,6 +548,9 @@
         $(window).on('resize', function () {
             $('div.canvas[guid]').each(function () {
                 $(this).data('j2d').device.resize();
+                if (isFullScreen) {
+                    $(this).data('j2d').scene.resizeToFullPage(isFullScreen);
+                }
             });
         });
     };

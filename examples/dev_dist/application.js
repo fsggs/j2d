@@ -62,7 +62,7 @@ define('Application', [
             TEST_BUTTON: [IO.key.KEY_W, true]
         });
 
-        //var device = j2d.device;
+        var device = j2d.device;
         var scene = j2d.scene;
         var layers = j2d.layers;
         var fps = new FPS(j2d);
@@ -70,8 +70,8 @@ define('Application', [
         layers.getLayer('1');
         var vec2df = j2d.vector.vec2df;
 
-        scene.init(400, 300);
-        //scene.init(device.width, device.height);
+        //scene.init(400, 300);
+        scene.init(device.width, device.height);
 
         var background = layers.add('background', -1);
         background.fill('black');
