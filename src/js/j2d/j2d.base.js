@@ -201,9 +201,16 @@ define('j2d.base', [
 
     BaseNode.prototype.drawBox = function () {
         var context = this.layer.context;
+
+        if (this.angle) {
+            context.save();
+            context.translate(this.getPosition().x - this.j2d.scene.viewport.x, this.getPosition().y - this.j2d.scene.viewport.y);
+            context.rotate(this.j2d.math.rad(this.angle));
+            context.translate(-(this.getPosition().x - this.j2d.scene.viewport.x), -(this.getPosition().y - this.j2d.scene.viewport.y));
+        }
+
         context.lineWidth = 2;
         context.strokeStyle = 'black';
-
         context.beginPath();
 
         context.rect(
@@ -218,6 +225,10 @@ define('j2d.base', [
         context.rect(this.box.offset.x + this.pos.x - this.j2d.scene.viewport.x, this.box.offset.y + this.pos.y - this.j2d.scene.viewport.y,
             this.box.size.x + this.size.x, this.box.size.y + this.size.y);
         context.stroke();
+
+        if (this.angle) {
+            context.restore();
+        }
     };
 
     return BaseNode;

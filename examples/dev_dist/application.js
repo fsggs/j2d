@@ -16,23 +16,23 @@
 var global;
 
 requirejs.config({
-    baseUrl: "js/",
+    baseUrl: "../../src/js/",
     paths: {
-        'jquery': '../vendor/jquery.min',
-        'jquery.j2d': 'jquery.j2d.min',
+        'jquery': '../../vendor/jquery/dist/jquery',
+        'jquery.j2d': 'jquery.j2d',
 
-        'j2d.base': 'j2d/j2d.base.min',
-        'j2d.circle': 'j2d/j2d.circle.min',
-        'j2d.fps': 'j2d/j2d.fps.min',
-        'j2d.input': 'j2d/j2d.input.min',
-        'j2d.io.legacy': 'j2d/j2d.io.legacy.min',
-        'j2d.line': 'j2d/j2d.line.min',
-        'j2d.rect': 'j2d/j2d.rect.min',
-        'j2d.sprite': 'j2d/j2d.sprite.min',
-        'j2d.text': 'j2d/j2d.text.min',
-        'j2d.textures': 'j2d/j2d.textures.min',
+        'j2d.base': 'j2d/j2d.base',
+        'j2d.circle': 'j2d/j2d.circle',
+        'j2d.fps': 'j2d/j2d.fps',
+        'j2d.input': 'j2d/j2d.input',
+        'j2d.io.legacy': 'j2d/j2d.io.legacy',
+        'j2d.line': 'j2d/j2d.line',
+        'j2d.rect': 'j2d/j2d.rect',
+        'j2d.sprite': 'j2d/j2d.sprite',
+        'j2d.text': 'j2d/j2d.text',
+        'j2d.textures': 'j2d/j2d.textures',
 
-        'vanilla.override': 'vanilla.override-1.0.3.min'
+        'vanilla.override': 'vanilla.override-1.0.3'
     }
 });
 
@@ -87,8 +87,8 @@ define('Application', [
         var move_controller = function () {
             var keyData;
             if (keyData = io.checkPressedKeyMap('ACTION')) {
-                a.setPosition(io.getPosition());
-                s.setPosition(io.getPosition());
+                a.moveTo(io.getPosition(), 20);
+                s.moveTo(io.getPosition(), 20);
 
                 //console.log(io.getMouseMoveDistance());
             }
@@ -110,8 +110,8 @@ define('Application', [
 
             a.draw();
             b.draw();
-            //a.drawBox();
-            //b.drawBox();
+            a.drawBox();
+            b.drawBox();
             _fps.drawSimpleText('Current FPS: ' + fps.getFPS());
             fps.end();
         };
