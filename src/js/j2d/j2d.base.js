@@ -211,6 +211,7 @@ define('j2d.base', [
 
         context.lineWidth = 2;
         context.strokeStyle = 'black';
+        context.lineCap = 'round';
         context.beginPath();
 
         context.rect(
@@ -226,6 +227,7 @@ define('j2d.base', [
             this.box.size.x + this.size.x, this.box.size.y + this.size.y);
         context.stroke();
 
+        context.lineCap = 'butt';
         if (this.angle) {
             context.restore();
         }

@@ -44,8 +44,16 @@ define('j2d.line', [
                 context.globalAlpha = this.alpha;
             }
 
+            if (this.angle) {
+                context.save();
+                context.translate(this.getPosition().x - this.j2d.scene.viewport.x, this.getPosition().y - this.j2d.scene.viewport.y);
+                context.rotate(this.j2d.math.rad(this.angle));
+                context.translate(-(this.getPosition().x - this.j2d.scene.viewport.x), -(this.getPosition().y - this.j2d.scene.viewport.y));
+            }
+
             context.strokeStyle = this.color;
             context.lineWidth = this.lineWidth;
+            context.lineCap = 'round';
 
             context.beginPath();
             context.moveTo(this.pos.x - this.j2d.scene.viewport.x,
@@ -64,6 +72,11 @@ define('j2d.line', [
             }
 
             context.lineWidth = 0;
+            context.lineCap = 'butt';
+
+            if (this.angle) {
+                context.restore();
+            }
 
             if (this.alpha != 1) {
                 context.globalAlpha = tmpAlpha;

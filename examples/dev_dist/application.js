@@ -7,10 +7,8 @@
  */
 
 /*
- * TODO:: Bugs from j2ds
  * TODO:: Storage
  * TODO:: FPS as part of Debug module!
- * TODO:: normal fullscreen without bugs(fills, objects on others layers)
  */
 
 var global;
@@ -77,18 +75,18 @@ define('Application', [
         background.fill('black');
 
         var size = vec2df(25, 25);
-        var a = scene.addRectNode(vec2df(40, 40), size, 'red');
+        var a = scene.addRectNode(vec2df(140, 140), size, 'red');
         var b = scene.addRectNode(vec2df(140, 140), size, 'green');
         b.setLayer('background');
-        var s = scene.addLineNode(vec2df(60, 60), [[0, 0], [100, 100]], 1, 'red', 2);
+        var s = scene.addLineNode(vec2df(60, 60), [[0, 0], [100, 0]], 1, 'green', 2);
 
         var _fps = scene.addTextNode(vec2df(5, 5), '', 12, 'white');
 
         var move_controller = function () {
             var keyData;
             if (keyData = io.checkPressedKeyMap('ACTION')) {
-                a.moveTo(io.getPosition(), 20);
-                s.moveTo(io.getPosition(), 20);
+                a.moveTo(io.getPosition(), 10);
+                s.moveTo(io.getPosition(), 10);
 
                 //console.log(io.getMouseMoveDistance());
             }
@@ -98,7 +96,10 @@ define('Application', [
         };
 
         var draw_animation = function () {
-            a.turn(1);
+            //a.turn(1);
+            a.setRotation(20);
+            b.setRotation(20);
+            s.setRotation(20);
         };
 
         var draw_viewport = function () {
@@ -106,12 +107,10 @@ define('Application', [
             scene.clear();
 
             s.draw();
-            b.setRotation(20);
-
             a.draw();
             b.draw();
-            a.drawBox();
-            b.drawBox();
+            //a.drawBox();
+            //b.drawBox();
             _fps.drawSimpleText('Current FPS: ' + fps.getFPS());
             fps.end();
         };
