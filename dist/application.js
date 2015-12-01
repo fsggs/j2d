@@ -31,6 +31,7 @@ requirejs.config({
         'j2d.sprite': 'j2d/j2d.sprite.min',
         'j2d.text': 'j2d/j2d.text.min',
         'j2d.textures': 'j2d/j2d.textures.min',
+        'j2d.webGL2d': 'j2d/j2d.webGL2d.min',
 
         'vanilla.override': 'vanilla.override-1.0.3.min'
     }
@@ -74,7 +75,6 @@ define('Application', [
         //scene.init(device.width, device.height);
 
         var background = layers.add('background', -1);
-        background.fill('black');
 
         var size = vec2df(25, 25);
         var a = scene.addRectNode(vec2df(40, 40), size, 'red');
@@ -104,6 +104,7 @@ define('Application', [
         var draw_viewport = function () {
             fps.start();
             scene.clear();
+            background.fill('black');
 
             s.draw();
             b.setRotation(20);

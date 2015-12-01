@@ -8,11 +8,11 @@
  */
 !function (root, factory) {
     if (typeof define === 'function' && define.amd) {
-        define('jquery.j2d', ['jquery'], factory);
+        define('jquery.j2d', ['jquery', 'j2d.webGL2d'], factory);
     } else {
-        factory(root.jQuery);
+        factory(root.jQuery, root.WebGL2D);
     }
-}(global, function (jQuery) {
+}(global, function (jQuery, WebGL2D) {
     var $ = jQuery, J2D;
     'use strict';
 
@@ -221,7 +221,12 @@
         layer.canvas.height = j2d.scene.height;
         layer.width = j2d.scene.width;
         layer.height = j2d.scene.height;
-        layer.context = layer.canvas.getContext('2d');
+        if (j2d.options.webGL) {
+            WebGL2D.enable(layer.canvas);
+            layer.context = layer.canvas.getContext('WebGL-2d');
+        } else {
+            layer.context = layer.canvas.getContext('2d');
+        }
         layer.context.shadowColor = 'rgba(0,0,0,0)';
         layer.canvas.style.zIndex = 1000 + zIndex;
         layer.canvas.style.position = 'absolute';
