@@ -1,6 +1,7 @@
 .j2d {
     border: 0;
     cursor: none;
+    position: relative;
 }
 
 .j2d-fullscreen {

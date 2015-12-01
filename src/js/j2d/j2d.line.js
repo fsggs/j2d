@@ -9,12 +9,13 @@
 
 define('j2d.line', [
     'jquery.j2d',
-    'j2d.base'
-], function (J2D, BaseNode) {
+    'j2d.base',
+    'j2d.scene'
+], function (J2D, BaseNode, Scene) {
     "use strict";
 
-    if (!J2D.prototype.scene.addLineNode) {
-        J2D.prototype.scene.addLineNode = function (pos, points, scale, color, width, fill, cFill) {
+    if (!Scene.prototype.addLineNode) {
+        Scene.prototype.addLineNode = function (pos, points, scale, color, width, fill, cFill) {
             return new LineNode(this.parent, pos, points, scale, color, width, fill, cFill);
         };
     }

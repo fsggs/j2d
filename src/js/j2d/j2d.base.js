@@ -8,12 +8,12 @@
  */
 
 define('j2d.base', [
-    'jquery.j2d'
-], function (J2D) {
+    'jquery.j2d', 'j2d.scene'
+], function (J2D, Scene) {
     "use strict";
 
-    if (!J2D.prototype.scene.addBaseNode) {
-        J2D.prototype.scene.addBaseNode = function (pos, size) {
+    if (!Scene.prototype.addBaseNode) {
+        Scene.prototype.addBaseNode = function (pos, size) {
             return new BaseNode(this.parent, pos, size);
         };
     }

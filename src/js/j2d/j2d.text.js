@@ -9,12 +9,13 @@
 
 define('j2d.text', [
     'jquery.j2d',
-    'j2d.base'
-], function (J2D, BaseNode) {
+    'j2d.base',
+    'j2d.scene'
+], function (J2D, BaseNode, Scene) {
     "use strict";
 
-    if (!J2D.prototype.scene.addTextNode) {
-        J2D.prototype.scene.addTextNode = function (pos, text, sizePx, color, family, width, colorL) {
+    if (!Scene.prototype.addTextNode) {
+        Scene.prototype.addTextNode = function (pos, text, sizePx, color, family, width, colorL) {
             return new TextNode(this.parent, pos, text, sizePx, color, family, width, colorL);
         };
     }

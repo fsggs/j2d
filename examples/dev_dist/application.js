@@ -19,6 +19,8 @@ requirejs.config({
         'jquery': '../../vendor/jquery/dist/jquery',
         'jquery.j2d': 'jquery.j2d',
 
+        'j2d.scene': 'j2d/j2d.scene',
+        'j2d.layers': 'j2d/j2d.layers',
         'j2d.base': 'j2d/j2d.base',
         'j2d.circle': 'j2d/j2d.circle',
         'j2d.fps': 'j2d/j2d.fps',
@@ -50,7 +52,9 @@ define('Application', [
     J2D.initJQueryPlugin();
 
     $(document).ready(function () {
-        var j2d = $('#j2d').j2d();
+        var j2d_containers = window.j2ds = $('.multi-2d').j2d();
+
+        var j2d = j2d_containers[0];
         j2d.enableWebGL();
         var io = j2d.IOHandler(new IO(j2d));
         io.toggleCursor(true); // enable cursor
@@ -123,7 +127,28 @@ define('Application', [
             scene.async(move_controller);
         };
         scene.start(Game, 60);
+
+        /** TEST Multiple **/
+        var j2d_2 = j2d_containers[1];
+        //var io2 = j2d_2.IOHandler(new IO(j2d_2));
+        //io2.toggleCursor(true);
+
+        var scene2 = j2d_2.scene;
+        scene2.init(400, 300);
+        var t = scene2.addRectNode(vec2df(140, 140), size, 'blue');
+        var draw_viewport2 = function () {
+            scene2.clear();
+            scene2.getLayer().fill('black');
+            t.turn();
+            t.draw();
+        };
+        var Game2 = function () {
+            scene2.async(draw_viewport2);
+        };
+        // scene2.start(Game2, 60);
+        /** TEST Multiple **/
     });
+
 });
 
 require(['Application']);

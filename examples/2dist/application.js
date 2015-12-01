@@ -21,6 +21,8 @@ requirejs.config({
         'jquery': '../vendor/jquery.min',
         'jquery.j2d': 'jquery.j2d.min',
 
+        'j2d.scene': 'j2d/j2d.scene.min',
+        'j2d.layers': 'j2d/j2d.layers.min',
         'j2d.base': 'j2d/j2d.base.min',
         'j2d.circle': 'j2d/j2d.circle.min',
         'j2d.fps': 'j2d/j2d.fps.min',

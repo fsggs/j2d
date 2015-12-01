@@ -9,12 +9,13 @@
 
 define('j2d.rect', [
     'jquery.j2d',
-    'j2d.base'
-], function (J2D, BaseNode) {
+    'j2d.base',
+    'j2d.scene'
+], function (J2D, BaseNode, Scene) {
     "use strict";
 
-    if (!J2D.prototype.scene.addRectNode) {
-        J2D.prototype.scene.addRectNode = function (pos, size, color) {
+    if (!Scene.prototype.addRectNode) {
+        Scene.prototype.addRectNode = function (pos, size, color) {
             return new RectNode(this.parent, pos, size, color);
         };
     }
