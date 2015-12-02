@@ -7,8 +7,26 @@
  */
 
 /*
+ *  v.0.1.5
  * TODO:: Storage
  * TODO:: FPS as part of Debug module!
+ * TODO:: focus|blur events
+ * TODO:: fix io for multiple scenes
+ * TODO:: documentation & legacy demos
+ *
+ *  v.0.1.6
+ * TODO:: Merge with <- j2ds 0.2.0+
+ *
+ *  v.0.1.7
+ * TODO:: WebGL PolyLine replacement LinePath
+ * TODO:: WebGL position fix
+ * TODO:: Nodes for bezierCurve & quadraticCurve
+ * TODO:: fix all knows bugs in WebGL adaptation
+ * TODO::
+ *
+ *  v.0.1.6
+ * TODO:: Collection & Layers global collection
+ * TODO:: specific plugin demos (not legacy)
  */
 
 var global;
