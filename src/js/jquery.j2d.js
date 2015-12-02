@@ -8,74 +8,36 @@
  */
 !function (root, factory) {
     if (typeof define === 'function' && define.amd) {
-        define('jquery.j2d', ['jquery', 'j2d.webGL2d', 'j2d.scene', 'j2d.layers'], factory);
+        define('jquery.j2d', ['jquery', 'j2d.webGL2d', 'j2d.frame', 'j2d.scene', 'j2d.layers'], factory);
     } else {
-        factory(root.jQuery, root.WebGL2D, null, null);
+        factory(root.jQuery, root.WebGL2D, null, null, null);
     }
-}(global, function (jQuery, WebGL2D, Scene, LayersManager) {
+}(global, function (jQuery, WebGL2D, FrameManager, Scene, LayersManager) {
     var $ = jQuery, J2D;
     'use strict';
 
     var defaults = {
+        id: undefined,
         vector: {},
         math: {},
-        dom: {},
-        now: 0,
-        dt: 0,
         io: undefined,
+        deltaTime: 0,
         pause: false,
-        frameLimit: 60,
-        sceneStartTime: 0,
-        sceneSkipTime: 0,
-        engine: false,
         ready: false,
         window: window,
 
         webGL: false
     };
 
-    J2D = function J2D(element, options) {
-        var j2d = this;
+    J2D = function J2D(id, element, options) {
+        this.id = id;
+        this.element = element;
+        this.options = options;
 
-        j2d.element = element;
-        j2d.options = options;
+        this.options.id = this.id;
 
-        j2d.layers = new LayersManager(j2d, WebGL2D);
-        j2d.scene = new Scene(j2d);
-
-        j2d.gameEngine = function () {
-            j2d.options.now = Date.now();
-
-            setTimeout(function () {
-                if (!j2d.options.pause) {
-                    if (j2d.options.io) {
-                        j2d.options.io.update();
-                    }
-                    j2d.options.dt = (j2d.options.now - j2d.options.lastTime) / 100.0;
-                    if (j2d.options.dt > j2d.options.sceneSkipTime) {
-                        j2d.options.dt = 0;
-                    }
-                    j2d.options.sceneStartTime = j2d.options.now;
-                    setTimeout(j2d.options.engine, 0);
-                    j2d.options.lastTime = j2d.options.now;
-                    if (j2d.options.io) {
-                        j2d.options.io.clear();
-                    }
-                }
-                nextJ2dsGameStep(j2d.gameEngine);
-            }, (j2d.options.frameLimit < 60 ? j2d.options.sceneSkipTime : 0));
-        };
-
-        var nextJ2dsGameStep = (function () {
-            return window.requestAnimationFrame ||
-                window.webkitRequestAnimationFrame ||
-                window.mozRequestAnimationFrame ||
-                window.oRequestAnimationFrame ||
-                window.msRequestAnimationFrame ||
-                function (callback) {
-                    window.setTimeout(callback, 1000 / j2d.options.frameLimit);
-                };
-        })();
+        this.layers = new LayersManager(this, WebGL2D);
+        this.scene = new Scene(this);
     };
 
     /** +links getters **/
@@ -108,16 +70,14 @@
     J2D.prototype.start = function (engine, frameLimit) {
         var j2d = this;
 
-        j2d.options.engine = engine || function () {
+        engine = engine || function () {
             j2d.element.html('Пожалуйста, инициализируйте игровую функцию!');
         };
-        j2d.options.frameLimit = frameLimit || 60;
-        j2d.options.sceneSkipTime = 1000.0 / j2d.options.frameLimit;
-        j2d.options.lastTime = Date.now();
-        j2d.options.dt = 0;
-        j2d.options.sceneStartTime = j2d.options.lastTime;
 
-        j2d.gameEngine();
+        FrameManager.start(j2d.id, engine, {
+            j2d: j2d,
+            frameLimit: frameLimit
+        });
     };
 
     J2D.prototype.pause = function () {
@@ -136,6 +96,7 @@
 
     J2D.prototype.enableWebGL = function () {
         this.options.webGL = true;
+        this.element.addClass('WebGL');
     };
 
     J2D.prototype.setActiveEngine = function (engine) {
@@ -200,9 +161,9 @@
 
     J2D.initJQueryPlugin = function () {
         $.fn.j2d = function (options) {
-            options = $.extend(true, {}, defaults, options);
-
             this.filter('div.canvas:not([guid])').each(function () {
+                var options = $.extend(true, {}, defaults, options);
+
                 var guid = 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function (c) {
                     var r = Math.random() * 16 | 0, v = c == 'x' ? r : (r & 0x3 | 0x8);
                     return v.toString(16);
@@ -216,7 +177,7 @@
                 if (typeof tabIndex === typeof undefined || tabIndex === false) {
                     $(this).attr('tabindex', '-1');
                 }
-                $(this).data('j2d', new J2D($(this), options)).addClass('j2d');
+                $(this).data('j2d', new J2D(guid, $(this), options)).addClass('j2d');
                 $(this).focus();
             });
 
@@ -267,6 +228,8 @@
                 }
             });
         });
+
+        FrameManager.pulse();
     };
 
     return J2D;

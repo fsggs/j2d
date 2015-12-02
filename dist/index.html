@@ -5,10 +5,31 @@
     <title>jQuery.j2d</title>
     <link rel="stylesheet" href="style.css" type="text/css"/>
     <link rel="stylesheet" href="css/jquery.j2d.min.css" type="text/css"/>
+
+    <style>
+        .multi-2d {
+            float: left;
+            margin: 20px 5px;
+        }
+
+        .multi-2d:after {
+            display: block;
+            content: 'J2D Engine';
+            position: absolute;
+            top: -20px;
+            left: 0;
+            text-indent: 7px;
+        }
+
+        .WebGL:after {
+            content: 'J2D Engine (WebGL)';
+        }
+    </style>
 </head>
 <body>
 
-<div id="j2d" class="canvas"></div>
+<div id="j2d" class="multi-2d canvas"></div>
+<div class="multi-2d canvas"></div>
 
 <script src="vendor/require.min.js" data-main="application" type="application/javascript"></script>
 </body>

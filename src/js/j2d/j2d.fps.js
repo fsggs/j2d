@@ -10,27 +10,26 @@
 define('j2d.fps', [], function () {
     "use strict";
 
-    var FPSMeter = function (j2d) {
-        this.j2d = j2d;
-        this.fps = j2d.options.frameLimit;
+    var FPSMeter = function () {
         this.tmp_of_fps = 1;
         this.tmp_of_time = Date.now();
     };
 
-    FPSMeter.prototype.start = function () {
+    FPSMeter.prototype.start = function (data) {
+        this.fps = data.frameLimit;
         this.tmp_of_fps += 1;
     };
 
-    FPSMeter.prototype.end = function () {
-        if (this.j2d.options.now - this.tmp_of_time >= 1000) {
+    FPSMeter.prototype.end = function (data) {
+        if (data.now - this.tmp_of_time >= 1000.0) {
             this.fps = this.tmp_of_fps;
             this.tmp_of_fps = 1;
-            this.tmp_of_time = this.j2d.options.now;
+            this.tmp_of_time = data.now;
         }
     };
 
     FPSMeter.prototype.getFPS = function () {
-        return (this.fps - 1);
+        return (this.fps);
     };
 
     return FPSMeter;

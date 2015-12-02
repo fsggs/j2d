@@ -19,6 +19,7 @@ requirejs.config({
         'jquery': '../../vendor/jquery/dist/jquery',
         'jquery.j2d': 'jquery.j2d',
 
+        'j2d.frame': 'j2d/j2d.frame',
         'j2d.scene': 'j2d/j2d.scene',
         'j2d.layers': 'j2d/j2d.layers',
         'j2d.base': 'j2d/j2d.base',
@@ -68,7 +69,7 @@ define('Application', [
         //var device = j2d.device;
         var scene = j2d.scene;
         var layers = j2d.layers;
-        var fps = new FPS(j2d);
+        var fps = new FPS();
 
         layers.getLayer('1');
         var vec2df = j2d.vector.vec2df;
@@ -106,8 +107,8 @@ define('Application', [
             s.setRotation(20);
         };
 
-        var draw_viewport = function () {
-            fps.start();
+        var draw_viewport = function (data) {
+            fps.start(data);
             scene.clear();
             background.fill('black');
 
@@ -117,13 +118,13 @@ define('Application', [
             //a.drawBox();
             //b.drawBox();
             _fps.drawSimpleText('Current FPS: ' + fps.getFPS());
-            fps.end();
+            fps.end(data);
         };
 
-        var Game = function () {
+        var Game = function (timestamp, data) {
             // Run controllers async! But all draw process in one so-process!
             scene.async(draw_animation);
-            scene.async(draw_viewport);
+            scene.async(draw_viewport, data);
             scene.async(move_controller);
         };
         scene.start(Game, 60);
@@ -136,16 +137,20 @@ define('Application', [
         var scene2 = j2d_2.scene;
         scene2.init(400, 300);
         var t = scene2.addRectNode(vec2df(140, 140), size, 'blue');
-        var draw_viewport2 = function () {
+        var _fps2 = scene2.addTextNode(vec2df(5, 5), '', 12, 'white');
+        var draw_viewport2 = function (data) {
+            fps.start(data);
             scene2.clear();
             scene2.getLayer().fill('black');
-            t.turn();
+            t.turn(-2);
             t.draw();
+            _fps2.drawSimpleText('Current FPS: ' + fps.getFPS());
+            fps.end(data);
         };
-        var Game2 = function () {
-            scene2.async(draw_viewport2);
+        var Game2 = function (timestamp, data) {
+            scene2.async(draw_viewport2, data);
         };
-        // scene2.start(Game2, 60);
+        scene2.start(Game2, 15);
         /** TEST Multiple **/
     });
 
