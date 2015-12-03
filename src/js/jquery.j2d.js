@@ -76,11 +76,11 @@
             frameLimit: frameLimit
         });
 
-        this.element.trigger('start');
+        j2d.element.trigger('start');
     };
 
     J2D.prototype.stop = function () {
-        if(this.options.io) this.options.io.disable();
+        //if(this.options.io) this.options.io.disable();
         FrameManager.stop(this.id);
         this.element.trigger('stop');
     };
@@ -191,7 +191,7 @@
                 }
                 var tabIndex = $(this).attr('tabindex');
                 if (typeof tabIndex === typeof undefined || tabIndex === false) {
-                    $(this).attr('tabindex', '1');
+                    $(this).attr('tabindex', '-1');
                 }
                 $(this).data('j2d', new J2D(guid, $(this), options)).addClass('j2d');
                 $(this).click().focus();
@@ -209,21 +209,21 @@
             }
         };
 
-        var isFullScreen = false;
-        $(document).on('fullscreenchange webkitfullscreenchange mozfullscreenchange msfullscreenchange', 'div.canvas[guid].active',
-            function (e) {
-                isFullScreen = !!(document.webkitFullscreenElement
-                || document.webkitCurrentFullScreenElement
-                || document.mozFullScreenElement
-                || document.msFullscreenElement
-                );
+        var isFullScreen = function () {
+            return !!(document.webkitFullscreenElement
+            || document.webkitCurrentFullScreenElement
+            || document.mozFullScreenElement
+            || document.msFullscreenElement
+            );
+        };
 
-                if (!isFullScreen) {
-                    $(this).data('j2d').scene.resizeToFullPage(isFullScreen);
-                    $('div.canvas[guid]:not(.active)').toggle(!isFullScreen);
-                }
+        $(document).on('fullscreenchange webkitfullscreenchange mozfullscreenchange MSFullscreenChange', function (e) {
+            var fullScreen = isFullScreen();
+            if (!fullScreen) {
+                $('div.canvas[guid].active').data('j2d').scene.resizeToFullPage(fullScreen);
+                $('div.canvas[guid]:not(.active)').toggle(!fullScreen);
             }
-        );
+        });
 
         $(document).on('click', 'div.canvas[guid].pause', function () {
             $(this).data('j2d').resume();
@@ -260,12 +260,13 @@
         });
 
         $(window).on('resize', function () {
-            $('div.canvas[guid].active').each(function () {
+            $('div.canvas[guid]').each(function () {
                 $(this).data('j2d').device.resize();
-                if (isFullScreen) {
-                    $(this).data('j2d').scene.resizeToFullPage(isFullScreen);
-                }
             });
+            var fullScreen = isFullScreen();
+            if (fullScreen) {
+                $('div.canvas[guid].active').data('j2d').scene.resizeToFullPage(fullScreen);
+            }
         });
 
         FrameManager.pulse();

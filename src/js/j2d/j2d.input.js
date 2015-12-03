@@ -339,6 +339,7 @@ define('j2d.input', ['jquery', 'vanilla.override'],
             }
         };
 
+        /** @deprecated **/
         InputManager.prototype.enable = function () {
             if (!this.data.enabled) {
                 bindEvents(this);
@@ -346,6 +347,7 @@ define('j2d.input', ['jquery', 'vanilla.override'],
             }
         };
 
+        /** @deprecated **/
         InputManager.prototype.disable = function () {
             if (this.data.enabled) {
                 unbindEvents(this);
