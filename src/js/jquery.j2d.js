@@ -18,8 +18,6 @@
 
     var defaults = {
         id: undefined,
-        vector: {},
-        math: {},
         io: undefined,
         deltaTime: 0,
         pause: false,
@@ -57,7 +55,6 @@
     /** -links getters **/
 
     /** +GameEngine **/
-
     J2D.prototype.IOHandler = function (handler) {
         return this.options.io = handler;
     };
@@ -80,14 +77,21 @@
         });
     };
 
+    J2D.prototype.stop = function () {
+        if(this.options.io) this.options.io.disable();
+        FrameManager.stop(this.id);
+    };
+
     J2D.prototype.pause = function () {
+        //if(this.options.io) this.options.io.disable();
         this.options.pause = true;
         this.element.addClass('pause');
     };
 
     J2D.prototype.resume = function () {
-        this.options.pause = false;
         this.element.removeClass('pause').focus();
+        this.options.pause = false;
+        //if(this.options.io) this.options.io.enable();
     };
 
     J2D.prototype.isPlay = function () {
@@ -99,13 +103,17 @@
         this.element.addClass('WebGL');
     };
 
+    J2D.prototype.disableWebGL = function () {
+        this.options.webGL = false;
+        this.element.removeClass('WebGL');
+    };
+
     J2D.prototype.setActiveEngine = function (engine) {
         this.options.engine = engine;
     };
     /** -GameEngine **/
 
     /** Device **/
-
     J2D.prototype.getDevice = function () {
         return this.device;
     };
@@ -160,6 +168,9 @@
     /** -Scene **/
 
     J2D.initJQueryPlugin = function () {
+        if (window.j2dPlugin !== undefined) return null;
+        window.j2dPlugin = {pluginInit: true};
+
         $.fn.j2d = function (options) {
             this.filter('div.canvas:not([guid])').each(function () {
                 var options = $.extend(true, {}, defaults, options);
@@ -175,10 +186,10 @@
                 }
                 var tabIndex = $(this).attr('tabindex');
                 if (typeof tabIndex === typeof undefined || tabIndex === false) {
-                    $(this).attr('tabindex', '-1');
+                    $(this).attr('tabindex', '1');
                 }
                 $(this).data('j2d', new J2D(guid, $(this), options)).addClass('j2d');
-                $(this).focus();
+                $(this).click().focus();
             });
 
             var $array = [];
@@ -194,24 +205,47 @@
         };
 
         var isFullScreen = false;
-        $(document).on('fullscreenchange webkitfullscreenchange mozfullscreenchange msfullscreenchange', 'div.canvas[guid]', function (e) {
-            isFullScreen = !!(document.webkitFullscreenElement
-            || document.webkitCurrentFullScreenElement
-            || document.mozFullScreenElement
-            || document.msFullscreenElement
-            );
+        $(document).on('fullscreenchange webkitfullscreenchange mozfullscreenchange msfullscreenchange', 'div.canvas[guid].active',
+            function (e) {
+                isFullScreen = !!(document.webkitFullscreenElement
+                || document.webkitCurrentFullScreenElement
+                || document.mozFullScreenElement
+                || document.msFullscreenElement
+                );
 
-            if (!isFullScreen) {
-                $(this).data('j2d').scene.resizeToFullPage(isFullScreen);
+                if (!isFullScreen) {
+                    $(this).data('j2d').scene.resizeToFullPage(isFullScreen);
+                    $('div.canvas[guid]:not(.active)').toggle(!isFullScreen);
+                }
             }
-        });
+        );
 
         $(document).on('click', 'div.canvas[guid].pause', function () {
             $(this).data('j2d').resume();
+
+            var current = this;
+            $('div.canvas[guid]:not(.pause-disable):not(:focus)').each(function () {
+                if (current !== this) $(this).removeClass('active').data('j2d').pause();
+            });
+            $('div.canvas[guid].active.pause-disable:not(:focus)').each(function () {
+                if (current !== this) $(this).removeClass('active');
+            });
+        });
+
+        $(document).on('click touch mouseenter', 'div.canvas[guid]:not(.resume-by-click):not(:focus)', function (e) {
+            $(this).addClass('active').focus().data('j2d').resume();
+
+            var current = this;
+            $('div.canvas[guid]:not(.pause-disable):not(:focus)').each(function () {
+                if (current !== this) $(this).removeClass('active').data('j2d').pause();
+            });
+            $('div.canvas[guid].active.pause-disable:not(:focus)').each(function () {
+                if (current !== this) $(this).removeClass('active');
+            });
         });
 
         $(window).on('focus', function () {
-            $('div.canvas[guid]').each(function () {
+            $('div.canvas[guid].active').each(function () {
                 $(this).data('j2d').resume();
             });
         }).on('blur', function () {
@@ -221,7 +255,7 @@
         });
 
         $(window).on('resize', function () {
-            $('div.canvas[guid]').each(function () {
+            $('div.canvas[guid].active').each(function () {
                 $(this).data('j2d').device.resize();
                 if (isFullScreen) {
                     $(this).data('j2d').scene.resizeToFullPage(isFullScreen);

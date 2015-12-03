@@ -12,6 +12,8 @@ define('j2d.input', ['jquery', 'vanilla.override'],
 
         var InputManager = function (j2d) {
             this.j2d = j2d;
+
+            this.id = j2d.id;
             this.element = j2d.element;
 
             this.data = {
@@ -88,7 +90,7 @@ define('j2d.input', ['jquery', 'vanilla.override'],
 
         var events = {
             onMouseClick: function (e) {
-                if (!e.data.manager.j2d.isPlay()) return true;
+                if (!e.data.manager.j2d.isPlay() || !e.data.manager.j2d.element.hasClass('active')) return true;
                 var keysPressed = e.data.manager.data.keysPressed;
                 var keyCode = getKey(InputManager.key, e.which) || 'KEY_UNKNOWN_' + e.which;
                 var mouse = e.data.manager.data.mouse;
@@ -113,7 +115,6 @@ define('j2d.input', ['jquery', 'vanilla.override'],
                         if (checkKeyMap(e) || e.data.manager.data.preventAll) {
                             e.preventDefault();
                         }
-
                         if (e.data.manager.data.enableAdditionalData) {
                             mouse.previousDistance = mouse.distance;
                             mouse.startPosition.x = 0;
@@ -135,7 +136,7 @@ define('j2d.input', ['jquery', 'vanilla.override'],
             },
 
             onMouseWheel: function (e) {
-                if (!e.data.manager.j2d.isPlay()) return true;
+                if (!e.data.manager.j2d.isPlay() || !e.data.manager.j2d.element.hasClass('active')) return true;
                 var keysPressed = e.data.manager.data.keysPressed;
                 var keyCode = (e.originalEvent.wheelDelta / 120 > 0) ?
                     getKey(InputManager.key, 4) : getKey(InputManager.key, 5);
@@ -176,13 +177,13 @@ define('j2d.input', ['jquery', 'vanilla.override'],
             },
 
             onKeyboardPress: function (e) {
-                if (!e.data.manager.j2d.isPlay()) return true;
+                if (!e.data.manager.j2d.isPlay() || !e.data.manager.element.hasClass('active')) return true;
                 var keysPressed = e.data.manager.data.keysPressed;
                 var keyCode = getKey(InputManager.key, e.which) || 'KEY_UNKNOWN_' + e.which;
                 if (e.data.event === 2 && true === e.data.manager.data.writeMode) {
                     var char = String.fromCharCode(e.which || e.keyCode);
                     e.preventDefault();
-                    e.data.manager.element.trigger('keyboardCharPress', {char: char});
+                    e.data.manager.element.focus().trigger('keyboardCharPress', {char: char});
                 } else {
                     if (e.data.event === 0) {
                         if (-1 === $.inArray(InputManager.key[keyCode], keysPressed)) {
@@ -211,7 +212,7 @@ define('j2d.input', ['jquery', 'vanilla.override'],
             },
 
             onTouchTap: function (e) {
-                if (!e.data.manager.j2d.isPlay()) return true;
+                if (!e.data.manager.j2d.isPlay() || !e.data.manager.j2d.element.hasClass('active')) return true;
                 var keysPressed = e.data.manager.data.keysPressed;
                 var keyCode = getKey(InputManager.key, e.which + 1) || 'KEY_UNKNOWN_' + e.which;
                 var touch = e.originalEvent.touches[0] || e.originalEvent.changedTouches[0];
@@ -269,7 +270,7 @@ define('j2d.input', ['jquery', 'vanilla.override'],
         };
 
         var bindEvents = function (manager) {
-            var selector = '[guid=' + manager.element.attr('guid') + ']';
+            var selector = '[guid=' + manager.id + ']';
 
             $(document).on('contextmenu', selector, {manager: manager, event: 2}, events.onMouseClick);
             $(document).on('mousedown', selector, {manager: manager, event: 0}, events.onMouseClick);
@@ -287,7 +288,7 @@ define('j2d.input', ['jquery', 'vanilla.override'],
         };
 
         var unbindEvents = function (manager) {
-            var selector = '[guid=' + manager.element.attr('guid') + ']';
+            var selector = '[guid=' + manager.id + ']';
 
             $(document).off('contextmenu', selector, {manager: manager, event: 1}, events.onMouseClick);
             $(document).off('mousedown', selector, {manager: manager, event: 0}, events.onMouseClick);
@@ -305,7 +306,7 @@ define('j2d.input', ['jquery', 'vanilla.override'],
         };
 
         InputManager.prototype.init = function () {
-            if (!this.data.enabled) {
+            if (!this.data.enabled && window.j2dPlugin.pluginInit) {
                 bindEvents(this);
 
                 this.data.enabled = true;
@@ -320,8 +321,9 @@ define('j2d.input', ['jquery', 'vanilla.override'],
                 x = this.data.mouse.currentPosition.x / dX,
                 y = this.data.mouse.currentPosition.y / dY;
 
-            this.data.viewport.x = this.j2d.scene.viewport.x + x;
-            this.data.viewport.y = this.j2d.scene.viewport.y + y;
+            var offset = this.element.offset();
+            this.data.viewport.x = this.j2d.scene.viewport.x + x - offset.left;
+            this.data.viewport.y = this.j2d.scene.viewport.y + y - offset.top;
         };
 
 

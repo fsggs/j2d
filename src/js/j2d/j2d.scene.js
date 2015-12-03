@@ -72,6 +72,8 @@ define('j2d.scene', [], function () {
     };
 
     Scene.prototype.resizeToFullPage = function (fullscreen) {
+        $('div.canvas[guid]:not(.active)').toggle(fullscreen);
+
         var j2d = this.parent;
         var scene = this;
 
@@ -81,13 +83,19 @@ define('j2d.scene', [], function () {
 
             scene.resize(j2d.device.width, j2d.device.height);
             scene.enableFullscreen = true;
+
+            this.parent.element.width(j2d.device.width).height(j2d.device.height).css('margin', 0);
         } else {
             scene.resize(scene.originalWidth, scene.originalHeight);
             scene.enableFullscreen = false;
+
+            this.parent.element.width(scene.originalWidth).height(scene.originalHeight).css('margin', scene.originalMargin);
         }
     };
 
     Scene.prototype.scaleToFullScreen = function (fullscreen) {
+        $('div.canvas[guid]:not(.active)').toggle(fullscreen);
+
         var layer, i;
         if (fullscreen) {
             for (i in this.parent.layers.list) {
@@ -98,7 +106,7 @@ define('j2d.scene', [], function () {
                 }
             }
             this.enableFullscreen = true;
-            this.parent.element.width(this.parent.device.width).height(this.parent.device.height);
+            this.parent.element.width(this.parent.device.width).height(this.parent.device.height).css('margin', 0);
         } else {
             for (i in this.parent.layers.list) {
                 if (this.parent.layers.list.hasOwnProperty(i)) {
@@ -108,7 +116,7 @@ define('j2d.scene', [], function () {
                 }
             }
             this.enableFullscreen = false;
-            this.parent.element.width(this.width).height(this.height);
+            this.parent.element.width(this.width).height(this.height).css('margin', this.originalMargin);
         }
     };
 
@@ -157,6 +165,7 @@ define('j2d.scene', [], function () {
 
         this.width = this.originalWidth = width;
         this.height = this.originalHeight = heigth;
+        this.originalMargin = j2d.element.css('margin');
 
         this.parent.element.width(width).height(heigth);
 

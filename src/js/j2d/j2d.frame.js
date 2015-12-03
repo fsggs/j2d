@@ -27,7 +27,7 @@ define('j2d.frame', ['vanilla.override'], function () {
             function (callback) {
                 if (!options.breakAnimationFrame) {
                     window.setTimeout(callback.call(callback, [
-                        Date.now()
+                        Date.now() //TODO:: fix this
                     ]), 1000.0 / options.frameLimit);
                 } else {
                     options.breakAnimationFrame = false
@@ -100,17 +100,20 @@ define('j2d.frame', ['vanilla.override'], function () {
                 var data = dataStack[index];
 
                 data.now = Date.now();
-                data.j2d.options.deltaTime = data.deltaTime = data.now - data.lastTime;
+                data.j2d.options.deltaTime = data.deltaTime = (data.now - data.lastTime) / 100.0;
 
-                if (data.deltaTime > data.interval) {
-                    data.lastTime = data.now - (data.deltaTime % data.interval);
+                if (data.j2d.options.io) data.j2d.options.io.update();
+                if ((data.deltaTime * 100.0) > data.interval) {
+                    data.lastTime = data.now - ((data.deltaTime * 100.0) % data.interval);
 
                     if (!data.j2d.options.pause) {
-                        if (data.j2d.options.io) data.j2d.options.io.update();
+                        data.j2d.options.deltaTime = data.deltaTime;
+
                         engine(timestamp, data);
-                        if (data.j2d.options.io) data.j2d.options.io.clear();
+
                     }
                 }
+                if (data.j2d.options.io) data.j2d.options.io.clear();
             }
         }
 

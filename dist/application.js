@@ -132,13 +132,27 @@ define('Application', [
 
         /** TEST Multiple **/
         var j2d_2 = j2d_containers[1];
+        //j2d_2.enableWebGL();
         var io2 = j2d_2.IOHandler(new IO(j2d_2));
         io2.toggleCursor(true);
+
+        io2.setKeys({
+            ACTION: [IO.key.KEY_MOUSE_LEFT, true],
+            ALT_ACTION: [IO.key.KEY_MOUSE_RIGHT, true] // disable context menu
+        });
 
         var scene2 = j2d_2.scene;
         scene2.init(400, 300);
         var t = scene2.addRectNode(vec2df(140, 140), size, 'blue');
         var _fps2 = scene2.addTextNode(vec2df(5, 5), '', 12, 'white');
+
+        var move_controller2 = function () {
+            if (io2.checkPressedKeyMap('ACTION')) {
+                t.moveTo(io2.getPosition(), 10);
+                t.moveTo(io2.getPosition(), 10);
+            }
+        };
+
         var draw_viewport2 = function (data) {
             fps.start(data);
             scene2.clear();
@@ -150,6 +164,7 @@ define('Application', [
         };
         var Game2 = function (timestamp, data) {
             scene2.async(draw_viewport2, data);
+            scene2.async(move_controller2);
         };
         scene2.start(Game2, 15);
         /** TEST Multiple **/
