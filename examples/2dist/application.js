@@ -34,6 +34,7 @@ requirejs.config({
         'j2d.sprite': 'j2d/j2d.sprite.min',
         'j2d.text': 'j2d/j2d.text.min',
         'j2d.textures': 'j2d/j2d.textures.min',
+        'j2d.storage': 'j2d/j2d.storage.min',
         'j2d.webGL2d': 'j2d/j2d.webGL2d.min',
 
         'vanilla.override': 'vanilla.override-1.0.3.min'
@@ -46,9 +47,12 @@ define('Application', [
 
     'j2d.input',
     'j2d.fps',
+    'j2d.textures',
     'j2d.rect',
     'j2d.line',
-    'j2d.text'
+    'j2d.text',
+    'j2d.circle',
+    'j2d.sprite'
 ], function ($, J2D, IO, FPS) {
     "use strict";
 
@@ -132,13 +136,19 @@ define('Application', [
 
         /** TEST Multiple **/
         var j2d_2 = j2d_containers[1];
+        j2d_2.setSmoothing(false);
         //j2d_2.enableWebGL();
         var io2 = j2d_2.IOHandler(new IO(j2d_2));
         io2.toggleCursor(true);
 
         io2.setKeys({
             ACTION: [IO.key.KEY_MOUSE_LEFT, true],
-            ALT_ACTION: [IO.key.KEY_MOUSE_RIGHT, true] // disable context menu
+            ALT_ACTION: [IO.key.KEY_MOUSE_RIGHT, true], // disable context menu
+
+            MOVE_UP: [IO.key.KEY_W, true],
+            MOVE_DOWN: [IO.key.KEY_S, true],
+            MOVE_LEFT: [IO.key.KEY_A, true],
+            MOVE_RIGHT: [IO.key.KEY_D, true]
         });
 
         var scene2 = j2d_2.scene;
@@ -146,19 +156,74 @@ define('Application', [
         var t = scene2.addRectNode(vec2df(140, 140), size, 'blue');
         var _fps2 = scene2.addTextNode(vec2df(5, 5), '', 12, 'white');
 
+        var width = 100,
+            height = 100;
+
+        var texture = j2d_2.getTextureManager();
+
+        var imageMap = texture.loadImageMap('img/ship.png');
+        var ship = scene2.addSpriteNode(vec2df(10, 10), vec2df(width, height), imageMap.getAnimation(0, 0, width, height, 1));
+
         var move_controller2 = function () {
             if (io2.checkPressedKeyMap('ACTION')) {
-                t.moveTo(io2.getPosition(), 10);
-                t.moveTo(io2.getPosition(), 10);
+                ship.moveTo(io2.getPosition(), 10);
             }
+
+            var diagonal = false;
+
+            if (io2.checkPressedKeyMap('MOVE_UP') && io2.checkPressedKeyMap('MOVE_LEFT')) {
+                diagonal = true;
+                ship.setRotation(-45);
+                ship.move(vec2df(-2.5, -2.5));
+            }
+            if (io2.checkPressedKeyMap('MOVE_DOWN') && io2.checkPressedKeyMap('MOVE_LEFT')) {
+                diagonal = true;
+                ship.setRotation(-135);
+                ship.move(vec2df(-2.5, 2.5));
+            }
+            if (io2.checkPressedKeyMap('MOVE_UP') && io2.checkPressedKeyMap('MOVE_RIGHT')) {
+                diagonal = true;
+                ship.setRotation(45);
+                ship.move(vec2df(2.5, -2.5));
+            }
+            if (io2.checkPressedKeyMap('MOVE_DOWN') && io2.checkPressedKeyMap('MOVE_RIGHT')) {
+                diagonal = true;
+                ship.setRotation(135);
+                ship.move(vec2df(2.5, 2.5));
+            }
+
+            if (!diagonal) {
+                if (io2.checkPressedKeyMap('MOVE_UP')) {
+                    ship.setRotation(0);
+                    ship.move(vec2df(0, -5));
+                }
+                if (io2.checkPressedKeyMap('MOVE_DOWN')) {
+                    ship.setRotation(180);
+                    ship.move(vec2df(0, 5));
+                }
+                if (io2.checkPressedKeyMap('MOVE_LEFT')) {
+                    ship.setRotation(-90);
+                    ship.move(vec2df(-5, 0));
+                }
+                if (io2.checkPressedKeyMap('MOVE_RIGHT')) {
+                    ship.setRotation(90);
+                    ship.move(vec2df(5, 0));
+                }
+            }
+
+            scene2.setViewFocus(ship, vec2df(0, 0));
         };
 
         var draw_viewport2 = function (data) {
             fps.start(data);
             scene2.clear();
             scene2.getLayer().fill('black');
+
             t.turn(-2);
             t.draw();
+
+            ship.draw();
+
             _fps2.drawSimpleText('Current FPS: ' + fps.getFPS());
             fps.end(data);
         };
@@ -166,7 +231,7 @@ define('Application', [
             scene2.async(draw_viewport2, data);
             scene2.async(move_controller2);
         };
-        scene2.start(Game2, 15);
+        scene2.start(Game2, 60);
         /** TEST Multiple **/
     });
 });

@@ -8,8 +8,7 @@
  */
 
 define('j2d.textures', [
-    'jquery.j2d',
-    'j2d.base'
+    'jquery.j2d'
 ], function (J2D) {
     "use strict";
 
@@ -30,6 +29,8 @@ define('j2d.textures', [
         imageObject.context = imageObject.img.getContext('2d');
         imageObject.img.width = imageObject.width;
         imageObject.img.height = imageObject.height;
+
+        J2D.util.disableSmoothing(imageObject.context);
 
         callback(imageObject.context);
 

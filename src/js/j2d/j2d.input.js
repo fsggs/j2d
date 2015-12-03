@@ -414,13 +414,13 @@ define('j2d.input', ['jquery', 'vanilla.override'],
         };
 
         InputManager.prototype.getPosition = function () {
-            return this.j2d.vector.vec2df(this.data.viewport.x, this.data.viewport.y);
+            return this.j2d.vector.vec2df(this.data.viewport.x + 0.5, this.data.viewport.y + 0.5);
         };
 
         InputManager.prototype.onNode = function (id) {
             if (!id.layer.visible) return false;
-            return (this.data.viewport.x > id.pos.x && this.data.viewport.x < id.pos.x + id.size.x) &&
-                (this.data.viewport.y > id.pos.y && this.data.viewport.y < id.pos.y + id.size.y);
+            return (this.data.viewport.x > id.options.position.x && this.data.viewport.x < id.options.position.x + id.options.size.x) &&
+                (this.data.viewport.y > id.options.position.y && this.data.viewport.y < id.options.position.y + id.options.size.y);
         };
         /** +Input Checkers **/
 

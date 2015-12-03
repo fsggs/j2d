@@ -1191,37 +1191,41 @@ define('j2d.webGL2d', [], function () {
 
         gl.arcApproximateCount = 100;
         gl.arc = function arc(cx, cy, radius, startAngle, endAngle, anticlockwise) {
-            var verts = subPaths[subPaths.length - 1].verts;
+            if (subPaths.length) {
+                var verts = subPaths[subPaths.length - 1].verts;
 
-            // startAngle
-            var x = cx + radius * Math.cos(startAngle),
-                y = cy + radius * Math.sin(startAngle);
-            verts.push(x, y, 0, 0);
-
-            while (startAngle > Math.PI * 2)
-                startAngle -= Math.PI * 2;
-            while (endAngle > Math.PI * 2)
-                endAngle -= Math.PI * 2;
-            while (startAngle < -Math.PI * 2)
-                startAngle += Math.PI * 2;
-            while (endAngle < -Math.PI * 2)
-                endAngle += Math.PI * 2;
-            if (startAngle == endAngle)
-                return;
-
-            var count = 1 / gl.arcApproximateCount,
-                fixed = gl.arcApproximateCount,
-                t;
-            if (anticlockwise) {
-                endAngle -= Math.PI * 2;
-                count = -count;
-            }
-            for (var i = startAngle; (i > endAngle && anticlockwise) || (i < endAngle && !anticlockwise); i += count) {
-                if (t == (t = (i * fixed | 0) / fixed))
-                    continue;
-                x = cx + radius * Math.cos(t);
-                y = cy + radius * Math.sin(t);
+                // startAngle
+                var x = cx + radius * Math.cos(startAngle),
+                    y = cy + radius * Math.sin(startAngle);
                 verts.push(x, y, 0, 0);
+
+                while (startAngle > Math.PI * 2)
+                    startAngle -= Math.PI * 2;
+                while (endAngle > Math.PI * 2)
+                    endAngle -= Math.PI * 2;
+                while (startAngle < -Math.PI * 2)
+                    startAngle += Math.PI * 2;
+                while (endAngle < -Math.PI * 2)
+                    endAngle += Math.PI * 2;
+                if (startAngle == endAngle)
+                    return;
+
+                var count = 1 / gl.arcApproximateCount,
+                    fixed = gl.arcApproximateCount,
+                    t;
+                if (anticlockwise) {
+                    endAngle -= Math.PI * 2;
+                    count = -count;
+                }
+                for (var i = startAngle; (i > endAngle && anticlockwise) || (i < endAngle && !anticlockwise); i += count) {
+                    if (t == (t = (i * fixed | 0) / fixed))
+                        continue;
+                    x = cx + radius * Math.cos(t);
+                    y = cy + radius * Math.sin(t);
+                    verts.push(x, y, 0, 0);
+                }
+            } else {
+                gl.moveTo(x, y);
             }
         };
 
@@ -1324,14 +1328,14 @@ define('j2d.webGL2d', [], function () {
             gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, image);
             gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
             gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
-            gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
+            gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.NEAREST);
 
             // Enable Mip mapping on power-of-2 textures
             if (isPOT(image.width) && isPOT(image.height)) {
-                gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR_MIPMAP_LINEAR);
+                gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR_MIPMAP_NEAREST);
                 gl.generateMipmap(gl.TEXTURE_2D);
             } else {
-                gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
+                gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.NEAREST);
             }
 
             // Unbind texture

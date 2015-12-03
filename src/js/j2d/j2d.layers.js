@@ -42,6 +42,7 @@ define('j2d.layers', [], function () {
         } else {
             layer.context = layer.canvas.getContext('2d');
         }
+        if (!j2d.options.smoothing) j2d.util.disableSmoothing(layer.context);
         layer.context.shadowColor = 'rgba(0,0,0,0)';
         layer.canvas.style.zIndex = 1000 + zIndex;
         layer.canvas.style.position = 'absolute';

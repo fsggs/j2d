@@ -171,8 +171,8 @@ define('j2d.io.legacy', [
     // Вернет true, если мышь наxодится над объектом
     IO.prototype.onNode = function (id) {
         if (!id.layer.visible) return false;
-        return (this.data.pos.x > id.pos.x && this.data.pos.x < id.pos.x + id.size.x) &&
-            (this.data.pos.y > id.pos.y && this.data.pos.y < id.pos.y + id.size.y);
+        return (this.data.pos.x > id.options.position.x && this.data.pos.x < id.options.position.x + id.options.size.x) &&
+            (this.data.pos.y > id.options.position.y && this.data.pos.y < id.options.position.y + id.options.size.y);
     };
 
     IO.prototype.cursorPosition = function (e) {

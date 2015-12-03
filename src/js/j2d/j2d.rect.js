@@ -3,7 +3,7 @@
  *
  * @authors Skaner, likerRr, DeVinterX
  * @license zlib
- * @version 0.1.4
+ * @version 0.1.5a
  * @see https://github.com/SkanerSoft/J2ds/commit/501b8993fc41960794572dc481a5f2fe492da349
  */
 
@@ -15,16 +15,16 @@ define('j2d.rect', [
     "use strict";
 
     if (!Scene.prototype.addRectNode) {
-        Scene.prototype.addRectNode = function (pos, size, color) {
-            return new RectNode(this.parent, pos, size, color);
+        Scene.prototype.addRectNode = function (position, size, color) {
+            return new RectNode(this.parent, position, size, color);
         };
     }
 
-    var RectNode = function (j2d, pos, size, color) {
-
-        BaseNode.call(this, j2d, pos, size);
-
-        this.color = color;
+    var RectNode = function (j2d, position, size, color) {
+        BaseNode.call(this, j2d, position, size);
+        this.mergeOptions({
+            color: color
+        });
     };
 
     RectNode.prototype = Object.create(BaseNode.prototype);
@@ -32,33 +32,33 @@ define('j2d.rect', [
 
     RectNode.prototype.draw = function () {
         var context = this.layer.context;
-        if (this.visible && this.isLookScene()) {
+        if (this.options.visible && this.isLookScene()) {
 
-            if (this.alpha != 1) {
+            if (this.options.alpha != 1) {
                 var tmpAlpha = context.globalAlpha;
-                context.globalAlpha = this.alpha;
+                context.globalAlpha = this.options.alpha;
             }
 
-            if (this.angle) {
+            if (this.options.angle) {
                 context.save();
                 context.translate(this.getPosition().x - this.j2d.scene.viewport.x, this.getPosition().y - this.j2d.scene.viewport.y);
-                context.rotate(this.j2d.math.rad(this.angle));
+                context.rotate(this.j2d.math.rad(this.options.angle));
                 context.translate(-(this.getPosition().x - this.j2d.scene.viewport.x), -(this.getPosition().y - this.j2d.scene.viewport.y));
             }
 
-            context.fillStyle = this.color;
+            context.fillStyle = this.options.color;
             context.lineWidth = 0;
 
             context.fillRect(
-                this.pos.x - this.j2d.scene.viewport.x,
-                this.pos.y - this.j2d.scene.viewport.y,
-                this.size.x, this.size.y);
+                this.options.position.x - this.j2d.scene.viewport.x,
+                this.options.position.y - this.j2d.scene.viewport.y,
+                this.options.size.x, this.options.size.y);
 
-            if (this.angle) {
+            if (this.options.angle) {
                 context.restore();
             }
 
-            if (this.alpha != 1) {
+            if (this.options.alpha != 1) {
                 context.globalAlpha = tmpAlpha;
             }
         }

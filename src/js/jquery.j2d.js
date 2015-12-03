@@ -22,6 +22,9 @@
         deltaTime: 0,
         pause: false,
         ready: false,
+
+        smoothing: true,
+
         window: window,
 
         webGL: false
@@ -108,6 +111,10 @@
         this.element.addClass('WebGL');
     };
 
+    J2D.prototype.setSmoothing = function (value) {
+        this.options.smoothing = !!value;
+    };
+
     J2D.prototype.disableWebGL = function () {
         this.options.webGL = false;
         this.element.removeClass('WebGL');
@@ -159,6 +166,18 @@
             return number * (Math.PI / 180);
         }
     };
+
+    /** Utils **/
+    J2D.util = {
+        disableSmoothing: function (context) {
+            context['imageSmoothingEnabled'] = false;
+            context['mozImageSmoothingEnabled'] = false;
+            context['oImageSmoothingEnabled'] = false;
+            context['webkitImageSmoothingEnabled'] = false;
+            context['msImageSmoothingEnabled'] = false;
+        }
+    };
+    J2D.prototype.util = J2D.util;
 
     /** +Layers **/
     J2D.prototype.getLayers = function () {

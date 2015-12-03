@@ -3,7 +3,7 @@
  *
  * @authors Skaner, likerRr, DeVinterX
  * @license zlib
- * @version 0.1.4
+ * @version 0.1.5a
  * @see https://github.com/SkanerSoft/J2ds/commit/501b8993fc41960794572dc481a5f2fe492da349
  */
 
@@ -13,29 +13,64 @@ define('j2d.base', [
     "use strict";
 
     if (!Scene.prototype.addBaseNode) {
-        Scene.prototype.addBaseNode = function (pos, size) {
-            return new BaseNode(this.parent, pos, size);
+        Scene.prototype.addBaseNode = function (position, size) {
+            return new BaseNode(this.parent, position, size);
         };
     }
 
-    var BaseNode = function (j2d, pos, size) {
+    var BaseNode = function (j2d, position, size) {
         this.j2d = j2d;
-        this.visible = true;
-        this.alpha = 1;
-        this.pos = pos;
-        this.size = size;
-        this.parent = false;
-        this.angle = 0;
         this.layer = j2d.scene;
-        this.box = {
-            offset: {x: 0, y: 0},
-            size: {x: 0, y: 0}
+
+        this.options = {
+            visible: true,
+            alpha: 1,
+            position: position,
+            size: size,
+            parent: false,
+            angle: 0,
+            box: {
+                offset: {
+                    x: 0,
+                    y: 0
+                },
+                size: {
+                    x: 0,
+                    y: 0
+                }
+            }
         };
     };
 
+    BaseNode.prototype.mergeOptions = function (data, options) {
+        if (options === undefined) options = this.options;
+        for (var i in data) {
+            if (data.hasOwnProperty(i)) {
+                try {
+                    if (data[i].constructor == Object) {
+                        options[i] = this.mergeOptions(data[i], options[i]);
+                    } else options[i] = data[i];
+                } catch (e) {
+                    options[i] = data[i];
+                }
+            }
+        }
+        return options;
+    };
+
+    BaseNode.prototype.saveJSON = function () {
+        JSON.stringify({
+            data: this.options
+        });
+    };
+
+    BaseNode.prototype.loadJSON = function (json) {
+        //this.options = JSON.parse(json);
+    };
+
     BaseNode.prototype.resizeBox = function (offset, size) {
-        this.box.offset = offset;
-        this.box.size = size;
+        this.options.box.offset = offset;
+        this.options.box.size = size;
     };
 
     BaseNode.prototype.setLayer = function (layer) {
@@ -47,21 +82,21 @@ define('j2d.base', [
     };
 
     BaseNode.prototype.setVisible = function (visible) {
-        this.visible = visible;
+        this.options.visible = visible;
     };
 
     BaseNode.prototype.isVisible = function () {
-        return this.visible;
+        return this.options.visible;
     };
 
     BaseNode.prototype.setAlpha = function (alpha) {
         if (alpha < 0) alpha = 0;
         if (alpha > 1) alpha = 1;
-        this.alpha = alpha;
+        this.options.alpha = alpha;
     };
 
     BaseNode.prototype.getAlpha = function (alpha) {
-        return this.alpha;
+        return this.options.alpha;
     };
 
     BaseNode.prototype.moveTo = function (to, t) {
@@ -72,25 +107,31 @@ define('j2d.base', [
         ));
     };
 
-    BaseNode.prototype.setPosition = function (pos) {
-        this.pos = this.j2d.vector.vec2df(pos.x - Math.ceil(this.size.x / 2), pos.y - Math.ceil(this.size.y / 2));
+    BaseNode.prototype.setPosition = function (position) {
+        this.options.position = this.j2d.vector.vec2df(
+            position.x - Math.ceil(this.options.size.x / 2),
+            position.y - Math.ceil(this.options.size.y / 2)
+        );
     };
 
-    BaseNode.prototype.move = function (pos) {
-        this.pos.x += pos.x;
-        this.pos.y += pos.y;
+    BaseNode.prototype.move = function (position) {
+        this.options.position.x += position.x;
+        this.options.position.y += position.y;
     };
 
     BaseNode.prototype.getPosition = function () {
-        return this.j2d.vector.vec2df(this.pos.x + Math.ceil(this.size.x / 2), this.pos.y + Math.ceil(this.size.y / 2));
+        return this.j2d.vector.vec2df(
+            this.options.position.x + Math.ceil(this.options.size.x / 2),
+            this.options.position.y + Math.ceil(this.options.size.y / 2)
+        );
     };
 
     BaseNode.prototype.setSize = function (size) {
-        this.size = size;
+        this.options.size = size;
     };
 
     BaseNode.prototype.getSize = function () {
-        return this.size;
+        return this.options.size;
     };
 
     BaseNode.prototype.setParent = function (id) {
@@ -106,22 +147,25 @@ define('j2d.base', [
     };
 
     BaseNode.prototype.getDistanceXY = function (id) {
-        return this.j2d.vector.vec2df(Math.abs(id.getPosition().x - this.getPosition().x), Math.abs(id.getPosition().y - this.getPosition().y));
+        return this.j2d.vector.vec2df(
+            Math.abs(id.getPosition().x - this.getPosition().x),
+            Math.abs(id.getPosition().y - this.getPosition().y)
+        );
     };
 
     BaseNode.prototype.isIntersect = function (id) {
         var pos = {
-            x1: this.pos.x + this.box.offset.x,
-            x2: id.pos.x + id.box.offset.x,
-            y1: this.pos.y + this.box.offset.y,
-            y2: id.pos.y + id.box.offset.y
+            x1: this.options.position.x + this.options.box.offset.x,
+            x2: id.options.position.x + id.options.box.offset.x,
+            y1: this.options.position.y + this.options.box.offset.y,
+            y2: id.options.position.y + id.options.box.offset.y
         };
 
         var size = {
-            x1: this.size.x + this.box.size.x,
-            x2: id.size.x + id.box.size.x,
-            y1: this.size.y + this.box.size.y,
-            y2: id.size.y + id.box.size.y
+            x1: this.options.size.x + this.options.box.size.x,
+            x2: id.options.size.x + id.options.box.size.x,
+            y1: this.options.size.y + this.options.box.size.y,
+            y2: id.options.size.y + id.options.box.size.y
         };
 
         return (
@@ -136,8 +180,8 @@ define('j2d.base', [
     BaseNode.prototype.isCollision = function (id) {
         var result = false;
         if (
-            (this.getDistanceXY(id).x < (this.size.x / 2 + id.size.x / 2)) &&
-            (this.getDistanceXY(id).y < (this.size.y / 2 + id.size.y / 2))
+            (this.getDistanceXY(id).x < (this.options.size.x / 2 + id.options.size.x / 2)) &&
+            (this.getDistanceXY(id).y < (this.options.size.y / 2 + id.options.size.y / 2))
         ) {
             result = true;
         }
@@ -147,10 +191,10 @@ define('j2d.base', [
     BaseNode.prototype.isLookScene = function () {
         var yes = true;
         if (
-            (this.pos.x > this.j2d.scene.viewport.x + this.j2d.scene.width ||
-            this.pos.x + this.size.x < this.j2d.scene.viewport.x) ||
-            (this.pos.y > this.j2d.scene.viewport.y + this.j2d.scene.height ||
-            this.pos.y + this.size.y < this.j2d.scene.viewport.y)
+            (this.options.position.x > this.j2d.scene.viewport.x + this.j2d.scene.width ||
+            this.options.position.x + this.options.size.x < this.j2d.scene.viewport.x) ||
+            (this.options.position.y > this.j2d.scene.viewport.y + this.j2d.scene.height ||
+            this.options.position.y + this.options.size.y < this.j2d.scene.viewport.y)
         ) {
             yes = false;
         }
@@ -158,54 +202,40 @@ define('j2d.base', [
     };
 
     BaseNode.prototype.turn = function (angle) {
-        this.angle = (this.angle % 360);
-        this.angle += angle;
+        this.options.angle = (this.options.angle % 360);
+        this.options.angle += angle;
     };
 
     BaseNode.prototype.setRotation = function (angle) {
-        this.angle = angle % 360;
+        this.options.angle = angle % 360;
     };
 
     BaseNode.prototype.getRotation = function (angle) {
-        return this.angle;
+        return this.options.angle;
     };
 
     BaseNode.prototype.isOutScene = function () {
-        var o = {};
-
-        if (this.pos.x + this.size.x >= this.j2d.scene.viewport.x + this.j2d.scene.width) {
-            o.x = 1;
-        } else if (this.pos.x <= this.j2d.scene.viewport.x) {
-            o.x = -1;
-        } else {
-            o.x = 0;
-        }
-
-        if (this.pos.y + this.size.y >= this.j2d.scene.viewport.y + this.j2d.scene.height) {
-            o.y = 1;
-        } else if (this.pos.y <= this.j2d.scene.viewport.y) {
-            o.y = -1;
-        } else {
-            o.y = 0;
-        }
-
-        o.all = (o.x || o.y);
-
-        return o;
+        return {
+            x: (this.options.position.x + this.options.size.x >= this.j2d.scene.viewport.x + this.j2d.scene.width)
+                ? 1 : ((this.options.position.x <= this.j2d.scene.viewport.x) ? -1 : 0),
+            y: (this.options.position.y + this.options.size.y >= this.j2d.scene.viewport.y + this.j2d.scene.height)
+                ? 1 : ((this.options.position.y <= this.j2d.scene.viewport.y) ? -1 : 0),
+            all: (this.x || this.y)
+        };
     };
 
     BaseNode.prototype.moveDir = function (speed) {
-        this.pos.x += speed * (Math.cos(this.j2d.math.rad(this.angle)));
-        this.pos.y += speed * (Math.sin(this.j2d.math.rad(this.angle)));
+        this.options.position.x += speed * (Math.cos(this.j2d.math.rad(this.options.angle)));
+        this.options.position.y += speed * (Math.sin(this.j2d.math.rad(this.options.angle)));
     };
 
     BaseNode.prototype.drawBox = function () {
         var context = this.layer.context;
 
-        if (this.angle) {
+        if (this.options.angle) {
             context.save();
             context.translate(this.getPosition().x - this.j2d.scene.viewport.x, this.getPosition().y - this.j2d.scene.viewport.y);
-            context.rotate(this.j2d.math.rad(this.angle));
+            context.rotate(this.j2d.math.rad(this.options.angle));
             context.translate(-(this.getPosition().x - this.j2d.scene.viewport.x), -(this.getPosition().y - this.j2d.scene.viewport.y));
         }
 
@@ -215,20 +245,24 @@ define('j2d.base', [
         context.beginPath();
 
         context.rect(
-            this.pos.x - this.j2d.scene.viewport.x,
-            this.pos.y - this.j2d.scene.viewport.y,
-            this.size.x, this.size.y);
+            this.options.position.x - this.j2d.scene.viewport.x,
+            this.options.position.y - this.j2d.scene.viewport.y,
+            this.options.size.x, this.options.size.y);
         context.stroke();
 
         context.strokeStyle = 'yellow';
 
         context.beginPath();
-        context.rect(this.box.offset.x + this.pos.x - this.j2d.scene.viewport.x, this.box.offset.y + this.pos.y - this.j2d.scene.viewport.y,
-            this.box.size.x + this.size.x, this.box.size.y + this.size.y);
+        context.rect(
+            this.options.box.offset.x + this.options.position.x - this.j2d.scene.viewport.x,
+            this.options.box.offset.y + this.options.position.y - this.j2d.scene.viewport.y,
+            this.options.box.size.x + this.options.size.x,
+            this.options.box.size.y + this.options.size.y
+        );
         context.stroke();
 
         context.lineCap = 'butt';
-        if (this.angle) {
+        if (this.options.angle) {
             context.restore();
         }
     };

@@ -3,7 +3,7 @@
  *
  * @authors Skaner, likerRr, DeVinterX
  * @license zlib
- * @version 0.1.4
+ * @version 0.1.5a
  * @see https://github.com/SkanerSoft/J2ds/commit/501b8993fc41960794572dc481a5f2fe492da349
  */
 
@@ -15,155 +15,168 @@ define('j2d.text', [
     "use strict";
 
     if (!Scene.prototype.addTextNode) {
-        Scene.prototype.addTextNode = function (pos, text, sizePx, color, family, width, colorL) {
-            return new TextNode(this.parent, pos, text, sizePx, color, family, width, colorL);
+        Scene.prototype.addTextNode = function (position, text, sizePx, color, family, width, colorL) {
+            return new TextNode(this.parent, position, text, sizePx, color, family, width, colorL);
         };
     }
 
-    var TextNode = function (j2d, pos, text, sizePx, color, family, width, colorL) {
+    //TODO::
+    var TextNode = function (j2d, position, text, sizePx, color, family, width, colorL) {
+        BaseNode.call(this, j2d, position, j2d.vector.vec2df(0, 0));
 
-        BaseNode.call(this, j2d, pos, j2d.vector.vec2df(0, 0));
+        this.mergeOptions({
+            vAlign: 'top',
+            hAlign: 'left',
+            color: color ? color : 'black',
+
+            family: family ? family : 'sans-serif',
+            sizePx: sizePx ? sizePx : 20,
+
+            box: {
+                offset: {
+                    y: this.j2d.math.toInt(this.sizePx * 0.26)
+                },
+                size: {
+                    y: -this.j2d.math.toInt(this.sizePx * 0.26)
+                }
+            },
+            lineWidth: width ? width : 0,
+            colorL: colorL ? colorL : 'black',
+
+            fullText: text,
+            maxWidth: 0,
+            lines: text.split("\n")
+        });
 
         /*Свойства*/
+        this.options.font = this.options.sizePx + 'px ' + this.options.family;
+        this.j2d.scene.context.font = this.options.font;
 
-        this.vAlign = 'top';
-        this.hAlign = 'left';
-        this.color = color ? color : 'black';
-
-        this.family = family ? family : 'sans-serif';
-        this.sizePx = sizePx ? sizePx : 20;
-
-        this.box.offset.y = this.j2d.math.toInt(this.sizePx * 0.26);
-        this.box.size.y = -this.j2d.math.toInt(this.sizePx * 0.26);
-
-        this.lineWidth = width ? width : 0;
-        this.colorL = colorL ? colorL : 'black';
-
-        this.font = this.sizePx + 'px ' + this.family;
-
-        this.fullText = text;
-        this.maxWidth = 0;
-        this.lines = text.split("\n");
-
-        this.j2d.scene.context.font = this.font;
-
-        for (var i = 0, len = this.lines.length; i < len; i += 1) {
-            this.maxWidth = (this.maxWidth < this.j2d.scene.context.measureText(this.lines[i]).width ?
-                this.j2d.scene.context.measureText(this.lines[i]).width :
-                this.maxWidth);
+        for (var i = 0, len = this.options.lines.length; i < len; i += 1) {
+            this.options.maxWidth = (this.options.maxWidth < this.j2d.scene.context.measureText(this.options.lines[i]).width ?
+                this.j2d.scene.context.measureText(this.options.lines[i]).width :
+                this.options.maxWidth);
         }
 
-        this.size.x = this.maxWidth;
-        this.size.y = this.lines.length * this.sizePx;
+        this.options.size.x = this.options.maxWidth;
+        this.options.size.y = this.options.lines.length * this.options.sizePx;
     };
 
     TextNode.prototype = Object.create(BaseNode.prototype);
     TextNode.prototype.constructor = TextNode;
 
     TextNode.prototype.setSize = function (sizePx) {
-        this.sizePx = sizePx;
-        this.font = this.sizePx + 'px ' + this.family;
-        this.j2d.scene.context.font = this.font;
+        this.options.sizePx = sizePx;
+        this.options.font = this.options.sizePx + 'px ' + this.options.family;
+        this.j2d.scene.context.font = this.options.font;
 
-        this.box.offset.y = this.j2d.math.toInt(this.sizePx * 0.26);
-        this.box.size.y = -this.j2d.math.toInt(this.sizePx * 0.26);
+        this.options.box.offset.y = this.j2d.math.toInt(this.options.sizePx * 0.26);
+        this.options.box.size.y = -this.j2d.math.toInt(this.options.sizePx * 0.26);
 
-        for (var i = 0, len = this.lines.length; i < len; i += 1) {
-            this.maxWidth = (this.maxWidth < this.j2d.scene.context.measureText(this.lines[i]).width ?
-                this.j2d.scene.context.measureText(this.lines[i]).width :
-                this.maxWidth);
+        for (var i = 0, len = this.options.lines.length; i < len; i += 1) {
+            this.options.maxWidth = (this.options.maxWidth < this.j2d.scene.context.measureText(this.options.lines[i]).width
+                ? this.j2d.scene.context.measureText(this.options.lines[i]).width
+                : this.options.maxWidth
+            );
         }
-        this.size.x = this.maxWidth;
-        this.size.y = this.lines.length * this.sizePx;
+        this.options.size.x = this.options.maxWidth;
+        this.options.size.y = this.options.lines.length * this.options.sizePx;
     };
 
     TextNode.prototype.getSize = function () {
-        return this.sizePx;
+        return this.options.sizePx;
     };
 
-    TextNode.prototype.drawSimpleText = function (text, pos, color, colorL) {
+    TextNode.prototype.drawSimpleText = function (text, position, color, colorL) {
         var context = this.layer.context;
-        context.fillStyle = color ? color : this.color;
-        context.textAlign = this.hAlign;
-        context.textBaseline = this.vAlign;
-        context.font = this.font;
-        context.lineWidth = this.lineWidth;
-        context.strokeStyle = colorL ? colorL : this.colorL;
+        context.fillStyle = color ? color : this.options.color;
+        context.textAlign = this.options.hAlign;
+        context.textBaseline = this.options.vAlign;
+        context.font = this.options.font;
+        context.lineWidth = this.options.lineWidth;
+        context.strokeStyle = colorL ? colorL : this.options.colorL;
 
         var lines = text.split("\n");
 
-        pos = pos ? pos : this.pos;
+        position = position ? position : this.options.position;
 
         for (var i = 0, len = lines.length; i < len; i += 1) {
-            if (this.lineWidth) {
-                context.strokeText(lines[i], pos.x, pos.y + this.sizePx * i);
+            if (this.options.lineWidth) {
+                context.strokeText(lines[i], position.x, position.y + this.options.sizePx * i);
             }
-            context.fillText(lines[i], pos.x, pos.y + this.sizePx * i);
+            context.fillText(lines[i], position.x, position.y + this.options.sizePx * i);
         }
         context.lineWidth = 0;
         context.strokeStyle = 'black';
     };
 
     TextNode.prototype.getText = function () {
-        return this.fullText;
+        return this.options.fullText;
     };
 
     TextNode.prototype.setText = function (text) {
-        this.fullText = text;
-        this.maxWidth = 0;
-        this.lines = text.split("\n");
+        this.options.fullText = text;
+        this.options.maxWidth = 0;
+        this.options.lines = text.split("\n");
 
-        this.j2d.scene.context.font = this.font;
+        this.j2d.scene.context.font = this.options.font;
 
-        this.box.offset.y = this.j2d.math.toInt(this.sizePx * 0.26);
-        this.box.size.y = -this.j2d.math.toInt(this.sizePx * 0.26);
+        this.options.box.offset.y = this.j2d.math.toInt(this.options.sizePx * 0.26);
+        this.options.box.size.y = -this.j2d.math.toInt(this.options.sizePx * 0.26);
 
-        for (var i = 0, len = this.lines.length; i < len; i += 1) {
-            this.maxWidth = (this.maxWidth < this.j2d.scene.context.measureText(this.lines[i]).width ?
-                this.j2d.scene.context.measureText(this.lines[i]).width :
-                this.maxWidth);
+        for (var i = 0, len = this.options.lines.length; i < len; i += 1) {
+            this.options.maxWidth = (this.options.maxWidth < this.j2d.scene.context.measureText(this.options.lines[i]).width
+                ? this.j2d.scene.context.measureText(this.options.lines[i]).width
+                : this.options.maxWidth
+            );
         }
-        this.size.x = this.maxWidth;
-        this.size.y = this.lines.length * this.sizePx;
+        this.options.size.x = this.options.maxWidth;
+        this.options.size.y = this.options.lines.length * this.options.sizePx;
     };
 
     TextNode.prototype.draw = function () {
         var context = this.layer.context;
-        if (this.visible && this.isLookScene()) {
-            if (this.alpha != 1) {
+        if (this.options.visible && this.isLookScene()) {
+            if (this.options.alpha != 1) {
                 var tmpAlpha = context.globalAlpha;
-                context.globalAlpha = this.alpha;
+                context.globalAlpha = this.options.alpha;
             }
 
-            if (this.angle) {
+            if (this.options.angle) {
                 context.save();
-                context.translate(this.getPosition().x - this.j2d.scene.viewport.x, this.getPosition().y - this.j2d.scene.viewport.y);
-                context.rotate(this.j2d.math.rad(this.angle));
-                context.translate(-(this.getPosition().x - this.j2d.scene.viewport.x), -(this.getPosition().y - this.j2d.scene.viewport.y));
+                context.translate(
+                    this.getPosition().x - this.j2d.scene.viewport.x,
+                    this.getPosition().y - this.j2d.scene.viewport.y
+                );
+                context.rotate(this.j2d.math.rad(this.options.angle));
+                context.translate(
+                    -(this.getPosition().x - this.j2d.scene.viewport.x),
+                    -(this.getPosition().y - this.j2d.scene.viewport.y)
+                );
             }
 
-            context.fillStyle = this.color;
-            context.textAlign = this.hAlign;
-            context.textBaseline = this.vAlign;
-            context.font = this.font;
-            context.lineWidth = this.lineWidth;
-            context.strokeStyle = this.colorL;
+            context.fillStyle = this.options.color;
+            context.textAlign = this.options.hAlign;
+            context.textBaseline = this.options.vAlign;
+            context.font = this.options.font;
+            context.lineWidth = this.options.lineWidth;
+            context.strokeStyle = this.options.colorL;
 
-            for (var i = 0, len = this.lines.length; i < len; i += 1) {
-                if (this.lineWidth) {
-                    context.strokeText(this.lines[i], this.pos.x, this.pos.y + this.sizePx * i);
+            for (var i = 0, len = this.options.lines.length; i < len; i += 1) {
+                if (this.options.lineWidth) {
+                    context.strokeText(this.options.lines[i], this.options.position.x, this.options.position.y + this.options.sizePx * i);
                 }
-                context.fillText(this.lines[i], this.pos.x, this.pos.y + this.sizePx * i);
+                context.fillText(this.options.lines[i], this.options.position.x, this.options.position.y + this.options.sizePx * i);
             }
 
             context.lineWidth = 0;
             context.strokeStyle = 'black';
 
-            if (this.angle) {
+            if (this.options.angle) {
                 context.restore();
             }
 
-            if (this.alpha != 1) {
+            if (this.options.alpha != 1) {
                 context.globalAlpha = tmpAlpha;
             }
         }
