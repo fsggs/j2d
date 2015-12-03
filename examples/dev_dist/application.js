@@ -10,7 +10,6 @@
  *  v.0.1.5
  * TODO:: Storage
  * TODO:: FPS as part of Debug module!
- * TODO:: focus|blur events
  * TODO:: documentation & legacy demos
  *
  *  v.0.1.6

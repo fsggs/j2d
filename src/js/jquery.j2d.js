@@ -75,23 +75,28 @@
             j2d: j2d,
             frameLimit: frameLimit
         });
+
+        this.element.trigger('start');
     };
 
     J2D.prototype.stop = function () {
         if(this.options.io) this.options.io.disable();
         FrameManager.stop(this.id);
+        this.element.trigger('stop');
     };
 
     J2D.prototype.pause = function () {
         //if(this.options.io) this.options.io.disable();
         this.options.pause = true;
         this.element.addClass('pause');
+        this.element.trigger('pause');
     };
 
     J2D.prototype.resume = function () {
         this.element.removeClass('pause').focus();
         this.options.pause = false;
         //if(this.options.io) this.options.io.enable();
+        this.element.trigger('resume');
     };
 
     J2D.prototype.isPlay = function () {
