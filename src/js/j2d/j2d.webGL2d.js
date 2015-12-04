@@ -778,7 +778,8 @@ define('j2d.webGL2d', [], function () {
                 shadowOffsetY: drawState.shadowOffsetY,
                 textAlign: drawState.textAlign,
                 font: drawState.font,
-                textBaseline: drawState.textBaseline
+                textBaseline: drawState.textBaseline,
+                imageSmoothingEnabled: drawState.imageSmoothingEnabled
             };
 
             drawStateStack.push(bakedDrawState);
@@ -952,6 +953,18 @@ define('j2d.webGL2d', [], function () {
             },
             set: function (value) {
                 drawState.globalAlpha = value;
+            }
+        });
+
+        // This attribute will need to control smoothing of objects drawn.
+        drawState.imageSmoothingEnabled = true;
+
+        Object.defineProperty(gl, "imageSmoothingEnabled", {
+            get: function () {
+                return drawState.imageSmoothingEnabled;
+            },
+            set: function (value) {
+                drawState.imageSmoothingEnabled = !!value;
             }
         });
 
@@ -1324,18 +1337,26 @@ define('j2d.webGL2d', [], function () {
                 image = canvas;
             }
 
+            var GL_FUNCTION = gl.LINEAR;
+            var GL_MIPMAP_FUNCTION = gl.LINEAR_MIPMAP_LINEAR;
+
+            if (!drawState.imageSmoothingEnabled) {
+                GL_FUNCTION = gl.NEAREST;
+                GL_MIPMAP_FUNCTION = gl.LINEAR_MIPMAP_NEAREST;
+            }
+
             gl.bindTexture(gl.TEXTURE_2D, this.obj);
             gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, image);
             gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
             gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
-            gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.NEAREST);
+            gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, GL_FUNCTION);
 
             // Enable Mip mapping on power-of-2 textures
             if (isPOT(image.width) && isPOT(image.height)) {
-                gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR_MIPMAP_NEAREST);
+                gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, GL_MIPMAP_FUNCTION);
                 gl.generateMipmap(gl.TEXTURE_2D);
             } else {
-                gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.NEAREST);
+                gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, GL_FUNCTION);
             }
 
             // Unbind texture

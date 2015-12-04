@@ -102,7 +102,7 @@ define('j2d.frame', ['vanilla.override'], function () {
                 data.now = Date.now();
                 data.j2d.options.deltaTime = data.deltaTime = (data.now - data.lastTime) / 100.0;
 
-                if (data.j2d.options.io) data.j2d.options.io.update();
+                if (data.j2d.options.io && !data.j2d.options.pause) data.j2d.options.io.update();
                 if ((data.deltaTime * 100.0) > data.interval) {
                     data.lastTime = data.now - ((data.deltaTime * 100.0) % data.interval);
 
@@ -113,7 +113,7 @@ define('j2d.frame', ['vanilla.override'], function () {
 
                     }
                 }
-                if (data.j2d.options.io) data.j2d.options.io.clear();
+                if (data.j2d.options.io && !data.j2d.options.pause) data.j2d.options.io.clear();
             }
         }
 

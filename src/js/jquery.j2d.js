@@ -71,7 +71,8 @@
         var j2d = this;
 
         engine = engine || function () {
-            j2d.element.html('Пожалуйста, инициализируйте игровую функцию!');
+            j2d.element.html('Please init game engine function!');
+            console.warn('Please init game engine function for ' + j2d.id + '!');
         };
 
         FrameManager.start(j2d.id, engine, {
@@ -170,10 +171,15 @@
     /** Utils **/
     J2D.util = {
         disableSmoothing: function (context) {
+            var chrome = window.navigator.userAgent.match(/Chrom(e|ium)\/([0-9]+)\./);
+            var version = chrome ? parseInt(chrome[2], 10) : false;
+
             context['imageSmoothingEnabled'] = false;
             context['mozImageSmoothingEnabled'] = false;
             context['oImageSmoothingEnabled'] = false;
-            context['webkitImageSmoothingEnabled'] = false;
+            if (version && version <= 29) {
+                context['webkitImageSmoothingEnabled'] = false;
+            }
             context['msImageSmoothingEnabled'] = false;
         }
     };
