@@ -161,8 +161,11 @@ define('Application', [
 
         var texture = j2d_2.getTextureManager();
 
-        var imageMap = texture.loadImageMap('img/ship.png');
-        var ship = scene2.addSpriteNode(vec2df(10, 10), vec2df(width, height), imageMap.getAnimation(0, 0, width, height, 1));
+        var ship = scene2.addRectNode(vec2df(10, 10), vec2df(width, height), 'rgba(0, 0, 0, 0)');
+        var imageMap = texture.loadImageMap('img/ship.png', function () {
+            ship = scene2.addSpriteNode(vec2df(10, 10), vec2df(width, height), imageMap.getAnimation(0, 0, width, height, 1));
+        });
+        scene2.setViewFocus(ship, vec2df(0, 0));
 
         var move_controller2 = function () {
             if (io2.checkPressedKeyMap('ACTION')) {

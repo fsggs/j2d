@@ -49,7 +49,7 @@ define('j2d.textures', [
         return imageObject;
     };
 
-    TextureManager.loadImageMap = function (path) {
+    TextureManager.loadImageMap = function (path, callback) {
         var imageObject = {
             img: undefined,
             width: 0,
@@ -64,6 +64,8 @@ define('j2d.textures', [
             imageObject.width = imageObject.img.width;
             imageObject.height = imageObject.img.height;
             imageObject.loaded = true;
+
+            if(callback) callback();
         };
         /* Свойства */
 
