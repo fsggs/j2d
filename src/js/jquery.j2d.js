@@ -23,6 +23,7 @@
         pause: false,
         ready: false,
 
+        frameLimit: 60,
         smoothing: true,
 
         window: window,
@@ -80,6 +81,8 @@
             frameLimit: frameLimit
         });
 
+        j2d.options.frameLimit = frameLimit;
+
         j2d.element.trigger('start');
     };
 
@@ -122,7 +125,19 @@
     };
 
     J2D.prototype.setActiveEngine = function (engine) {
-        this.options.engine = engine;
+        var j2d = this;
+
+        engine = engine || function () {
+            j2d.element.html('Please set game engine function!');
+            console.warn('Please set game engine function for ' + j2d.id + '!');
+        };
+
+        FrameManager.stop(j2d.id);
+
+        FrameManager.start(j2d.id, engine, {
+            j2d: j2d,
+            frameLimit: j2d.options.frameLimit
+        });
     };
     /** -GameEngine **/
 
