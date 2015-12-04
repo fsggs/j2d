@@ -167,21 +167,29 @@
     };
 
     /** Math **/
-    J2D.prototype.math = {
+    J2D.math = {
         toInt: function (number) {
             return number >> 0;
         },
         randomColor: function (min, max, opacity) {
-            return 'rgba(' + this.random(min, max) + ', ' + this.random(min, max) + ', ' + this.random(min, max) + ', ' + opacity + ')';
+            return 'rgba('
+                + J2D.math.random(min, max) + ', '
+                + J2D.math.random(min, max) + ', '
+                + J2D.math.random(min, max) + ', '
+                + opacity + ')';
         },
         random: function (min, max, omitZero) {
             var random = (Math.floor(Math.random() * (max - min + 1) + min));
-            return (omitZero && random == 0) ? this.random(min, max, omitZero) : random;
+            return (omitZero && random == 0)
+                ? J2D.math.random(min, max, omitZero)
+                : random;
         },
         rad: function (number) {
             return number * (Math.PI / 180);
         }
     };
+
+    J2D.prototype.math = J2D.math;
 
     /** Utils **/
     J2D.util = {
