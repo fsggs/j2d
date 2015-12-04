@@ -126,7 +126,7 @@ define('j2d.input', ['jquery', 'vanilla.override'],
                         );
                     }
                     e.data.manager.element.trigger(e.data.event === 0 ?
-                            'mouseKeyDown' : 'mouseKeyUp', {key: keyCode}
+                            'mouseKeyDown' : 'mouseKeyUp', {keyCode: keyCode}
                     );
                 } else {
                     if (checkKeyMap(e, false)) {
@@ -152,7 +152,7 @@ define('j2d.input', ['jquery', 'vanilla.override'],
                     e.data.manager.fixMouseWheel();
                 }
 
-                e.data.manager.element.trigger('mouseWheel', {key: keyCode});
+                e.data.manager.element.trigger('mouseWheel', {keyCode: keyCode});
             },
 
             mouseWheelCancel: function (keysPressed, keyCode) {
@@ -183,8 +183,14 @@ define('j2d.input', ['jquery', 'vanilla.override'],
                 if (e.data.event === 2 && true === e.data.manager.data.writeMode) {
                     var char = String.fromCharCode(e.which || e.keyCode);
                     e.preventDefault();
-                    e.data.manager.element.focus().trigger('keyboardCharPress', {char: char});
-                } else {
+                    e.data.manager.element.focus().trigger('keyboardCharPress', {
+                        key: e.which || e.keyCode,
+                        keyCode: keyCode,
+                        char: char
+                    });
+                }
+
+                if (e.data.event !== 2 && false === e.data.manager.data.writeMode) {
                     if (e.data.event === 0) {
                         if (-1 === $.inArray(InputManager.key[keyCode], keysPressed)) {
                             keysPressed.push(InputManager.key[keyCode]);
@@ -206,7 +212,13 @@ define('j2d.input', ['jquery', 'vanilla.override'],
                     }
 
                     e.data.manager.element.trigger(e.data.event === 0 ?
-                            'keyboardKeyDown' : 'keyboardKeyUp', {key: keyCode}
+                            'keyboardKeyDown' : 'keyboardKeyUp', {keyCode: keyCode, key: e.which || e.keyCode}
+                    );
+                }
+
+                if (e.data.event !== 2 && true === e.data.manager.data.writeMode) {
+                    e.data.manager.element.trigger(e.data.event === 0 ?
+                            'keyboardKeyDown' : 'keyboardKeyUp', {keyCode: keyCode, key: e.which || e.keyCode}
                     );
                 }
             },
@@ -249,7 +261,7 @@ define('j2d.input', ['jquery', 'vanilla.override'],
                 }
 
                 e.data.manager.element.trigger(e.data.event === 0 ?
-                        'mouseKeyDown' : 'mouseKeyUp', {key: keyCode}
+                        'mouseKeyDown' : 'mouseKeyUp', {keyCode: keyCode}
                 );
             },
 
@@ -422,8 +434,17 @@ define('j2d.input', ['jquery', 'vanilla.override'],
             return (this.data.viewport.x > id.options.position.x && this.data.viewport.x < id.options.position.x + id.options.size.x) &&
                 (this.data.viewport.y > id.options.position.y && this.data.viewport.y < id.options.position.y + id.options.size.y);
         };
-        /** +Input Checkers **/
+        /** -Input Checkers **/
 
+        /** +Input Write Mode **/
+        InputManager.prototype.setWriteMode = function (mode) {
+            this.data.writeMode = mode;
+        };
+
+        InputManager.prototype.isWriteMode = function () {
+            return !!this.data.writeMode;
+        };
+        /** -Input Write Mode **/
 
         /** +Cursor **/
         InputManager.prototype.setCursorImage = function (image) {
