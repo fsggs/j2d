@@ -42,7 +42,11 @@ define('j2d.layers', [], function () {
         } else {
             layer.context = layer.canvas.getContext('2d');
         }
-        if (!j2d.options.smoothing) j2d.util.disableSmoothing(layer.context);
+        if (!j2d.options.smoothing) {
+            layer.smoothing = false;
+            layer.disableSmoothing = j2d.util.disableSmoothing;
+            j2d.util.disableSmoothing(layer.context);
+        } else layer.smoothing = true;
         layer.context.shadowColor = 'rgba(0,0,0,0)';
         layer.canvas.style.zIndex = 1000 + zIndex;
         layer.canvas.style.position = 'absolute';
@@ -120,6 +124,7 @@ define('j2d.layers', [], function () {
 
                 this.context.restore();
             }
+            if (!this.smoothing) this.disableSmoothing(this.context);
         };
 
         this.list[id] = layer;

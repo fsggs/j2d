@@ -183,6 +183,8 @@ define('Application', [
         var t = scene2.addRectNode(vec2df(140, 140), size, 'blue');
         var _fps2 = scene2.addTextNode(vec2df(5, 5), '', 12, 'white');
 
+        var debug_coordinates = scene2.addTextNode(vec2df(5, 20), '', 12, 'white');
+
         var width = 100,
             height = 100;
 
@@ -255,6 +257,12 @@ define('Application', [
             ship.draw();
 
             _fps2.drawSimpleText('Current FPS: ' + fps.getFPS());
+            debug_coordinates.drawSimpleText(
+                "Position: \nx: "
+                + ship.options.position.x.toFixed(1)
+                + "\ny: " + ship.options.position.y.toFixed(1)
+                + "\nangle:" + ship.options.angle.toFixed(1)
+            );
             fps.end(data);
         };
         var Game2 = function (timestamp, data) {

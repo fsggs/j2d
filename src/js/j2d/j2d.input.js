@@ -245,7 +245,7 @@ define('j2d.input', ['jquery', 'vanilla.override'],
                             manager.data.timePressed = e.timeStamp;
                         }
                     }
-                    if (checkKeyMap(e, false) ||manager.data.preventAll) {
+                    if (checkKeyMap(e, false) || manager.data.preventAll) {
                         e.preventDefault();
                     }
                 } else {
@@ -342,9 +342,11 @@ define('j2d.input', ['jquery', 'vanilla.override'],
             this.data.viewport.y = this.j2d.scene.viewport.y + y - offset.top;
         };
 
-
-        InputManager.prototype.clear = function () {
+        InputManager.prototype.flush = function () {
+            this.data.keysPressed = [];
         };
+
+        InputManager.prototype.clear = function () {};
 
         InputManager.prototype.fixMouseWheel = function () {
             var keyPressed = this.data.keysPressed;
@@ -355,18 +357,16 @@ define('j2d.input', ['jquery', 'vanilla.override'],
             }
         };
 
-        /** @deprecated **/
         InputManager.prototype.enable = function () {
             if (!this.data.enabled) {
-                bindEvents(this);
+                //bindEvents(this);
                 this.data.enabled = false;
             }
         };
 
-        /** @deprecated **/
         InputManager.prototype.disable = function () {
             if (this.data.enabled) {
-                unbindEvents(this);
+                //unbindEvents(this);
                 this.data.enabled = false;
             }
         };

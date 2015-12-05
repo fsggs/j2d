@@ -94,7 +94,7 @@
     };
 
     J2D.prototype.pause = function () {
-        //if(this.options.io) this.options.io.disable();
+        if (this.options.io) this.options.io.flush();
         this.options.pause = true;
         this.element.addClass('pause');
         this.element.trigger('pause');
@@ -103,7 +103,7 @@
     J2D.prototype.resume = function () {
         this.element.removeClass('pause').focus();
         this.options.pause = false;
-        //if(this.options.io) this.options.io.enable();
+        if (this.options.io) this.options.io.flush();
         this.element.trigger('resume');
     };
 
