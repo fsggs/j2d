@@ -3,13 +3,10 @@
  *
  * @authors DeVinterX, Skaner(j2ds)
  * @license BSD, zlib(j2ds)
- * @version 0.1.5a, j2ds(0.1.2.501b89)
+ * @version 0.1.5, j2ds(0.1.2.501b89)
  */
 
 /*
- *  v.0.1.5
- * TODO:: documentation & legacy demos
- *
  *  v.0.1.6
  * TODO:: Merge with <- j2ds 0.2.0+
  *

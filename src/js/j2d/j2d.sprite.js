@@ -22,6 +22,7 @@ define('j2d.sprite', [
 
     var SpriteNode = function (j2d, position, size, animation) {
         BaseNode.call(this, j2d, position, size);
+        this.nodeName = 'SpriteNode';
         this.mergeOptions({
             tmpSpeed: 0,
             frame: 0,

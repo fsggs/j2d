@@ -6,13 +6,6 @@
  * @version 0.1.5a, j2ds(0.1.2.501b89)
  */
 
-/*
- * TODO:: Bugs from j2ds
- * TODO:: Storage
- * TODO:: FPS as part of Debug module!
- * TODO:: normal fullscreen without bugs(fills, objects on others layers)
- */
-
 var global;
 
 requirejs.config({
@@ -47,13 +40,14 @@ define('Application', [
 
     'j2d.input',
     'j2d.fps',
+    'j2d.storage',
     'j2d.textures',
     'j2d.rect',
     'j2d.line',
     'j2d.text',
     'j2d.circle',
     'j2d.sprite'
-], function ($, J2D, IO, FPS) {
+], function ($, J2D, IO, FPS, Storage) {
     "use strict";
 
     J2D.initJQueryPlugin();
@@ -133,6 +127,13 @@ define('Application', [
             scene.async(move_controller);
         };
         scene.start(Game, 60);
+
+        /*
+         * Test Storage
+         */
+        var _storage = new Storage('j2d');
+        _storage.save('text', 'Hello World');
+        _storage.saveNode('testNode', a);
 
         /** TEST Multiple **/
         var j2d_2 = j2d_containers[1];

@@ -23,7 +23,7 @@ define('j2d.text', [
     //TODO::
     var TextNode = function (j2d, position, text, sizePx, color, family, width, colorL) {
         BaseNode.call(this, j2d, position, j2d.vector.vec2df(0, 0));
-
+        this.nodeName = 'TextNode';
         this.mergeOptions({
             vAlign: 'top',
             hAlign: 'left',

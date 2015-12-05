@@ -3,9 +3,10 @@
  *
  * @authors Skaner, likerRr, DeVinterX
  * @license zlib
- * @version 0.1.5a
+ * @version 0.1.5
  * @see https://github.com/SkanerSoft/J2ds/commit/501b8993fc41960794572dc481a5f2fe492da349
  */
+
 !function (root, factory) {
     if (typeof define === 'function' && define.amd) {
         define('jquery.j2d', ['jquery', 'j2d.webGL2d', 'j2d.frame', 'j2d.scene', 'j2d.layers'], factory);

@@ -3,7 +3,7 @@
  *
  * @authors DeVinterX
  * @license BSD
- * @version 0.1.3
+ * @version 0.1.5
  */
 
 define('j2d.input', ['jquery', 'vanilla.override'],
@@ -90,32 +90,33 @@ define('j2d.input', ['jquery', 'vanilla.override'],
 
         var events = {
             onMouseClick: function (e) {
-                if (!e.data.manager.j2d.isPlay() || !e.data.manager.j2d.element.hasClass('active')) return true;
-                var keysPressed = e.data.manager.data.keysPressed;
+                var manager = e.data.manager;
+                if (!manager.data.enabled || !manager.j2d.isPlay() || !manager.j2d.element.hasClass('active')) return true;
+                var keysPressed = manager.data.keysPressed;
                 var keyCode = getKey(InputManager.key, e.which) || 'KEY_UNKNOWN_' + e.which;
-                var mouse = e.data.manager.data.mouse;
+                var mouse = manager.data.mouse;
 
                 if (e.data.event !== 2) {
                     if (e.data.event === 0) {
                         if (-1 === $.inArray(InputManager.key[keyCode], keysPressed)) {
                             keysPressed.push(InputManager.key[keyCode]);
 
-                            if (e.data.manager.data.enableAdditionalData) {
+                            if (manager.data.enableAdditionalData) {
                                 mouse.startPosition.x = e.pageX;
                                 mouse.startPosition.y = e.pageY;
                                 mouse.distance = 0;
 
-                                e.data.manager.data.timePressed = e.timeStamp;
+                                manager.data.timePressed = e.timeStamp;
                             }
                         }
-                        if (checkKeyMap(e, false) || e.data.manager.data.preventAll) {
+                        if (checkKeyMap(e, false) || manager.data.preventAll) {
                             e.preventDefault();
                         }
                     } else {
-                        if (checkKeyMap(e) || e.data.manager.data.preventAll) {
+                        if (checkKeyMap(e) || manager.data.preventAll) {
                             e.preventDefault();
                         }
-                        if (e.data.manager.data.enableAdditionalData) {
+                        if (manager.data.enableAdditionalData) {
                             mouse.previousDistance = mouse.distance;
                             mouse.startPosition.x = 0;
                             mouse.startPosition.y = 0;
@@ -125,7 +126,7 @@ define('j2d.input', ['jquery', 'vanilla.override'],
                             keysPressed.indexOf(InputManager.key[keyCode]), 1
                         );
                     }
-                    e.data.manager.element.trigger(e.data.event === 0 ?
+                    manager.element.trigger(e.data.event === 0 ?
                             'mouseKeyDown' : 'mouseKeyUp', {keyCode: keyCode}
                     );
                 } else {
@@ -136,8 +137,9 @@ define('j2d.input', ['jquery', 'vanilla.override'],
             },
 
             onMouseWheel: function (e) {
-                if (!e.data.manager.j2d.isPlay() || !e.data.manager.j2d.element.hasClass('active')) return true;
-                var keysPressed = e.data.manager.data.keysPressed;
+                var manager = e.data.manager;
+                if (!manager.data.enabled || !manager.j2d.isPlay() || !manager.j2d.element.hasClass('active')) return true;
+                var keysPressed = manager.data.keysPressed;
                 var keyCode = (e.originalEvent.wheelDelta / 120 > 0) ?
                     getKey(InputManager.key, 4) : getKey(InputManager.key, 5);
 
@@ -147,12 +149,12 @@ define('j2d.input', ['jquery', 'vanilla.override'],
                     keysPressed.push(InputManager.key[keyCode]);
                 }
 
-                if (checkKeyMap(e) || e.data.manager.data.preventAll) {
+                if (checkKeyMap(e) || manager.data.preventAll) {
                     e.preventDefault();
-                    e.data.manager.fixMouseWheel();
+                    manager.fixMouseWheel();
                 }
 
-                e.data.manager.element.trigger('mouseWheel', {keyCode: keyCode});
+                manager.element.trigger('mouseWheel', {keyCode: keyCode});
             },
 
             mouseWheelCancel: function (keysPressed, keyCode) {
@@ -177,32 +179,33 @@ define('j2d.input', ['jquery', 'vanilla.override'],
             },
 
             onKeyboardPress: function (e) {
-                if (!e.data.manager.j2d.isPlay() || !e.data.manager.element.hasClass('active')) return true;
-                var keysPressed = e.data.manager.data.keysPressed;
+                var manager = e.data.manager;
+                if (!manager.data.enabled || !manager.j2d.isPlay() || !manager.element.hasClass('active')) return true;
+                var keysPressed = manager.data.keysPressed;
                 var keyCode = getKey(InputManager.key, e.which) || 'KEY_UNKNOWN_' + e.which;
-                if (e.data.event === 2 && true === e.data.manager.data.writeMode) {
+                if (e.data.event === 2 && true === manager.data.writeMode) {
                     var char = String.fromCharCode(e.which || e.keyCode);
                     e.preventDefault();
-                    e.data.manager.element.focus().trigger('keyboardCharPress', {
+                    manager.element.focus().trigger('keyboardCharPress', {
                         key: e.which || e.keyCode,
                         keyCode: keyCode,
                         char: char
                     });
                 }
 
-                if (e.data.event !== 2 && false === e.data.manager.data.writeMode) {
+                if (e.data.event !== 2 && false === manager.data.writeMode) {
                     if (e.data.event === 0) {
                         if (-1 === $.inArray(InputManager.key[keyCode], keysPressed)) {
                             keysPressed.push(InputManager.key[keyCode]);
-                            if (e.data.manager.data.enableAdditionalData) {
-                                e.data.manager.data.timePressed = e.timeStamp;
+                            if (manager.data.enableAdditionalData) {
+                                manager.data.timePressed = e.timeStamp;
                             }
                         }
-                        if (checkKeyMap(e, false) || e.data.manager.data.preventAll) {
+                        if (checkKeyMap(e, false) || manager.data.preventAll) {
                             e.preventDefault();
                         }
                     } else {
-                        if (checkKeyMap(e) || e.data.manager.data.preventAll) {
+                        if (checkKeyMap(e) || manager.data.preventAll) {
                             e.preventDefault();
                         }
 
@@ -211,45 +214,46 @@ define('j2d.input', ['jquery', 'vanilla.override'],
                         );
                     }
 
-                    e.data.manager.element.trigger(e.data.event === 0 ?
+                    manager.element.trigger(e.data.event === 0 ?
                             'keyboardKeyDown' : 'keyboardKeyUp', {keyCode: keyCode, key: e.which || e.keyCode}
                     );
                 }
 
-                if (e.data.event !== 2 && true === e.data.manager.data.writeMode) {
-                    e.data.manager.element.trigger(e.data.event === 0 ?
+                if (e.data.event !== 2 && true === manager.data.writeMode) {
+                    manager.element.trigger(e.data.event === 0 ?
                             'keyboardKeyDown' : 'keyboardKeyUp', {keyCode: keyCode, key: e.which || e.keyCode}
                     );
                 }
             },
 
             onTouchTap: function (e) {
-                if (!e.data.manager.j2d.isPlay() || !e.data.manager.j2d.element.hasClass('active')) return true;
-                var keysPressed = e.data.manager.data.keysPressed;
+                var manager = e.data.manager;
+                if (!manager.data.enabled || !manager.j2d.isPlay() || !manager.j2d.element.hasClass('active')) return true;
+                var keysPressed = manager.data.keysPressed;
                 var keyCode = getKey(InputManager.key, e.which + 1) || 'KEY_UNKNOWN_' + e.which;
                 var touch = e.originalEvent.touches[0] || e.originalEvent.changedTouches[0];
-                var mouse = e.data.manager.data.mouse;
+                var mouse = manager.data.mouse;
 
                 if (e.data.event === 0) {
                     if (-1 === $.inArray(InputManager.key[keyCode], keysPressed)) {
                         keysPressed.push(InputManager.key[keyCode]);
-                        if (e.data.manager.data.enableAdditionalData) {
+                        if (manager.data.enableAdditionalData) {
                             mouse.startPosition.x = touch.pageX;
                             mouse.startPosition.y = touch.pageY;
                             mouse.distance = 0;
 
-                            e.data.manager.data.timePressed = e.timeStamp;
+                            manager.data.timePressed = e.timeStamp;
                         }
                     }
-                    if (checkKeyMap(e, false) || e.data.manager.data.preventAll) {
+                    if (checkKeyMap(e, false) ||manager.data.preventAll) {
                         e.preventDefault();
                     }
                 } else {
-                    if (checkKeyMap(e) || e.data.manager.data.preventAll) {
+                    if (checkKeyMap(e) || manager.data.preventAll) {
                         e.preventDefault();
                     }
 
-                    if (e.data.manager.data.enableAdditionalData) {
+                    if (manager.data.enableAdditionalData) {
                         mouse.previousDistance = mouse.distance;
                         mouse.startPosition.x = 0;
                         mouse.startPosition.y = 0;
@@ -260,7 +264,7 @@ define('j2d.input', ['jquery', 'vanilla.override'],
                     );
                 }
 
-                e.data.manager.element.trigger(e.data.event === 0 ?
+                manager.element.trigger(e.data.event === 0 ?
                         'mouseKeyDown' : 'mouseKeyUp', {keyCode: keyCode}
                 );
             },

@@ -21,8 +21,8 @@ define('j2d.line', [
     }
 
     var LineNode = function (j2d, position, points, scale, color, width, fill, cFill) {
-
         BaseNode.call(this, j2d, position, j2d.vector.vec2df(0, 0));
+        this.nodeName = 'LineNode';
         this.mergeOptions({
             color: color,
             points: points,

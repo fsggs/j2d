@@ -22,6 +22,7 @@ define('j2d.circle', [
 
     var CircleNode = function (j2d, position, radius, color) {
         BaseNode.call(this, j2d, position, j2d.vector.vec2df(radius * 2, radius * 2));
+        this.nodeName = 'CircleNode';
         this.mergeOptions({
             color: color,
             radius: radius

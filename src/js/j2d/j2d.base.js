@@ -19,6 +19,7 @@ define('j2d.base', [
     }
 
     var BaseNode = function (j2d, position, size) {
+        this.nodeName = 'BaseNode';
         this.j2d = j2d;
         this.layer = j2d.scene;
 
@@ -59,13 +60,18 @@ define('j2d.base', [
     };
 
     BaseNode.prototype.saveJSON = function () {
-        JSON.stringify({
+        return JSON.stringify({
+            node: this.nodeName,
             data: this.options
         });
     };
 
     BaseNode.prototype.loadJSON = function (json) {
-        //this.options = JSON.parse(json);
+        json = JSON.parse(json);
+        if (this.nodeName === json.node) {
+            return this.mergeOptions(json.data);
+        }
+        throw 'Node type invalid to loadJSON data.';
     };
 
     BaseNode.prototype.resizeBox = function (offset, size) {

@@ -38,7 +38,7 @@ gulp.task('clean', function () {
 });
 
 /** Developer example **/
-gulp.task('example-dist', ['clean'], function () {
+gulp.task('example-dist', [], function () {
     gulp.src(paths.example)
         .pipe(gulp.dest('dist'))
         .pipe(livereload());
@@ -48,7 +48,7 @@ gulp.task('example-dist', ['clean'], function () {
 });
 
 /** JS Scripts **/
-gulp.task('js-scripts', ['clean'], function () {
+gulp.task('js-scripts', [], function () {
     gulp.src(paths.scripts)
         //.pipe(jshint())
         .pipe(sourcemaps.init({loadMaps: true}))
@@ -85,7 +85,7 @@ gulp.task('js-scripts', ['clean'], function () {
 });
 
 /** CSS Style **/
-gulp.task('css-style', ['clean'], function () {
+gulp.task('css-style', [], function () {
     gulp.src(paths.css)
         .pipe(csso())
         .pipe(rename(function (path) {
@@ -96,7 +96,7 @@ gulp.task('css-style', ['clean'], function () {
 });
 
 /** Images **/
-gulp.task('images', ['clean'], function () {
+gulp.task('images', [], function () {
     return gulp.src(paths.images)
         .pipe(imagemin({optimizationLevel: 5}))
         .pipe(gulp.dest('dist/img'))
@@ -122,12 +122,21 @@ gulp.task('server', function (done) {
 });
 
 /** Open browser **/
-gulp.task('browser', function () {
+gulp.task('browser-chrome', function () {
     opn('http://127.0.0.1:' + server.port, {app: 'chrome'});
 });
 
+gulp.task('browser-firefox', function () {
+    opn('http://127.0.0.1:' + server.port, {app: 'firefox'});
+});
+
 /** Make **/
-gulp.task('make', ['js-scripts', 'css-style', 'images', 'example-dist']);
+gulp.task('make', ['clean'], function () {
+    gulp.start('js-scripts');
+    gulp.start('css-style');
+    gulp.start('images');
+    gulp.start('example-dist');
+});
 
 /** Default **/
 gulp.task('default', ['make']);

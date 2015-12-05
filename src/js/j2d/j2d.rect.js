@@ -22,6 +22,7 @@ define('j2d.rect', [
 
     var RectNode = function (j2d, position, size, color) {
         BaseNode.call(this, j2d, position, size);
+        this.nodeName = 'RectNode';
         this.mergeOptions({
             color: color
         });
