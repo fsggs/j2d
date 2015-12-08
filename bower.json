@@ -37,5 +37,9 @@
   "resolutions": {
     "jquery": "",
     "requirejs": ""
+  },
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/fsggs/jquery.j2d.git"
   }
 }
