@@ -11,12 +11,19 @@
  * TODO:: Merge with <- j2ds 0.2.0+
  *
  *  v.0.1.7
+ * TODO:: Merge with <- j2ds 0.3.0+
+ *
+ *  v.0.1.8
+ * TODO:: j2d.trigger() && j2d.on() && j2d.off()
+ * TODO:: j2d.scene.fullscreenElement
+ *
+ *  v.0.1.9
  * TODO:: WebGL PolyLine replacement LinePath
  * TODO:: WebGL position fix
  * TODO:: Nodes for bezierCurve & quadraticCurve
  * TODO:: fix all knows bugs in WebGL adaptation
  *
- *  v.0.1.6
+ *  v.0.1.10
  * TODO:: Collection & Layers global collection
  * TODO:: specific plugin demos (not legacy)
  * TODO:: FPS as part of Debug module!
