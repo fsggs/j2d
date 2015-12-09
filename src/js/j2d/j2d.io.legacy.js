@@ -332,6 +332,6 @@
 
     IO.activeElement = undefined;
 
-    if (window.J2D !== undefined) window.IO = IO;
+    if (global.J2D !== undefined) global.IO = IO;
     return IO;
 });

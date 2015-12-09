@@ -142,6 +142,6 @@
         return layer;
     };
 
-    if (window.J2D !== undefined) window.LayersManager = LayersManager;
+    if (global.J2D !== undefined) global.LayersManager = LayersManager;
     return LayersManager;
 });

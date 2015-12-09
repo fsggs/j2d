@@ -112,6 +112,6 @@
         }
     };
 
-    if (window.J2D !== undefined) window.SpriteNode = SpriteNode;
+    if (global.J2D !== undefined) global.SpriteNode = SpriteNode;
     return SpriteNode;
 });

@@ -199,6 +199,6 @@
         });
     };
 
-    if (window.J2D !== undefined) window.Scene = Scene;
+    if (global.J2D !== undefined) global.Scene = Scene;
     return Scene;
 });

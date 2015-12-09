@@ -67,6 +67,6 @@
         }
     };
 
-    if (window.J2D !== undefined) window.RectNode = RectNode;
+    if (global.J2D !== undefined) global.RectNode = RectNode;
     return RectNode;
 });

@@ -20,15 +20,15 @@
         };
 
         (function () {
-            if (!window.vanilla || window.vanilla.version !== vanilla.version) {
-                window.vanilla = vanilla;
+            if (!global.vanilla || global.vanilla.version !== vanilla.version) {
+                global.vanilla = vanilla;
 
                 console.info('J2D Initialize "vanilla.override" module.');
 
                 if (Array.prototype.equals) {
                     console.warn('Overriding existing Array.prototype.equals.');
                 }
-                window.Array.prototype.equals = function (array) {
+                global.Array.prototype.equals = function (array) {
                     if (!array)
                         return false;
 

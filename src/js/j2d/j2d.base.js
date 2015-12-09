@@ -277,6 +277,6 @@
         }
     };
 
-    if(window.J2D !== undefined) window.BaseNode = BaseNode;
+    if(global.J2D !== undefined) global.BaseNode = BaseNode;
     return BaseNode;
 });

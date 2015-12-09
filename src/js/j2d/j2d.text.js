@@ -184,6 +184,6 @@
         }
     };
 
-    if (window.J2D !== undefined) window.TextNode = TextNode;
+    if (global.J2D !== undefined) global.TextNode = TextNode;
     return TextNode;
 });

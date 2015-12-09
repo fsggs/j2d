@@ -90,6 +90,6 @@
         }
     };
 
-    if (window.J2D !== undefined) window.LineNode = LineNode;
+    if (global.J2D !== undefined) global.LineNode = LineNode;
     return LineNode;
 });

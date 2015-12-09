@@ -327,7 +327,7 @@
         };
 
         InputManager.prototype.init = function () {
-            if (!this.data.enabled && window.j2dPlugin.pluginInit) {
+            if (!this.data.enabled && global.j2dPlugin.pluginInit) {
                 bindEvents(this);
 
                 this.data.enabled = true;
@@ -602,7 +602,7 @@
             })[0];
         }
 
-        if (window.J2D !== undefined) window.InputManager = InputManager;
+        if (global.J2D !== undefined) global.InputManager = InputManager;
         return InputManager;
     }
 );

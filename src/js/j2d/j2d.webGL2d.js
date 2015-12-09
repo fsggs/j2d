@@ -243,7 +243,7 @@
          */
     };
 
-    var WebGL2D = window.WebGL2D = function WebGL2D(canvas, options) {
+    var WebGL2D = global.WebGL2D = function WebGL2D(canvas, options) {
         this.canvas = canvas;
         this.options = options || {};
         this.gl = undefined;

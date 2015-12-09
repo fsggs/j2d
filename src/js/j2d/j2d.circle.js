@@ -60,6 +60,6 @@
         }
     };
 
-    if (window.J2D !== undefined) window.CircleNode = CircleNode;
+    if (global.J2D !== undefined) global.CircleNode = CircleNode;
     return CircleNode;
 });

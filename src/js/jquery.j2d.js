@@ -27,7 +27,7 @@
         frameLimit: 60,
         smoothing: true,
 
-        window: window,
+        window: global,
 
         webGL: false
     };
@@ -65,7 +65,7 @@
     };
 
     J2D.prototype.setWindow = function (customWindow) {
-        this.window = customWindow ? customWindow : window;
+        this.window = customWindow ? customWindow : global;
     };
 
     // старт игры
@@ -152,8 +152,8 @@
         height: parseInt($(document).height()) < parseInt(screen.height) ? parseInt($(document).height()) : parseInt(screen.height),
 
         resize: function () {
-            this.width = window.innerWidth;
-            this.height = window.innerHeight;
+            this.width = global.innerWidth;
+            this.height = global.innerHeight;
         }
     };
 
@@ -195,7 +195,7 @@
     /** Utils **/
     J2D.util = {
         disableSmoothing: function (context) {
-            var chrome = window.navigator.userAgent.match(/Chrom(e|ium)\/([0-9]+)\./);
+            var chrome = global.navigator.userAgent.match(/Chrom(e|ium)\/([0-9]+)\./);
             var version = chrome ? parseInt(chrome[2], 10) : false;
 
             context['imageSmoothingEnabled'] = false;
@@ -222,8 +222,8 @@
     /** -Scene **/
 
     J2D.initJQueryPlugin = function () {
-        if (window.j2dPlugin !== undefined) return null;
-        window.j2dPlugin = {pluginInit: true};
+        if (global.j2dPlugin !== undefined) return null;
+        global.j2dPlugin = {pluginInit: true};
 
         $.fn.j2d = function (options) {
             this.filter('div.canvas:not([guid])').each(function () {
@@ -298,7 +298,7 @@
             });
         });
 
-        $(window).on('focus', function () {
+        $(global).on('focus', function () {
             $('div.canvas[guid].active').each(function () {
                 $(this).data('j2d').resume();
             });
@@ -308,7 +308,7 @@
             });
         });
 
-        $(window).on('resize', function () {
+        $(global).on('resize', function () {
             $('div.canvas[guid]').each(function () {
                 $(this).data('j2d').device.resize();
             });
@@ -321,6 +321,6 @@
         FrameManager.pulse();
     };
 
-    if (window.J2D !== undefined) window.J2D = J2D;
+    if (global.J2D !== undefined) global.J2D = J2D;
     return J2D;
 });

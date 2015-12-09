@@ -135,6 +135,6 @@
         $[this.storage](this.id + '_' + name, node.saveJSON());
     };
 
-    if (window.J2D !== undefined) window.Storage = Storage;
+    if (global.J2D !== undefined) global.Storage = Storage;
     return Storage;
 });

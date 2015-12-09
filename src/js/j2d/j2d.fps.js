@@ -40,6 +40,6 @@
         return (this.fps > this.maxFPS) ? this.maxFPS : this.fps;
     };
 
-    if (window.J2D !== undefined) window.FPSMeter = FPSMeter;
+    if (global.J2D !== undefined) global.FPSMeter = FPSMeter;
     return FPSMeter;
 });

@@ -22,7 +22,7 @@
  * TODO:: FPS as part of Debug module!
  */
 
-var global;
+var global = window;
 
 requirejs.config({
     baseUrl: "../../src/js/",

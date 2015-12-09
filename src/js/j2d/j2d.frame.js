@@ -143,6 +143,6 @@
         }
     };
 
-    if (window.J2D !== undefined) window.FrameManager = FrameManager.Init();
+    if (global.J2D !== undefined) global.FrameManager = FrameManager.Init();
     return FrameManager.Init();
 });

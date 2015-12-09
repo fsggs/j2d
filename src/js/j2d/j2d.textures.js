@@ -132,6 +132,6 @@
         return TextureManager;
     };
 
-    if (window.J2D !== undefined) window.TextureManager = TextureManager;
+    if (global.J2D !== undefined) global.TextureManager = TextureManager;
     return TextureManager;
 });
