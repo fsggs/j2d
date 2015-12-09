@@ -6,31 +6,32 @@
  * @version 0.1.5a, j2ds(0.1.2.501b89)
  */
 
-var global;
-
 requirejs.config({
     baseUrl: "js/",
     paths: {
-        'jquery': '../vendor/jquery.min',
-        'jquery.j2d': 'jquery.j2d.min',
+        'jquery': '../vendor/jquery.min'
+    },
+    bundles: {
+        'jquery.j2d.all.min': [
+            'jquery.j2d',
+            'j2d.frame',
+            'j2d.scene',
+            'j2d.layers',
+            'j2d.base',
+            'j2d.circle',
+            'j2d.fps',
+            'j2d.input',
+            'j2d.io.legacy',
+            'j2d.line',
+            'j2d.rect',
+            'j2d.sprite',
+            'j2d.text',
+            'j2d.textures',
+            'j2d.storage',
+            'j2d.webGL2d',
 
-        'j2d.frame': 'j2d/j2d.frame.min',
-        'j2d.scene': 'j2d/j2d.scene.min',
-        'j2d.layers': 'j2d/j2d.layers.min',
-        'j2d.base': 'j2d/j2d.base.min',
-        'j2d.circle': 'j2d/j2d.circle.min',
-        'j2d.fps': 'j2d/j2d.fps.min',
-        'j2d.input': 'j2d/j2d.input.min',
-        'j2d.io.legacy': 'j2d/j2d.io.legacy.min',
-        'j2d.line': 'j2d/j2d.line.min',
-        'j2d.rect': 'j2d/j2d.rect.min',
-        'j2d.sprite': 'j2d/j2d.sprite.min',
-        'j2d.text': 'j2d/j2d.text.min',
-        'j2d.textures': 'j2d/j2d.textures.min',
-        'j2d.storage': 'j2d/j2d.storage.min',
-        'j2d.webGL2d': 'j2d/j2d.webGL2d.min',
-
-        'vanilla.override': 'vanilla.override.min'
+            'vanilla.override'
+        ]
     }
 });
 

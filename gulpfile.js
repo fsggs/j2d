@@ -16,6 +16,7 @@ var opn = require('opn');
 var concat = require('gulp-concat');
 var header = require('gulp-header');
 var replace = require('gulp-replace');
+var newer = require('gulp-newer');
 
 var http = require('http');
 
@@ -55,9 +56,11 @@ gulp.task('clean', function () {
 /** Developer example **/
 gulp.task('example-dist', [], function () {
     gulp.src(paths.example)
+        .pipe(newer('dist'))
         .pipe(gulp.dest('dist'))
         .pipe(livereload());
     gulp.src(paths.vendor)
+        .pipe(newer('dist/vendor'))
         .pipe(gulp.dest('dist/vendor'))
         .pipe(livereload());
 });
@@ -85,6 +88,7 @@ gulp.task('compile-script', [], function () {
 gulp.task('js-scripts', [], function () {
     gulp.src(paths.scripts)
         //.pipe(jshint())
+        .pipe(newer('dist/js'))
         .pipe(sourcemaps.init({loadMaps: true}))
         .pipe(uglify())
         .pipe(header(fs.readFileSync('src/header.js', 'utf8')))
@@ -102,6 +106,7 @@ gulp.task('js-scripts', [], function () {
         .pipe(livereload());
 
     gulp.src(['vendor/requirejs/require.js'])
+        .pipe(newer('libs'))
         .pipe(sourcemaps.init({loadMaps: true}))
         .pipe(uglify({preserveComments: 'license'}))
         .pipe(sourcemaps.write('./'))
@@ -120,6 +125,7 @@ gulp.task('js-scripts', [], function () {
 /** CSS Style **/
 gulp.task('css-style', [], function () {
     gulp.src(paths.css)
+        .pipe(newer('dist/css'))
         .pipe(csso())
         .pipe(rename(function (path) {
             path.extname = ".min.css"
@@ -131,6 +137,7 @@ gulp.task('css-style', [], function () {
 /** Images **/
 gulp.task('images', [], function () {
     return gulp.src(paths.images)
+        .pipe(newer('dist/img'))
         .pipe(imagemin({optimizationLevel: 5}))
         .pipe(gulp.dest('dist/img'))
         .pipe(livereload());
@@ -166,9 +173,9 @@ gulp.task('browser-firefox', function () {
 /** Make **/
 gulp.task('make', ['clean'], function () {
     gulp.start('js-scripts');
-    gulp.start('compile-script');
     gulp.start('css-style');
     gulp.start('images');
+    gulp.start('compile-script');
     gulp.start('example-dist');
 });
 
