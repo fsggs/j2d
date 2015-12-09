@@ -7,9 +7,13 @@
  * @see https://github.com/SkanerSoft/J2ds/commit/81c85984b36cfd7ff413577737e10e8a81b0263c
  */
 
-define('j2d.io.legacy', [
-    'jquery'
-], function ($) {
+!function (root, factory) {
+    if (typeof define === 'function' && define.amd) {
+        define('j2d.io.legacy', ['jquery'], factory);
+    } else {
+        factory(root.jQuery);
+    }
+}(global, function ($) {
     "use strict";
 
     var IO = function (j2d) {
@@ -82,7 +86,7 @@ define('j2d.io.legacy', [
         this.data.pos.y = this.j2d.scene.viewport.y + this.data.y;
     };
 
-    IO.prototype.clear = function() {
+    IO.prototype.clear = function () {
         this.data.keyPress = [];
         this.data.keyUp = [];
     };
@@ -328,5 +332,6 @@ define('j2d.io.legacy', [
 
     IO.activeElement = undefined;
 
+    if (window.J2D !== undefined) window.IO = IO;
     return IO;
 });

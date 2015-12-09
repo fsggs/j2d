@@ -30,7 +30,7 @@ requirejs.config({
         'j2d.storage': 'j2d/j2d.storage.min',
         'j2d.webGL2d': 'j2d/j2d.webGL2d.min',
 
-        'vanilla.override': 'vanilla.override-1.0.3.min'
+        'vanilla.override': 'vanilla.override.min'
     }
 });
 

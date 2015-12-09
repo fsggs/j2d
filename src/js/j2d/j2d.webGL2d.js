@@ -6,7 +6,13 @@
  *  CubicVR.js by Charles Cliffe <cj@cubicproductions.com> on 2011-03-03
  */
 
-define('j2d.webGL2d', [], function () {
+!function (root, factory) {
+    if (typeof define === 'function' && define.amd) {
+        define('j2d.webGL2d', [], factory);
+    } else {
+        factory();
+    }
+}(global, function () {
     "use strict";
 
     // Vector & Matrix libraries from CubicVR.js

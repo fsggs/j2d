@@ -11,10 +11,10 @@
     if (typeof define === 'function' && define.amd) {
         define('jquery.j2d', ['jquery', 'j2d.webGL2d', 'j2d.frame', 'j2d.scene', 'j2d.layers'], factory);
     } else {
-        factory(root.jQuery, root.WebGL2D, null, null, null);
+        factory(root.jQuery, root.WebGL2D, FrameManager, Scene, LayersManager);
     }
-}(global, function (jQuery, WebGL2D, FrameManager, Scene, LayersManager) {
-    var $ = jQuery, J2D;
+}(global, function ($, WebGL2D, FrameManager, Scene, LayersManager) {
+    if (J2D === undefined) var J2D;
     'use strict';
 
     var defaults = {
@@ -321,5 +321,6 @@
         FrameManager.pulse();
     };
 
+    if (window.J2D !== undefined) window.J2D = J2D;
     return J2D;
 });

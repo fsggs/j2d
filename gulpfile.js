@@ -10,12 +10,27 @@ var rename = require('gulp-rename');
 var livereload = require('gulp-livereload');
 var del = require('del');
 var st = require('st');
+var fs = require('fs');
 var opn = require('opn');
+
+var concat = require('gulp-concat');
+var header = require('gulp-header');
+var replace = require('gulp-replace');
 
 var http = require('http');
 
 var paths = {
-    scripts: ['src/js/**/*.js'],
+    scripts: [
+        'src/js/**/*.js'
+    ],
+    scriptsCompile: [
+        'src/js/vanilla.override.js',
+        'src/js/j2d/j2d.frame.js',
+        'src/js/j2d/j2d.scene.js',
+        'src/js/j2d/j2d.layers.js',
+        'src/js/jquery.j2d.js',
+        'src/js/**/*.js'
+    ],
     css: ['src/css/**/*.css'],
     images: ['src/img/**/*'],
 
@@ -48,39 +63,57 @@ gulp.task('example-dist', [], function () {
 });
 
 /** JS Scripts **/
+gulp.task('compile-script', [], function () {
+    gulp.src(paths.scriptsCompile)
+        .pipe(sourcemaps.init({loadMaps: true}))
+        .pipe(concat('jquery.j2d.all.js'))
+        .pipe(uglify())
+        .pipe(header(fs.readFileSync('src/header.js', 'utf8')))
+        .pipe(sourcemaps.write('./'))
+        .pipe(rename(function (path) {
+            if (path.basename.substr(path.basename.length - 4) !== '.min' && path.extname === '.js') {
+                path.basename += '.min';
+            }
+            if (path.basename.substr(path.basename.length - 3) === '.js' && path.extname === '.map') {
+                path.basename = path.basename.slice(0, path.basename.length - 3) + '.min';
+            }
+        }))
+        .pipe(replace('.js.map', '.min.map'))
+        .pipe(gulp.dest('dist/js'));
+});
+
 gulp.task('js-scripts', [], function () {
     gulp.src(paths.scripts)
         //.pipe(jshint())
         .pipe(sourcemaps.init({loadMaps: true}))
         .pipe(uglify())
-        .pipe(rename(function (path) {
-            if (path.extname === '.js') {
-                path.extname = '.min';
-            }
-        }))
+        .pipe(header(fs.readFileSync('src/header.js', 'utf8')))
         .pipe(sourcemaps.write('./'))
         .pipe(rename(function (path) {
-            if (path.extname === '.min') {
-                path.extname = '.min.js';
+            if (path.basename.substr(path.basename.length - 4) !== '.min' && path.extname === '.js') {
+                path.basename += '.min';
+            }
+            if (path.basename.substr(path.basename.length - 3) === '.js' && path.extname === '.map') {
+                path.basename = path.basename.slice(0, path.basename.length - 3) + '.min';
             }
         }))
+        .pipe(replace('.js.map', '.min.map'))
         .pipe(gulp.dest('dist/js'))
         .pipe(livereload());
 
     gulp.src(['vendor/requirejs/require.js'])
         .pipe(sourcemaps.init({loadMaps: true}))
-        .pipe(uglify())
-        .pipe(rename(function (path) {
-            if (path.extname === '.js') {
-                path.extname = '.min';
-            }
-        }))
+        .pipe(uglify({preserveComments: 'license'}))
         .pipe(sourcemaps.write('./'))
         .pipe(rename(function (path) {
-            if (path.extname === '.min') {
-                path.extname = '.min.js';
+            if (path.basename.substr(path.basename.length - 4) !== '.min' && path.extname === '.js') {
+                path.basename += '.min';
+            }
+            if (path.basename.substr(path.basename.length - 3) === '.js' && path.extname === '.map') {
+                path.basename = path.basename.slice(0, path.basename.length - 3) + '.min';
             }
         }))
+        .pipe(replace('.js.map', '.min.map'))
         .pipe(gulp.dest('libs'));
 });
 
@@ -133,6 +166,7 @@ gulp.task('browser-firefox', function () {
 /** Make **/
 gulp.task('make', ['clean'], function () {
     gulp.start('js-scripts');
+    gulp.start('compile-script');
     gulp.start('css-style');
     gulp.start('images');
     gulp.start('example-dist');

@@ -7,7 +7,13 @@
  * @see https://github.com/SkanerSoft/J2ds/commit/d91880bd189a29b364cc6fd2a3af069f139c5f8a
  */
 
-define('j2d.layers', [], function () {
+!function (root, factory) {
+    if (typeof define === 'function' && define.amd) {
+        define('j2d.layers', [], factory);
+    } else {
+        factory();
+    }
+}(global, function () {
     "use strict";
 
     var WebGL2D;
@@ -136,5 +142,6 @@ define('j2d.layers', [], function () {
         return layer;
     };
 
+    if (window.J2D !== undefined) window.LayersManager = LayersManager;
     return LayersManager;
 });

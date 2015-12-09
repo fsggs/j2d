@@ -7,9 +7,13 @@
  * @see https://github.com/SkanerSoft/J2ds/commit/501b8993fc41960794572dc481a5f2fe492da349
  */
 
-define('j2d.base', [
-    'jquery.j2d', 'j2d.scene'
-], function (J2D, Scene) {
+!function (root, factory) {
+    if (typeof define === 'function' && define.amd) {
+        define('j2d.base', ['jquery.j2d', 'j2d.scene'], factory);
+    } else {
+        factory(root.J2D, Scene);
+    }
+}(global, function (J2D, Scene) {
     "use strict";
 
     if (!Scene.prototype.addBaseNode) {
@@ -273,5 +277,6 @@ define('j2d.base', [
         }
     };
 
+    if(window.J2D !== undefined) window.BaseNode = BaseNode;
     return BaseNode;
 });

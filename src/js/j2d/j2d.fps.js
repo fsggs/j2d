@@ -7,7 +7,13 @@
  * @see https://github.com/SkanerSoft/J2ds/commit/d91880bd189a29b364cc6fd2a3af069f139c5f8a
  */
 
-define('j2d.fps', [], function () {
+!function (root, factory) {
+    if (typeof define === 'function' && define.amd) {
+        define('j2d.fps', factory);
+    } else {
+        factory();
+    }
+}(global, function () {
     "use strict";
 
     var FPSMeter = function () {
@@ -34,5 +40,6 @@ define('j2d.fps', [], function () {
         return (this.fps > this.maxFPS) ? this.maxFPS : this.fps;
     };
 
+    if (window.J2D !== undefined) window.FPSMeter = FPSMeter;
     return FPSMeter;
 });

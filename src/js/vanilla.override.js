@@ -6,8 +6,13 @@
  * @version 1.0.3
  */
 
-define('vanilla.override', [],
-    function () {
+!function (root, factory) {
+    if (typeof define === 'function' && define.amd) {
+        define('vanilla.override', [], factory);
+    } else {
+        factory();
+    }
+}(global, function () {
         "use strict";
 
         var vanilla = {

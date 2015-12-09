@@ -3,52 +3,14 @@
  *
  * @authors DeVinterX, Skaner(j2ds)
  * @license BSD, zlib(j2ds)
- * @version 0.1.5a, j2ds(0.1.2.501b89)
+ * @version 0.1.5, j2ds(0.1.2.501b89)
  */
 
-var global;
-
-requirejs.config({
-    baseUrl: "js/",
-    paths: {
-        'jquery': '../vendor/jquery.min',
-        'jquery.j2d': 'jquery.j2d.min',
-
-        'j2d.frame': 'j2d/j2d.frame.min',
-        'j2d.scene': 'j2d/j2d.scene.min',
-        'j2d.layers': 'j2d/j2d.layers.min',
-        'j2d.base': 'j2d/j2d.base.min',
-        'j2d.circle': 'j2d/j2d.circle.min',
-        'j2d.fps': 'j2d/j2d.fps.min',
-        'j2d.input': 'j2d/j2d.input.min',
-        'j2d.io.legacy': 'j2d/j2d.io.legacy.min',
-        'j2d.line': 'j2d/j2d.line.min',
-        'j2d.rect': 'j2d/j2d.rect.min',
-        'j2d.sprite': 'j2d/j2d.sprite.min',
-        'j2d.text': 'j2d/j2d.text.min',
-        'j2d.textures': 'j2d/j2d.textures.min',
-        'j2d.storage': 'j2d/j2d.storage.min',
-        'j2d.webGL2d': 'j2d/j2d.webGL2d.min',
-
-        'vanilla.override': 'vanilla.override.min'
-    }
-});
-
-define('Application', [
-    'jquery',
-    'jquery.j2d',
-
-    'j2d.input',
-    'j2d.fps',
-    'j2d.storage',
-    'j2d.textures',
-    'j2d.rect',
-    'j2d.line',
-    'j2d.text',
-    'j2d.circle',
-    'j2d.sprite'
-], function ($, J2D, IO, FPS, Storage) {
+(function () {
     "use strict";
+
+    var IO = InputManager;
+    var FPS = FPSMeter;
 
     J2D.initJQueryPlugin();
 
@@ -56,7 +18,8 @@ define('Application', [
         var j2d_containers = window.j2ds = $('.multi-2d').j2d();
 
         var j2d = j2d_containers[0];
-        j2d.enableWebGL();
+        j2d.setSmoothing(false);
+        //j2d.enableWebGL();
         var io = j2d.IOHandler(new IO(j2d));
         io.toggleCursor(true); // enable cursor
 
@@ -80,18 +43,21 @@ define('Application', [
         var background = layers.add('background', -1);
 
         var size = vec2df(25, 25);
-        var a = scene.addRectNode(vec2df(40, 40), size, 'red');
+        var a = scene.addRectNode(vec2df(140, 140), size, 'red');
         var b = scene.addRectNode(vec2df(140, 140), size, 'green');
         b.setLayer('background');
-        var s = scene.addLineNode(vec2df(60, 60), [[0, 0], [100, 100]], 1, 'red', 2);
+        var s = scene.addLineNode(vec2df(60, 60), [[0, 0], [100, 0]], 1.0, 'green', 2);
+
+        var circle = scene.addCircleNode(vec2df(10, 200), 10, 'white');
 
         var _fps = scene.addTextNode(vec2df(5, 5), '', 12, 'white');
+        var hello = scene.addTextNode(vec2df(35, 230), 'Hello World', 20, 'grey');
 
         var move_controller = function () {
             var keyData;
             if (keyData = io.checkPressedKeyMap('ACTION')) {
-                a.setPosition(io.getPosition());
-                s.setPosition(io.getPosition());
+                a.moveTo(io.getPosition(), 10);
+                s.moveTo(io.getPosition(), 10);
 
                 //console.log(io.getMouseMoveDistance());
             }
@@ -102,6 +68,9 @@ define('Application', [
 
         var draw_animation = function () {
             a.turn(1);
+            //a.setRotation(20);
+            b.setRotation(20);
+            s.setRotation(20);
         };
 
         var draw_viewport = function (data) {
@@ -109,11 +78,13 @@ define('Application', [
             scene.clear();
             background.fill('black');
 
-            s.draw();
-            b.setRotation(20);
+            hello.draw();
+            circle.draw();
 
+            s.draw();
             a.draw();
             b.draw();
+
             //a.drawBox();
             //b.drawBox();
             _fps.drawSimpleText('Current FPS: ' + fps.getFPS());
@@ -131,9 +102,10 @@ define('Application', [
         /*
          * Test Storage
          */
-        var _storage = new Storage('j2d');
+        var _storage = new Storage('temp_j2d');
         _storage.save('text', 'Hello World');
-        _storage.saveNode('testNode', a);
+        _storage.saveNode('test', a);
+
 
         /** TEST Multiple **/
         var j2d_2 = j2d_containers[1];
@@ -246,6 +218,5 @@ define('Application', [
         scene2.start(Game2, 60);
         /** TEST Multiple **/
     });
-});
 
-require(['Application']);
+})();

@@ -1,0 +1,38 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>jQuery.j2d</title>
+    <link rel="stylesheet" href="style.css" type="text/css"/>
+    <link rel="stylesheet" href="../../src/css/jquery.j2d.css" type="text/css"/>
+
+    <style>
+        .multi-2d {
+            float: left;
+            margin: 20px 5px;
+        }
+
+        .multi-2d:after {
+            display: block;
+            content: 'J2D Engine';
+            position: absolute;
+            top: -20px;
+            left: 0;
+            text-indent: 7px;
+        }
+
+        .WebGL:after {
+            content: 'J2D Engine (WebGL)';
+        }
+    </style>
+</head>
+<body>
+
+<div id="j2d" class="multi-2d canvas pause-disable"></div>
+<div class="multi-2d canvas"></div>
+
+<script src="../../dist/vendor/jquery.min.js" type="application/javascript"></script>
+<script src="../../dist/js/jquery.j2d.all.min.js" type="application/javascript"></script>
+<script src="application.js" type="application/javascript"></script>
+</body>
+</html>

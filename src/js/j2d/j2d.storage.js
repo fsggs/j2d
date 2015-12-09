@@ -7,15 +7,13 @@
  * @see https://github.com/SkanerSoft/J2ds/commit/501b8993fc41960794572dc481a5f2fe492da349
  */
 
-(function (factory) {
+!function (root, factory) {
     if (typeof define === 'function' && define.amd) {
         define(['jquery'], factory);
-    } else if (typeof exports === 'object') {
-        factory(require('jquery'));
     } else {
-        factory(jQuery);
+        factory(root.jQuery);
     }
-}(function ($) {
+}(global, function ($) {
     "use strict";
 
     /*!
@@ -137,5 +135,6 @@
         $[this.storage](this.id + '_' + name, node.saveJSON());
     };
 
+    if (window.J2D !== undefined) window.Storage = Storage;
     return Storage;
-}));
+});

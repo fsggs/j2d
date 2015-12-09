@@ -6,7 +6,13 @@
  * @version 0.1.5a
  */
 
-define('j2d.frame', ['vanilla.override'], function () {
+!function (root, factory) {
+    if (typeof define === 'function' && define.amd) {
+        define('j2d.frame', ['vanilla.override'], factory);
+    } else {
+        factory();
+    }
+}(global, function () {
     "use strict";
 
     var instance;
@@ -130,8 +136,13 @@ define('j2d.frame', ['vanilla.override'], function () {
 
     /* Singleton */
     FrameManager.Init = function () {
-        return instance || (instance = new FrameManager());
+        if (window.J2D !== undefined) {
+            return window.instanceFrameManager || (window.instanceFrameManager = new FrameManager());
+        } else {
+            return instance || (instance = new FrameManager());
+        }
     };
 
+    if (window.J2D !== undefined) window.FrameManager = FrameManager.Init();
     return FrameManager.Init();
 });

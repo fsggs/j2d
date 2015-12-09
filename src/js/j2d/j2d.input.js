@@ -6,8 +6,13 @@
  * @version 0.1.5
  */
 
-define('j2d.input', ['jquery', 'vanilla.override'],
-    function ($) {
+!function (root, factory) {
+    if (typeof define === 'function' && define.amd) {
+        define('j2d.input', ['jquery', 'vanilla.override'], factory);
+    } else {
+        factory(root.jQuery);
+    }
+}(global, function ($) {
         "use strict";
 
         var InputManager = function (j2d) {
@@ -346,7 +351,8 @@ define('j2d.input', ['jquery', 'vanilla.override'],
             this.data.keysPressed = [];
         };
 
-        InputManager.prototype.clear = function () {};
+        InputManager.prototype.clear = function () {
+        };
 
         InputManager.prototype.fixMouseWheel = function () {
             var keyPressed = this.data.keysPressed;
@@ -596,6 +602,7 @@ define('j2d.input', ['jquery', 'vanilla.override'],
             })[0];
         }
 
+        if (window.J2D !== undefined) window.InputManager = InputManager;
         return InputManager;
     }
 );

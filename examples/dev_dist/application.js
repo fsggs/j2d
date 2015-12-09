@@ -46,7 +46,7 @@ requirejs.config({
         'j2d.storage': 'j2d/j2d.storage',
         'j2d.webGL2d': 'j2d/j2d.webGL2d',
 
-        'vanilla.override': 'vanilla.override-1.0.3'
+        'vanilla.override': 'vanilla.override'
     }
 });
 

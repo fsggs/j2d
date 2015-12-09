@@ -7,9 +7,13 @@
  * @see https://github.com/SkanerSoft/J2ds/commit/501b8993fc41960794572dc481a5f2fe492da349
  */
 
-define('j2d.textures', [
-    'jquery.j2d'
-], function (J2D) {
+!function (root, factory) {
+    if (typeof define === 'function' && define.amd) {
+        define('j2d.textures', ['jquery.j2d'], factory);
+    } else {
+        factory(root.J2D);
+    }
+}(global, function (J2D) {
     "use strict";
 
     var TextureManager = {
@@ -65,7 +69,7 @@ define('j2d.textures', [
             imageObject.height = imageObject.img.height;
             imageObject.loaded = true;
 
-            if(callback) callback();
+            if (callback) callback();
         };
         /* Свойства */
 
@@ -128,5 +132,6 @@ define('j2d.textures', [
         return TextureManager;
     };
 
+    if (window.J2D !== undefined) window.TextureManager = TextureManager;
     return TextureManager;
 });

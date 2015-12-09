@@ -7,11 +7,13 @@
  * @see https://github.com/SkanerSoft/J2ds/commit/501b8993fc41960794572dc481a5f2fe492da349
  */
 
-define('j2d.circle', [
-    'jquery.j2d',
-    'j2d.base',
-    'j2d.scene'
-], function (J2D, BaseNode, Scene) {
+!function (root, factory) {
+    if (typeof define === 'function' && define.amd) {
+        define('j2d.circle', ['jquery.j2d', 'j2d.base', 'j2d.scene'], factory);
+    } else {
+        factory(root.J2D, BaseNode, Scene);
+    }
+}(global, function (J2D, BaseNode, Scene) {
     "use strict";
 
     if (!Scene.prototype.addCircleNode) {
@@ -58,5 +60,6 @@ define('j2d.circle', [
         }
     };
 
+    if (window.J2D !== undefined) window.CircleNode = CircleNode;
     return CircleNode;
 });
