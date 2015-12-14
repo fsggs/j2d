@@ -3,15 +3,15 @@
  *
  * @authors Skaner, likerRr, DeVinterX
  * @license zlib
- * @version 0.1.5a
- * @see https://github.com/SkanerSoft/J2ds/commit/501b8993fc41960794572dc481a5f2fe492da349
+ * @version 0.1.6
+ * @see https://github.com/SkanerSoft/J2ds/commit/be23ec0c5eb07270f087aebcb1de56c50b8a0343
  */
 
 !function (root, factory) {
     if (typeof define === 'function' && define.amd) {
         define('j2d.base', ['jquery.j2d', 'j2d.scene'], factory);
     } else {
-        factory(root.J2D, Scene);
+        factory(root.J2D, root.Scene);
     }
 }(global, function (J2D, Scene) {
     "use strict";
@@ -118,10 +118,14 @@
     };
 
     BaseNode.prototype.setPosition = function (position) {
-        this.options.position = this.j2d.vector.vec2df(
-            position.x - Math.ceil(this.options.size.x / 2),
-            position.y - Math.ceil(this.options.size.y / 2)
-        );
+        if (position !== undefined) {
+            this.options.position = this.j2d.vector.vec2df(
+                position.x - Math.ceil(this.options.size.x / 2),
+                position.y - Math.ceil(this.options.size.y / 2)
+            );
+        } else {
+            return this.options.position;
+        }
     };
 
     BaseNode.prototype.move = function (position) {
@@ -137,7 +141,12 @@
     };
 
     BaseNode.prototype.setSize = function (size) {
-        this.options.size = size;
+        if (size !== undefined) {
+            this.options.size = size;
+        } else {
+            return this.options.size;
+        }
+
     };
 
     BaseNode.prototype.getSize = function () {
@@ -277,6 +286,6 @@
         }
     };
 
-    if(global.J2D !== undefined) global.BaseNode = BaseNode;
+    if (global.J2D !== undefined) global.BaseNode = BaseNode;
     return BaseNode;
 });

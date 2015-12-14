@@ -11,7 +11,7 @@
     if (typeof define === 'function' && define.amd) {
         define('j2d.line', ['jquery.j2d', 'j2d.base', 'j2d.scene'], factory);
     } else {
-        factory(root.J2D, BaseNode, Scene);
+        factory(root.J2D, root.BaseNode, root.Scene);
     }
 }(global, function (J2D, BaseNode, Scene) {
     "use strict";

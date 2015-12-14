@@ -1,10 +1,9 @@
 /**
- * J2D (jQuery plugin of the fork j2ds)
+ * J2D (jQuery plugin of the fork j2Ds)
  *
- * @authors Skaner, likerRr, DeVinterX
+ * @authors Skaner, DeVinterX
  * @license BSD, zlib
- * @version 0.1.5
- * @see https://github.com/SkanerSoft/J2ds/commit/501b8993fc41960794572dc481a5f2fe492da349
+ * @version 0.1.6
  */
 
 if (global === undefined) var global = window;

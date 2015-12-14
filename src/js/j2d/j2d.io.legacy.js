@@ -3,8 +3,8 @@
  *
  * @authors Skaner, likerRr, DeVinterX
  * @license zlib
- * @version 0.1.5a
- * @see https://github.com/SkanerSoft/J2ds/commit/81c85984b36cfd7ff413577737e10e8a81b0263c
+ * @version 0.1.6
+ * @see https://github.com/SkanerSoft/J2ds/commit/be23ec0c5eb07270f087aebcb1de56c50b8a0343
  */
 
 !function (root, factory) {
@@ -24,18 +24,22 @@
             x: 0,
             y: 0,
             abs: {x: 0, y: 0},
-            lClick: false,
-            mClick: false,
-            rClick: false,
-            touch: false,
             keyDown: [],
             keyPress: [],
             keyPressed: [],
             keyUp: [],
             keyUpped: false,
+
+            mouseDown: [],
+            mousePress: [],
+            mousePressed: [],
+            mouseUp: [],
+            mouseUpped: false,
+
             canceled: false,
             body: false,
             anyKey: false,
+            anyMouse: false,
             writeMode: false,
             displayCursor: '',
             visible: true
@@ -47,23 +51,19 @@
 
         IO.activeElement = io.j2d.element;
         IO.activeElement.focus();
-        io.j2d.options.window.ontouchstart = io.onTouch;
-        io.j2d.options.window.ontouchmove = io.onTouch;
-        io.j2d.options.window.ontouchend = function () {
-            io.data.canceled = false;
-            io.falseInput();
-        };
         io.j2d.options.window.oncontextmenu = function () {
             return false;
         };
         io.j2d.options.window.onselectstart = io.j2d.options.window.oncontextmenu;
         io.j2d.options.window.ondragstart = io.j2d.options.window.oncontextmenu;
-        io.j2d.options.window.onmousedown = io.onClick;
-        io.j2d.options.window.onmouseup = function () {
+        io.j2d.options.window.onmousedown = io.onMouseEvent;
+        io.j2d.options.window.onmouseup = function (e) {
             io.data.canceled = false;
-            io.falseInput();
+            io.onMouseEvent(e);
         };
-        io.j2d.options.window.onmousemove = io.cursorPosition;
+        io.j2d.options.window.onmousemove = function (e) {
+            io.onMove(e);
+        };
         io.j2d.options.window.onkeydown = function (e) {
             io.keyEvent(e);
         };
@@ -89,6 +89,8 @@
     IO.prototype.clear = function () {
         this.data.keyPress = [];
         this.data.keyUp = [];
+        this.data.mousePress = [];
+        this.data.mouseUp = [];
     };
 
     IO.prototype.keyList = function () {
@@ -159,46 +161,41 @@
         return false;
     };
 
-    //! системная
     IO.prototype.cancel = function (id) {
         if (!id) {
             this.data.canceled = true;
-            this.falseInput();
             this.data.keyDown = [];
+            this.data.mouseDown = [];
         }
         else {
             this.data.keyDown[IO.keys[id]] = false;
         }
     };
 
-    //! системная
-    // Вернет true, если мышь наxодится над объектом
     IO.prototype.onNode = function (id) {
         if (!id.layer.visible) return false;
         return (this.data.pos.x > id.options.position.x && this.data.pos.x < id.options.position.x + id.options.size.x) &&
             (this.data.pos.y > id.options.position.y && this.data.pos.y < id.options.position.y + id.options.size.y);
     };
 
-    IO.prototype.cursorPosition = function (e) {
-        var io = IO.activeElement.j2d().options.io;
-
-        if (!io.data.touch) {
-            var x, y;
-
-            if (document.all) {
-                x = e.x + document.body.scrollLeft;
-                y = e.y + document.body.scrollTop;
-            } else {
-                x = e.pageX; // Координата X курсора
-                y = e.pageY;// Координата Y курсора
-            }
-            io.data.abs.x = x;
-            io.data.abs.y = y;
-        }
+    IO.prototype.onMove = function (e) {
+        this.data.abs.x = e.pageX;
+        this.data.abs.y = e.pageY;
     };
 
+    IO.prototype.isMouseDown = function (code) {
+        return this.data.mouseDown[IO.mKeys[code]];
+    };
 
-    IO.prototype.onClick = function (e) {
+    IO.prototype.isMousePress = function (code) {
+        return this.data.mousePress[IO.mKeys.mKeys[code]];
+    };
+
+    IO.prototype.isMouseUp = function (code) {
+        return this.data.mouseUp[IO.mKeys.mKeys[code]];
+    };
+
+    IO.prototype.onMouseEvent = function (e) {
         var io = IO.activeElement.j2d().options.io;
 
         if (!e.which && e.button) {
@@ -207,30 +204,25 @@
             else if (e.button & 2) e.which = 3;
         }
 
-        io.data.lClick = (e.which == 1) && (!io.data.canceled);
-        io.data.mClick = (e.which == 2) && (!io.data.canceled);
-        io.data.rClick = (e.which == 3) && (!io.data.canceled);
+        if (e.type == 'mousedown') {
+            if (!this.data.mousePressed[e.which]) {
+                this.data.mousePress[e.which] = true;
+                this.data.mousePressed[e.which] = true;
+            }
+        } else if (e.type == 'mouseup') {
+            if (this.data.mousePressed[e.which]) {
+                this.data.mousePress[e.which] = false;
+                this.data.mousePressed[e.which] = false;
+                this.data.mouseUp[e.which] = true;
+                this.data.mouseUped = true;
+            }
+        }
+
+        this.data.mouseDown[e.which] = (e.type == 'mousedown') && (!this.data.canceled);
+
         IO.activeElement.focus();
         e.preventDefault();
         return false;
-    };
-
-    IO.prototype.onTouch = function (e) {
-        var io = IO.activeElement.j2d().options.io;
-
-        io.data.abs.x = e.touches[0].pageX;
-        io.data.abs.y = e.touches[0].pageY;
-        io.data.lClick = !io.data.canceled;
-        io.data.touch = !io.data.canceled;
-        IO.activeElement.focus();
-        e.preventDefault();
-        return false;
-    };
-
-    IO.prototype.falseInput = function () {
-        this.data.lClick = false;
-        this.data.mClick = false;
-        this.data.rClick = false;
     };
 
     IO.prototype.setCursorImage = function (curImg) {
@@ -249,6 +241,12 @@
 
     IO.prototype.isVisible = function () {
         return this.data.visible;
+    };
+
+    IO.mKeys = {
+        'LEFT': 1,
+        'MIDDLE': 2,
+        'RIGHT': 3
     };
 
     IO.keys = {

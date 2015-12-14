@@ -3,7 +3,7 @@
  *
  * @authors DeVinterX, Skaner(j2ds)
  * @license BSD, zlib(j2ds)
- * @version 0.1.5, j2ds(0.1.2.501b89)
+ * @version 0.1.6, j2ds(0.1.2.501b89)
  */
 
 /*
@@ -14,16 +14,19 @@
  * TODO:: Merge with <- j2ds 0.3.0+
  *
  *  v.0.1.8
+ * TODO:: Merge with <- j2ds 0.4.0+
+ *
+ *  v.0.1.9
  * TODO:: j2d.trigger() && j2d.on() && j2d.off()
  * TODO:: j2d.scene.fullscreenElement
  *
- *  v.0.1.9
+ *  v.0.1.10
  * TODO:: WebGL PolyLine replacement LinePath
  * TODO:: WebGL position fix
  * TODO:: Nodes for bezierCurve & quadraticCurve
  * TODO:: fix all knows bugs in WebGL adaptation
  *
- *  v.0.1.10
+ *  v.0.1.11
  * TODO:: Collection & Layers global collection
  * TODO:: specific plugin demos (not legacy)
  * TODO:: FPS as part of Debug module!

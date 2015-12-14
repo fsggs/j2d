@@ -1,17 +1,17 @@
 /**
- * J2D (jQuery plugin of the fork j2ds)
+ * J2D (jQuery plugin of the fork j2Ds)
  *
  * @authors Skaner, likerRr, DeVinterX
  * @license BSD, zlib
- * @version 0.1.5
- * @see https://github.com/SkanerSoft/J2ds/commit/501b8993fc41960794572dc481a5f2fe492da349
+ * @version 0.1.6
+ * @see https://github.com/SkanerSoft/J2ds/commit/be23ec0c5eb07270f087aebcb1de56c50b8a0343
  */
 
 !function (root, factory) {
     if (typeof define === 'function' && define.amd) {
         define('jquery.j2d', ['jquery', 'j2d.webGL2d', 'j2d.frame', 'j2d.scene', 'j2d.layers'], factory);
     } else {
-        factory(root.jQuery, root.WebGL2D, FrameManager, Scene, LayersManager);
+        factory(root.jQuery, root.WebGL2D, root.FrameManager, root.Scene, root.LayersManager);
     }
 }(global, function ($, WebGL2D, FrameManager, Scene, LayersManager) {
     if (J2D === undefined) var J2D;
@@ -47,10 +47,10 @@
     J2D.prototype.getInfo = function () {
         return {
             'name': 'jquery.j2d',
-            'version': '0.1.5',
+            'version': '0.1.6',
             'site': 'https://github.com/fsggs/jquery.j2d',
             'info': 'jquery.j2d - jQuery plugin of the fork j2ds.',
-            'author': 'DeVinterX, Skaner(j2ds)'
+            'author': 'DeVinterX, Skaner(j2Ds)'
         };
     };
 
