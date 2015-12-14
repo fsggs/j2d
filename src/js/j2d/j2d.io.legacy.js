@@ -3,8 +3,8 @@
  *
  * @authors Skaner, likerRr, DeVinterX
  * @license zlib
- * @version 0.1.6
- * @see https://github.com/SkanerSoft/J2ds/commit/be23ec0c5eb07270f087aebcb1de56c50b8a0343
+ * @version 0.1.7
+ * @see https://github.com/SkanerSoft/J2ds/commit/09b23c64add60b9904d211da9222f921550d6f21
  */
 
 !function (root, factory) {
@@ -35,6 +35,7 @@
             mousePressed: [],
             mouseUp: [],
             mouseUpped: false,
+            mouseWheel: 0,
 
             canceled: false,
             body: false,
@@ -74,6 +75,16 @@
         io.j2d.options.window.onkeypress = function (e) {
             io.keyEvent(e);
         };
+
+        io.j2d.options.window.onmousewheel = function (e) {
+            io.onMouseWheel(e);
+        };
+
+        if (io.j2d.options.window.addEventListener) {
+            io.j2d.options.window.addEventListener("DOMMouseScroll", function (e) {
+                io.onMouseWheel(e);
+            }, false);
+        }
     };
 
     IO.prototype.update = function () {
@@ -91,6 +102,7 @@
         this.data.keyUp = [];
         this.data.mousePress = [];
         this.data.mouseUp = [];
+        this.data.mouseWheel = 0;
     };
 
     IO.prototype.keyList = function () {
@@ -193,6 +205,16 @@
 
     IO.prototype.isMouseUp = function (code) {
         return this.data.mouseUp[IO.mKeys.mKeys[code]];
+    };
+
+    IO.prototype.isMouseWheel = function (code) {
+        return (code == 'UP' && this.data.mouseWheel > 0) || (code == 'DOWN' && this.data.mouseWheel < 0)
+    };
+
+    IO.prototype.onMouseWheel = function (e) {
+        this.data.mouseWheel = ((e.wheelDelta) ? e.wheelDelta : -e.detail);
+        e.preventDefault();
+        return false;
     };
 
     IO.prototype.onMouseEvent = function (e) {
