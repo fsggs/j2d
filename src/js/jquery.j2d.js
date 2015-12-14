@@ -3,8 +3,8 @@
  *
  * @authors Skaner, likerRr, DeVinterX
  * @license BSD, zlib
- * @version 0.1.7
- * @see https://github.com/SkanerSoft/J2ds/commit/09b23c64add60b9904d211da9222f921550d6f21
+ * @version 0.1.8-dev
+ * @see https://github.com/SkanerSoft/J2ds/commit/fa7474a338f040ecdf439390ab69f9e4b7052f4d
  */
 
 !function (root, factory) {
@@ -47,7 +47,7 @@
     J2D.prototype.getInfo = function () {
         return {
             'name': 'jquery.j2d',
-            'version': '0.1.7',
+            'version': '0.1.8',
             'site': 'https://github.com/fsggs/jquery.j2d',
             'info': 'jquery.j2d - jQuery plugin of the fork j2ds.',
             'author': 'DeVinterX, Skaner(j2Ds)'
@@ -146,6 +146,7 @@
     J2D.prototype.getDevice = function () {
         return this.device;
     };
+    J2D.prototype.getDeviceManager = J2D.prototype.getDevice;
 
     J2D.prototype.device = {
         width: parseInt($(document).width()) < parseInt(screen.width) ? parseInt($(document).width()) : parseInt(screen.width),
@@ -159,10 +160,10 @@
 
     /** Vector **/
     J2D.prototype.vector = {
-        vec2df: function (x, y) {
+        v2f: function (x, y) {
             return {x: x, y: y};
         },
-        vec2di: function (x, y) {
+        v2i: function (x, y) {
             return {x: (x >> 0), y: (y >> 0)};
         }
     };
@@ -213,12 +214,14 @@
     J2D.prototype.getLayers = function () {
         return this.layers;
     };
+    J2D.prototype.getLayerManager = J2D.prototype.getLayers;
     /** -Layers **/
 
     /** +Scene **/
     J2D.prototype.getScene = function () {
         return this.scene;
     };
+    J2D.prototype.getSceneManager = J2D.prototype.getScene;
     /** -Scene **/
 
     J2D.initJQueryPlugin = function () {

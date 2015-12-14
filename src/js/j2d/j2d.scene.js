@@ -3,8 +3,8 @@
  *
  * @authors Skaner, likerRr, DeVinterX
  * @license zlib
- * @version 0.1.5a
- * @see https://github.com/SkanerSoft/J2ds/commit/d91880bd189a29b364cc6fd2a3af069f139c5f8a
+ * @version 0.1.8
+ * @see https://github.com/SkanerSoft/J2ds/commit/fa7474a338f040ecdf439390ab69f9e4b7052f4d
  */
 
 !function (root, factory) {
@@ -184,7 +184,7 @@
         this.cancelClear = false;
 
         /* Вид "камеры" */
-        this.viewport = j2d.vector.vec2df(0, 0);
+        this.viewport = j2d.vector.v2f(0, 0);
 
         j2d.element.trigger('afterInit');
 

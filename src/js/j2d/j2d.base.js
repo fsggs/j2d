@@ -3,8 +3,8 @@
  *
  * @authors Skaner, likerRr, DeVinterX
  * @license zlib
- * @version 0.1.6
- * @see https://github.com/SkanerSoft/J2ds/commit/be23ec0c5eb07270f087aebcb1de56c50b8a0343
+ * @version 0.1.8
+ * @see https://github.com/SkanerSoft/J2ds/commit/fa7474a338f040ecdf439390ab69f9e4b7052f4d
  */
 
 !function (root, factory) {
@@ -111,7 +111,7 @@
 
     BaseNode.prototype.moveTo = function (to, t) {
         t = t ? t : 1;
-        this.move(this.j2d.vector.vec2df(
+        this.move(this.j2d.vector.v2f(
             ((to.x - this.getPosition().x) / t),
             ((to.y - this.getPosition().y) / t)
         ));
@@ -119,7 +119,7 @@
 
     BaseNode.prototype.setPosition = function (position) {
         if (position !== undefined) {
-            this.options.position = this.j2d.vector.vec2df(
+            this.options.position = this.j2d.vector.v2f(
                 position.x - Math.ceil(this.options.size.x / 2),
                 position.y - Math.ceil(this.options.size.y / 2)
             );
@@ -134,7 +134,7 @@
     };
 
     BaseNode.prototype.getPosition = function () {
-        return this.j2d.vector.vec2df(
+        return this.j2d.vector.v2f(
             this.options.position.x + Math.ceil(this.options.size.x / 2),
             this.options.position.y + Math.ceil(this.options.size.y / 2)
         );
@@ -166,7 +166,7 @@
     };
 
     BaseNode.prototype.getDistanceXY = function (id) {
-        return this.j2d.vector.vec2df(
+        return this.j2d.vector.v2f(
             Math.abs(id.getPosition().x - this.getPosition().x),
             Math.abs(id.getPosition().y - this.getPosition().y)
         );

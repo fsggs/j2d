@@ -3,8 +3,8 @@
  *
  * @authors Skaner, likerRr, DeVinterX
  * @license zlib
- * @version 0.1.7
- * @see https://github.com/SkanerSoft/J2ds/commit/09b23c64add60b9904d211da9222f921550d6f21
+ * @version 0.1.8
+ * @see https://github.com/SkanerSoft/J2ds/commit/fa7474a338f040ecdf439390ab69f9e4b7052f4d
  */
 
 !function (root, factory) {
@@ -128,7 +128,7 @@
     };
 
     IO.prototype.getPosition = function () {
-        return this.j2d.vector.vec2df(this.data.pos.x, this.data.pos.y);
+        return this.j2d.vector.v2f(this.data.pos.x, this.data.pos.y);
     };
 
     IO.prototype.setWriteMode = function (mode) {

@@ -3,22 +3,19 @@
  *
  * @authors DeVinterX, Skaner(j2ds)
  * @license BSD, zlib(j2ds)
- * @version 0.1.6, j2ds(0.1.2.501b89)
+ * @version 0.1.8, j2ds(0.4.0.fa7474)
  */
 
 /*
- *  v.0.1.6
- * TODO:: Merge with <- j2ds 0.2.0+
- *
- *  v.0.1.7
- * TODO:: Merge with <- j2ds 0.3.0+
- *
  *  v.0.1.8
  * TODO:: Merge with <- j2ds 0.4.0+
+ * TODO:: Fix all examples
  *
  *  v.0.1.9
  * TODO:: j2d.trigger() && j2d.on() && j2d.off()
  * TODO:: j2d.scene.fullscreenElement
+ * TODO:: j2d.io.element to triggering events
+ * TODO:: j2d.trigger -> ( set: j2d.eventElement )
  *
  *  v.0.1.10
  * TODO:: WebGL PolyLine replacement LinePath
@@ -99,7 +96,7 @@ define('Application', [
         var fps = new FPS();
 
         layers.getLayer('1');
-        var vec2df = j2d.vector.vec2df;
+        var vec2df = j2d.vector.v2f;
 
         scene.init(400, 300);
         //scene.init(device.width, device.height);

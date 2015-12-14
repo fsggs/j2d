@@ -35,7 +35,7 @@
         var fps = new FPS();
 
         layers.getLayer('1');
-        var vec2df = j2d.vector.vec2df;
+        var vec2df = j2d.vector.v2f;
 
         scene.init(400, 300);
         //scene.init(device.width, device.height);

@@ -3,7 +3,7 @@
  *
  * @authors Skaner, DeVinterX
  * @license BSD, zlib
- * @version 0.1.7
+ * @version 0.1.8-dev
  */
 
 if (global === undefined) var global = window;

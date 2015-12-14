@@ -436,7 +436,7 @@
         };
 
         InputManager.prototype.getPosition = function () {
-            return this.j2d.vector.vec2df(this.data.viewport.x + 0.5, this.data.viewport.y + 0.5);
+            return this.j2d.vector.v2f(this.data.viewport.x + 0.5, this.data.viewport.y + 0.5);
         };
 
         InputManager.prototype.onNode = function (id) {

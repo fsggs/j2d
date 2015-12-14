@@ -3,8 +3,8 @@
  *
  * @authors Skaner, likerRr, DeVinterX
  * @license zlib
- * @version 0.1.5a
- * @see https://github.com/SkanerSoft/J2ds/commit/501b8993fc41960794572dc481a5f2fe492da349
+ * @version 0.1.8
+ * @see https://github.com/SkanerSoft/J2ds/commit/fa7474a338f040ecdf439390ab69f9e4b7052f4d
  */
 
 !function (root, factory) {
@@ -23,7 +23,7 @@
     }
 
     var LineNode = function (j2d, position, points, scale, color, width, fill, cFill) {
-        BaseNode.call(this, j2d, position, j2d.vector.vec2df(0, 0));
+        BaseNode.call(this, j2d, position, j2d.vector.v2f(0, 0));
         this.nodeName = 'LineNode';
         this.mergeOptions({
             color: color,

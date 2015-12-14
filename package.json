@@ -1,6 +1,6 @@
 {
   "name": "jquery.j2d",
-  "version": "0.1.7",
+  "version": "0.1.8-dev",
   "description": "2D engine",
   "main": "src/js/jquery.j2d.js",
   "directories": {
