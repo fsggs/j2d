@@ -22,7 +22,7 @@ define(function(require) {
 
     J2D.initPlugin();
 
-    $(window.document).ready(function () {
+    $(document).ready(function () {
 
     });
 });
