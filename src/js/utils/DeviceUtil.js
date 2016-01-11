@@ -10,6 +10,8 @@ import $ from "jquery";
 import Vector2dInteger from "Vector2dInteger";
 
 /**
+ * Class utility for get system browser window size
+ *
  * @implements {IDeviceUtil}
  */
 export default class DeviceUtil {
@@ -36,4 +38,4 @@ export default class DeviceUtil {
     }
 }
 
-if (window.J2D !== undefined) window.DeviceUtil = DeviceUtil;
+if (window.J2D === undefined) window.DeviceUtil = DeviceUtil;

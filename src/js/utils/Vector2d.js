@@ -43,4 +43,4 @@ export default class Vector2d {
     }
 }
 
-if (window.J2D !== undefined) window.Vector2d = Vector2d;
+if (window.J2D === undefined) window.Vector2d = Vector2d;

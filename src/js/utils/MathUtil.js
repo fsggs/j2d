@@ -23,7 +23,7 @@ export default class MathUtil {
     }
 
     static random(min, max, omitZero) {
-        let random = (Math.floor(Math.random() * (max - min + 1) + min));
+        var random = (Math.floor(Math.random() * (max - min + 1) + min));
         return (omitZero && random == 0)
             ? MathUtil.random(min, max, omitZero)
             : random;
@@ -34,4 +34,4 @@ export default class MathUtil {
     }
 }
 
-if (window.J2D !== undefined) window.MathUtil = MathUtil;
+if (window.J2D === undefined) window.MathUtil = MathUtil;

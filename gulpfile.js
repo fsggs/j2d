@@ -1,6 +1,7 @@
 'use strict';
 
 var gulp = require('gulp');
+var qunit = require('gulp-qunit');
 var babel = require("gulp-babel");
 var uglify = require('gulp-uglify');
 var csso = require('gulp-csso');
@@ -81,7 +82,11 @@ gulp.task('js-scripts', [], function () {
         .pipe(sourcemaps.init())
         .pipe(babel())
         .pipe(concat('jquery.j2d.js'))
-        .pipe(uglify())
+        .pipe(replace( // Fix babel compile bug
+            'var _typeof = typeof Symbol === "function" && _typeof(Symbol.iterator) === "symbol" ? function (obj) {',
+            'var _typeof = typeof Symbol === "function" && typeof(Symbol.iterator) === "symbol" ? function (obj) {'
+        ))
+        //.pipe(uglify())
         .pipe(header(fs.readFileSync('src/header.js', 'utf8')))
         .pipe(sourcemaps.write('./'))
         .pipe(rename(function (path) {
@@ -176,6 +181,12 @@ gulp.task('browser-chrome', function () {
 
 gulp.task('browser-firefox', function () {
     opn('http://127.0.0.1:' + server.port, {app: 'firefox'});
+});
+
+/** Test **/
+gulp.task('tests', function () {
+    return gulp.src('./tests/test-runner.html')
+        .pipe(qunit());
 });
 
 /** Make **/

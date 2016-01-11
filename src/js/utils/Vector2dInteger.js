@@ -24,4 +24,4 @@ export default class Vector2dInteger extends Vector2d {
     }
 }
 
-if (window.J2D !== undefined) window.Vector2dInteger = Vector2dInteger;
+if (window.J2D === undefined) window.Vector2dInteger = Vector2dInteger;

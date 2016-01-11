@@ -21,10 +21,11 @@ interface IVector2d {
 }
 
 interface IVector2dInteger extends IVector2d {
-
+    constructor(x:number, y:number) : IVector2dInteger
 }
 
 interface IDeviceUtil {
+    constructor() : IDeviceUtil
     resize(width ?:number, height ?:number) : IDeviceUtil
 
     getWidth(): number
