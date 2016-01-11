@@ -6,69 +6,70 @@
  * @version 0.2.0-dev
  */
 
-
-/* Utils */
-interface Vector2d {
+interface IVector2d {
     x : number
     y : number
 
-    constructor(x:number, y:number) : Vector2d
+    constructor(x:number, y:number) : IVector2d
+    toArray() : Array<number>
+    fromArray(array:Array<number>) : IVector2d
+    toString() : string
 
-    getCoordinateX() : number
-    getCoordinateY() : number
-    getCoordinates() : Vector2d
+    getX() : number
+    getY() : number
+    getCoordinates() : IVector2d
 }
 
-interface Vector2dInteger extends Vector2d {
+interface IVector2dInteger extends IVector2d {
 
 }
 
-interface DeviceUtil {
-    resize(width ?:number, height ?:number) : DeviceUtil
+interface IDeviceUtil {
+    resize(width ?:number, height ?:number) : IDeviceUtil
 
     getWidth(): number
     getHeight(): number
-    getSize(): Object
+    getSize(): IVector2dInteger
 }
 
-declare module MathUtil {
-    function number2Integer(number:number):number
+interface IMathUtil {
+    number2Integer(number:number):number
 
-    function randomColor(min:number, max:number, opacity:number):string
+    randomColor(min:number, max:number, opacity:number):string
 
-    function random(min:number, max:number, omitZero:boolean):number
+    random(min:number, max:number, omitZero:boolean):number
 
-    function degree2Radian(degree:number):number
+    degree2Radian(degree:number):number
 }
 
 /* Nodes */
-interface BaseNode {
-    constructor(data:Object) : BaseNode
+interface IBaseNode {
+    constructor(data:Object) : IBaseNode
 
     mergeData(properties:Object) : Object
     saveJSON() : string
     loadJSON(json:string) : Object
 
-    getPosition() : Vector2d
-    setPosition(position:Vector2d) : BaseNode
+    getPosition() : IVector2d
+    setPosition(position:IVector2d) : IBaseNode
 
-    getSize() : Vector2d
-    setSize(size:Vector2d) : BaseNode
+    getSize() : IVector2d
+    setSize(size:IVector2d) : IBaseNode
 
-    getOffset() : Vector2d
-    setOffset(offset:Vector2d) : BaseNode
+    getOffset() : IVector2d
+    setOffset(offset:IVector2d) : IBaseNode
 
-    render(debug: number) : BaseNode
+    render(debug:number) : IBaseNode
 }
 
-interface CollectionNode extends BaseNode {
-    constructor(data:Object) : CollectionNode
+interface ICollectionNode extends IBaseNode {
+    constructor(data:Object) : ICollectionNode
 }
 
-interface CameraNode extends BaseNode {
-    constructor(data:Object) : CameraNode
+interface ICameraNode extends IBaseNode {
+    constructor(data:Object) : ICameraNode
 }
 
-interface RectNode extends BaseNode {
-    constructor(data:Object) : RectNode
+interface IRectNode extends IBaseNode {
+    constructor(data:Object) : IRectNode
 }
