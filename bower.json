@@ -1,13 +1,13 @@
 {
   "name": "jquery.j2d",
-  "version": "0.1.8-dev",
+  "version": "0.2.0-dev",
   "homepage": "https://github.com/fsggs/jquery.j2d",
   "authors": [
     "DeVinterX",
-    "Skaner(j2ds)"
+    "Skaner(j2Ds)"
   ],
-  "description": "2D engine",
-  "main": "src/js/jquery.j2d.js",
+  "description": "jQuery Canvas Graphic Engine plugin.",
+  "main": "dist/js/jquery.j2d.js",
   "moduleType": [
     "amd"
   ],
@@ -19,11 +19,11 @@
     "webgl",
     "jquery",
     "j2d",
-    "j2ds"
+    "j2Ds",
+    "ES6"
   ],
   "license": [
-    "BSD-4-Clause",
-    "Zlib"
+    "BSD-4-Clause"
   ],
   "ignore": [
     "**/.*",

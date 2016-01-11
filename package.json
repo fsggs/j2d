@@ -1,10 +1,10 @@
 {
   "name": "jquery.j2d",
-  "version": "0.1.8-dev",
-  "description": "2D engine",
+  "version": "0.2.0-dev",
+  "description": "jQuery Canvas Graphic Engine plugin.",
   "main": "src/js/jquery.j2d.js",
   "directories": {
-    "example": "examples"
+    "example": "example"
   },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
@@ -20,36 +20,40 @@
     "canvas",
     "webgl",
     "jquery",
-    "j2d",
-    "j2ds"
+    "j2d"
   ],
   "author": [
     "DeVinterX",
-    "Skaner(j2ds)"
+    "Skaner(j2Ds)"
   ],
   "license": [
-    "BSD-4-Clause",
-    "zlib"
+    "BSD-4-Clause"
   ],
   "bugs": {
     "url": "https://github.com/fsggs/jquery.j2d/issues"
   },
   "homepage": "https://github.com/fsggs/jquery.j2d",
   "devDependencies": {
+    "babel": "^6.3.26",
+    "babel-cli": "^6.4.0",
+    "babel-plugin-add-module-exports": "^0.1.2",
+    "babel-plugin-transform-es2015-modules-amd": "^6.4.0",
+    "babel-plugin-transform-es2015-modules-umd": "^6.4.0",
+    "babel-preset-es2015": "^6.3.13",
     "del": "^2.1.0",
     "gulp": "^3.9.0",
+    "gulp-babel": "^6.1.1",
     "gulp-concat": "^2.6.0",
     "gulp-csso": "^1.0.1",
     "gulp-header": "^1.7.1",
     "gulp-imagemin": "^2.4.0",
-    "gulp-jshint": "^2.0.0",
     "gulp-livereload": "^3.8.1",
     "gulp-newer": "^1.1.0",
+    "gulp-plumber": "^1.0.1",
     "gulp-rename": "^1.2.2",
     "gulp-replace": "^0.5.4",
     "gulp-sourcemaps": "^1.6.0",
     "gulp-uglify": "^1.5.1",
-    "jshint": "^2.8.0",
     "opn": "^3.0.3",
     "st": "^1.0.0"
   }

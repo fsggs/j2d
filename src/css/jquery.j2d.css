@@ -1,19 +1,14 @@
 .j2d {
     border: 0;
     cursor: none;
-    position: relative;
+    position: relative
 }
 
-.j2d:fullscreen,
-.j2d:-webkit-full-screen,
-.j2d:-moz-full-screen,
-.j2d:-o-full-screen,
-.j2d:-ms-fullscreen,
-{
+.j2d:fullscreen, .j2d:-webkit-full-screen, .j2d:-moz-full-screen, .j2d:-o-full-screen, .j2d:-ms-fullscreen {
     margin: 0;
     padding: 0;
     width: 100%;
-    height: 100%;
+    height: 100%
 }
 
 img[src$=".gif"], img[src$=".png"] {
@@ -21,5 +16,5 @@ img[src$=".gif"], img[src$=".png"] {
     image-rendering: -webkit-optimize-contrast;
     image-rendering: -moz-crisp-edges;
     image-rendering: -o-crisp-edges;
-    -ms-interpolation-mode: nearest-neighbor;
+    -ms-interpolation-mode: nearest-neighbor
 }

@@ -1,11 +1,10 @@
 /**
- * J2D (jQuery plugin of the fork j2Ds)
+ * J2D (jQuery Canvas Graphic Engine plugin)
  *
- * @authors Skaner, DeVinterX
- * @license BSD, zlib
- * @version 0.1.8-dev
+ * @authors DeVinterX, Skaner(j2Ds)
+ * @license BSD
+ * @version 0.2.0-dev
  */
 
-if (global === undefined) var global = window;
-if (typeof define !== 'function' || define.amd) global.J2D = {};
+if (typeof define !== 'function' || define.amd) window.J2D = true;
 

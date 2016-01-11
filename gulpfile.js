@@ -1,13 +1,14 @@
 'use strict';
 
 var gulp = require('gulp');
-var jshint = require('gulp-jshint');
+var babel = require("gulp-babel");
 var uglify = require('gulp-uglify');
 var csso = require('gulp-csso');
 var imagemin = require('gulp-imagemin');
 var sourcemaps = require('gulp-sourcemaps');
 var rename = require('gulp-rename');
 var livereload = require('gulp-livereload');
+var plumber = require('gulp-plumber');
 var del = require('del');
 var st = require('st');
 var fs = require('fs');
@@ -24,21 +25,13 @@ var paths = {
     scripts: [
         'src/js/**/*.js'
     ],
-    scriptsCompile: [
-        'src/js/vanilla.override.js',
-        'src/js/j2d/j2d.frame.js',
-        'src/js/j2d/j2d.scene.js',
-        'src/js/j2d/j2d.layers.js',
-        'src/js/jquery.j2d.js',
-        'src/js/**/*.js'
-    ],
     css: ['src/css/**/*.css'],
     images: ['src/img/**/*'],
 
     example: [
-        'examples/2dist/index.html',
-        'examples/2dist/application.js',
-        'examples/2dist/style.css'
+        'example/2dist/index.html',
+        'example/2dist/application.js',
+        'example/2dist/style.css'
     ],
     vendor: ['libs/require.min.js', 'vendor/jquery/dist/jquery.min.js']
 };
@@ -56,20 +49,38 @@ gulp.task('clean', function () {
 /** Developer example **/
 gulp.task('example-dist', [], function () {
     gulp.src(paths.example)
+        .pipe(plumber({
+            errorHandler: function (err) {
+                console.log(err);
+                this.emit('end');
+            }
+        }))
         .pipe(newer('dist'))
         .pipe(gulp.dest('dist'))
         .pipe(livereload());
     gulp.src(paths.vendor)
+        .pipe(plumber({
+            errorHandler: function (err) {
+                console.log(err);
+                this.emit('end');
+            }
+        }))
         .pipe(newer('dist/vendor'))
         .pipe(gulp.dest('dist/vendor'))
         .pipe(livereload());
 });
 
-/** JS Scripts **/
-gulp.task('compile-script', [], function () {
-    gulp.src(paths.scriptsCompile)
-        .pipe(sourcemaps.init({loadMaps: true}))
-        .pipe(concat('jquery.j2d.all.js'))
+gulp.task('js-scripts', [], function () {
+    gulp.src(paths.scripts)
+        .pipe(plumber({
+            errorHandler: function (err) {
+                console.log(err);
+                this.emit('end');
+            }
+        }))
+        .pipe(sourcemaps.init())
+        .pipe(babel())
+        .pipe(concat('jquery.j2d.js'))
         .pipe(uglify())
         .pipe(header(fs.readFileSync('src/header.js', 'utf8')))
         .pipe(sourcemaps.write('./'))
@@ -83,29 +94,14 @@ gulp.task('compile-script', [], function () {
         }))
         .pipe(replace('.js.map', '.min.map'))
         .pipe(gulp.dest('dist/js'));
-});
-
-gulp.task('js-scripts', [], function () {
-    gulp.src(paths.scripts)
-        //.pipe(jshint())
-        .pipe(newer('dist/js'))
-        .pipe(sourcemaps.init({loadMaps: true}))
-        .pipe(uglify())
-        .pipe(header(fs.readFileSync('src/header.js', 'utf8')))
-        .pipe(sourcemaps.write('./'))
-        .pipe(rename(function (path) {
-            if (path.basename.substr(path.basename.length - 4) !== '.min' && path.extname === '.js') {
-                path.basename += '.min';
-            }
-            if (path.basename.substr(path.basename.length - 3) === '.js' && path.extname === '.map') {
-                path.basename = path.basename.slice(0, path.basename.length - 3) + '.min';
-            }
-        }))
-        .pipe(replace('.js.map', '.min.map'))
-        .pipe(gulp.dest('dist/js'))
-        .pipe(livereload());
 
     gulp.src(['vendor/requirejs/require.js'])
+        .pipe(plumber({
+            errorHandler: function (err) {
+                console.log(err);
+                this.emit('end');
+            }
+        }))
         .pipe(newer('libs'))
         .pipe(sourcemaps.init({loadMaps: true}))
         .pipe(uglify({preserveComments: 'license'}))
@@ -125,6 +121,12 @@ gulp.task('js-scripts', [], function () {
 /** CSS Style **/
 gulp.task('css-style', [], function () {
     gulp.src(paths.css)
+        .pipe(plumber({
+            errorHandler: function (err) {
+                console.log(err);
+                this.emit('end');
+            }
+        }))
         .pipe(newer('dist/css'))
         .pipe(csso())
         .pipe(rename(function (path) {
@@ -137,6 +139,12 @@ gulp.task('css-style', [], function () {
 /** Images **/
 gulp.task('images', [], function () {
     return gulp.src(paths.images)
+        .pipe(plumber({
+            errorHandler: function (err) {
+                console.log(err);
+                this.emit('end');
+            }
+        }))
         .pipe(newer('dist/img'))
         .pipe(imagemin({optimizationLevel: 5}))
         .pipe(gulp.dest('dist/img'))
@@ -175,7 +183,6 @@ gulp.task('make', ['clean'], function () {
     gulp.start('js-scripts');
     gulp.start('css-style');
     gulp.start('images');
-    gulp.start('compile-script');
     gulp.start('example-dist');
 });
 

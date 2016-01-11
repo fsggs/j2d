@@ -1,5 +1,5 @@
 # jQuery.j2d
-jQuery.j2d is jQuery adaptation of [j2ds](https://github.com/SkanerSoft/J2ds) graphic lib.
+jQuery.j2d is jQuery Canvas Graphic Engine plugin.
 
 ## Documentation
 [Русская документация](https://github.com/fsggs/jquery.j2d/wiki/ru_Home)
