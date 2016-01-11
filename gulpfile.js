@@ -86,7 +86,7 @@ gulp.task('js-scripts', [], function () {
             'var _typeof = typeof Symbol === "function" && _typeof(Symbol.iterator) === "symbol" ? function (obj) {',
             'var _typeof = typeof Symbol === "function" && typeof(Symbol.iterator) === "symbol" ? function (obj) {'
         ))
-        //.pipe(uglify())
+        .pipe(uglify())
         .pipe(header(fs.readFileSync('src/header.js', 'utf8')))
         .pipe(sourcemaps.write('./'))
         .pipe(rename(function (path) {

@@ -21,7 +21,6 @@ var defaults = {
     webGL: false
 };
 
-
 export default class J2D {
     constructor() {
     }
