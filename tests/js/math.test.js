@@ -8,7 +8,7 @@
 
 (function (root, factory) {
     if (typeof define === 'function' && define.amd) {
-        define('utils/MathUtil', [], factory);
+        define(['utils/MathUtil'], factory);
     } else if (typeof module === "object" && typeof module.exports === "object") {
         module.exports = factory(root.MathUtil);
     } else {
