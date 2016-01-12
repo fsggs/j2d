@@ -6,34 +6,36 @@
  * @version 0.2.0-dev
  */
 
-interface IVector2d {
+/* ------------------------------------------ Utils ------------------------------------------ */
+
+interface Vector2d {
     x : number
     y : number
 
-    constructor(x:number, y:number) : IVector2d
+    constructor(x:number, y:number) : Vector2d
     toArray() : Array<number>
-    fromArray(array:Array<number>) : IVector2d
+    fromArray(array:Array<number>) : Vector2d
     toString() : string
 
     getX() : number
     getY() : number
-    getCoordinates() : IVector2d
+    getCoordinates() : Vector2d
 }
 
-interface IVector2dInteger extends IVector2d {
-    constructor(x:number, y:number) : IVector2dInteger
+interface Vector2dInteger extends Vector2d {
+    constructor(x:number, y:number) : Vector2dInteger
 }
 
-interface IDeviceUtil {
-    constructor() : IDeviceUtil
-    resize(width ?:number, height ?:number) : IDeviceUtil
+interface DeviceUtil {
+    constructor() : DeviceUtil
+    reCalculateSize() : DeviceUtil
 
     getWidth(): number
     getHeight(): number
-    getSize(): IVector2dInteger
+    getSize(): Vector2dInteger
 }
 
-interface IMathUtil {
+interface MathUtil {
     number2Integer(number:number):number
 
     randomColor(min:number, max:number, opacity:number):string
@@ -41,36 +43,168 @@ interface IMathUtil {
     random(min:number, max:number, omitZero:boolean):number
 
     degree2Radian(degree:number):number
+
+    radian2Degree(radian:number):number
 }
 
-/* Nodes */
-interface IBaseNode {
-    constructor(data:Object) : IBaseNode
+/* ------------------------------------------ Nodes ------------------------------------------ */
+
+interface BaseNode {
+    constructor(data:Object) : BaseNode
 
     mergeData(properties:Object) : Object
     saveJSON() : string
     loadJSON(json:string) : Object
 
-    getPosition() : IVector2d
-    setPosition(position:IVector2d) : IBaseNode
+    getPosition() : Vector2d
+    setPosition(position:Vector2d) : BaseNode
 
-    getSize() : IVector2d
-    setSize(size:IVector2d) : IBaseNode
+    getSize() : Vector2d
+    setSize(size:Vector2d) : BaseNode
 
-    getOffset() : IVector2d
-    setOffset(offset:IVector2d) : IBaseNode
+    getOffset() : Vector2d
+    setOffset(offset:Vector2d) : BaseNode
 
-    render(debug:number) : IBaseNode
+    render(debug:number) : BaseNode
 }
 
-interface ICollectionNode extends IBaseNode {
-    constructor(data:Object) : ICollectionNode
+interface CollectionNode extends BaseNode {
+    constructor(data:Object) : CollectionNode
 }
 
-interface ICameraNode extends IBaseNode {
-    constructor(data:Object) : ICameraNode
+interface CameraNode extends BaseNode {
+    constructor(data:Object) : CameraNode
 }
 
-interface IRectNode extends IBaseNode {
-    constructor(data:Object) : IRectNode
+interface RectNode extends BaseNode {
+    constructor(data:Object) : RectNode
+}
+
+
+/* ------------------------------------------ Exceptions ------------------------------------------ */
+
+/**
+ * Default Exception
+ */
+interface Exception extends Error {
+    /**
+     * Create custom exception with message.
+     * @param {string} message
+     */
+    constructor(message) : Exception
+
+    /**
+     * Convert exception to String
+     * @returns {string|}
+     */
+    toString() : String
+}
+/**
+ * RuntimeException
+ */
+interface RuntimeException extends Exception {
+    /**
+     * Create RuntimeException exception with message.
+     * @param {string} message
+     */
+    constructor(message) : RuntimeException
+}
+
+/**
+ * InvalidArgumentException
+ */
+interface InvalidArgumentException extends Exception {
+    /**
+     * Create InvalidArgumentException exception with message.
+     * @param {string} message
+     */
+    constructor(message) : InvalidArgumentException
+}
+
+/**
+ * BadFunctionCallException
+ */
+interface BadFunctionCallException extends Exception {
+    /**
+     * Create BadFunctionCallException exception with message.
+     * @param {string} message
+     */
+    constructor(message) : BadFunctionCallException
+}
+
+/**
+ * BadMethodCallException
+ */
+interface BadMethodCallException extends Exception {
+    /**
+     * Create BadMethodCallException exception with message.
+     * @param {string} message
+     */
+    constructor(message) : BadMethodCallException
+}
+
+/**
+ * LengthException
+ */
+interface LengthException extends Exception {
+    /**
+     * Create LengthException exception with message.
+     * @param {string} message
+     */
+    constructor(message) : LengthException
+}
+
+/**
+ * LogicException
+ */
+interface LogicException extends Exception {
+    /**
+     * Create LogicException exception with message.
+     * @param {string} message
+     */
+    constructor(message) : LogicException
+}
+
+/**
+ * OutOfBoundsException
+ */
+interface OutOfBoundsException extends Exception {
+    /**
+     * Create OutOfBoundsException exception with message.
+     * @param {string} message
+     */
+    constructor(message) : OutOfBoundsException
+}
+
+/**
+ * OutOfRangeException
+ */
+interface OutOfRangeException extends Exception {
+    /**
+     * Create OutOfRangeException exception with message.
+     * @param {string} message
+     */
+    constructor(message) : OutOfRangeException
+}
+
+/**
+ * RangeException
+ */
+interface RangeException extends Exception {
+    /**
+     * Create RangeException exception with message.
+     * @param {string} message
+     */
+    constructor(message) : RangeException
+}
+
+/**
+ * UnexpectedValueException
+ */
+interface UnexpectedValueException extends Exception {
+    /**
+     * Create UnexpectedValueException exception with message.
+     * @param {string} message
+     */
+    constructor(message) : UnexpectedValueException
 }

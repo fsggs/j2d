@@ -20,6 +20,8 @@ define(function(require) {
     var $ = require('jquery'),
         J2D = require('jquery.j2d');
 
+    console.log($, J2D);
+
     J2D.initPlugin();
 
     $(window.document).ready(function () {

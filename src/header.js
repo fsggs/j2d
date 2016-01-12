@@ -6,5 +6,6 @@
  * @version 0.2.0-dev
  */
 
-if (typeof define !== 'function' || define.amd) window.J2D = true;
+if (global === undefined) {var global = window || this}
+if (typeof define !== 'function' || !define.amd) {global.J2D = true; global.exports = {}}
 

@@ -1,8 +1,6 @@
 'use strict';
 
 var gulp = require('gulp');
-var qunit = require('gulp-qunit');
-var babel = require("gulp-babel");
 var uglify = require('gulp-uglify');
 var csso = require('gulp-csso');
 var imagemin = require('gulp-imagemin');
@@ -15,6 +13,7 @@ var st = require('st');
 var fs = require('fs');
 var opn = require('opn');
 
+var Karma = require('karma').Server;
 var concat = require('gulp-concat');
 var header = require('gulp-header');
 var replace = require('gulp-replace');
@@ -30,9 +29,9 @@ var paths = {
     images: ['src/img/**/*'],
 
     example: [
-        'example/2dist/index.html',
-        'example/2dist/application.js',
-        'example/2dist/style.css'
+        'tests/2dist/index.html',
+        'tests/2dist/application.js',
+        'tests/2dist/style.css'
     ],
     vendor: ['libs/require.min.js', 'vendor/jquery/dist/jquery.min.js']
 };
@@ -80,12 +79,7 @@ gulp.task('js-scripts', [], function () {
             }
         }))
         .pipe(sourcemaps.init())
-        .pipe(babel())
         .pipe(concat('jquery.j2d.js'))
-        .pipe(replace( // Fix babel compile bug
-            'var _typeof = typeof Symbol === "function" && _typeof(Symbol.iterator) === "symbol" ? function (obj) {',
-            'var _typeof = typeof Symbol === "function" && typeof(Symbol.iterator) === "symbol" ? function (obj) {'
-        ))
         .pipe(uglify())
         .pipe(header(fs.readFileSync('src/header.js', 'utf8')))
         .pipe(sourcemaps.write('./'))
@@ -183,10 +177,23 @@ gulp.task('browser-firefox', function () {
     opn('http://127.0.0.1:' + server.port, {app: 'firefox'});
 });
 
-/** Test **/
-gulp.task('tests', function () {
-    return gulp.src('./tests/test-runner.html')
-        .pipe(qunit());
+/**
+ * Run test once and exit
+ */
+gulp.task('test', function (done) {
+    new Karma({
+        configFile: __dirname + '/tests/karma.conf.js',
+        singleRun: true
+    }, done).start();
+});
+
+/**
+ * Watch for file changes and re-run tests on each change
+ */
+gulp.task('tdd', function (done) {
+    new Karma({
+        configFile: __dirname + '/tests/karma.conf.js'
+    }, done).start();
 });
 
 /** Make **/

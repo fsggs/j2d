@@ -6,22 +6,38 @@
  * @version 0.2.0-dev
  */
 
-import Vector2d from "Vector2d";
-
-/**
- * @implements {IVector2dInteger}
- */
-export default class Vector2dInteger extends Vector2d {
-    constructor(x, y) {
-        super(x >> 0, y >> 0);
+(function (root, factory) {
+    if (typeof define === 'function' && define.amd) {
+        define('utils/Vector2dInteger', ['utils/Vector2d'], factory);
+    } else {
+        factory(root.Vector2d);
     }
+}(typeof window !== "undefined" ? window : global, function (Vector2d) {
+    "use strict";
 
-    fromArray(array) {
+    /**
+     * @param {number} x
+     * @param {number} y
+     */
+    var Vector2dInteger = function (x, y) {
+        Vector2d.call(this, x >> 0, y >> 0);
+    };
+
+    Vector2dInteger.prototype = Object.create(Vector2d.prototype);
+    Vector2dInteger.prototype.constructor = Vector2dInteger;
+
+    /**
+     * @param {Array<number>} array
+     * @returns {Vector2d|Vector2dInteger}
+     */
+    Vector2dInteger.prototype.fromArray = function (array) {
         this.x = array[0] >> 0;
         this.y = array[1] >> 0;
 
-        return this
-    }
-}
+        return this;
+    };
 
-if (window.J2D === undefined) window.Vector2dInteger = Vector2dInteger;
+    if (window.J2D === undefined) window.Vector2dInteger = Vector2dInteger;
+
+    return Vector2dInteger;
+}));
