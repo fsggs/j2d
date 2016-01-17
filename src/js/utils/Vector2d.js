@@ -9,12 +9,12 @@
 (function (root, factory) {
     if (typeof define === 'function' && define.amd) {
         define('utils/Vector2d', [], factory);
-    } else if (typeof module === "object" && typeof module.exports === "object") {
+    } else if (typeof module === 'object' && typeof module.exports === 'object') {
         module.exports = factory();
     } else {
         factory();
     }
-}(typeof window !== "undefined" ? window : global, function () {
+}(typeof window !== 'undefined' ? window : global, function () {
     "use strict";
 
     /**

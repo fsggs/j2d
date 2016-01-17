@@ -9,12 +9,12 @@
 (function (root, factory) {
     if (typeof define === 'function' && define.amd) {
         define('jquery.j2d', ['jquery'], factory);
-    } else if (typeof module === "object" && typeof module.exports === "object") {
-        module.exports = factory(root.jQuery);
+    } else if (typeof module === 'object' && typeof module.exports === 'object') {
+        module.exports = factory(require('jquery'));
     } else {
         factory(root.jQuery);
     }
-}(typeof window !== "undefined" ? window : global, function ($) {
+}(typeof window !== 'undefined' ? window : global, function ($) {
     "use strict";
 
     var defaults = {

@@ -8,13 +8,13 @@
 
 (function (root, factory) {
     if (typeof define === 'function' && define.amd) {
-        define('jquery.j2d', ['jquery', 'utils/Vector2dInteger'], factory);
-    } else if (typeof module === "object" && typeof module.exports === "object") {
-        module.exports = factory(root.jQuery, root.Vector2dInteger);
+        define('utils/DeviceUtil', ['jquery', 'utils/Vector2dInteger'], factory);
+    } else if (typeof module === 'object' && typeof module.exports === 'object') {
+        module.exports = factory(require('jquery'), require('utils/Vector2dInteger'));
     } else {
         factory(root.jQuery, root.Vector2dInteger);
     }
-}(typeof window !== "undefined" ? window : global, function ($, Vector2dInteger) {
+}(typeof window !== 'undefined' ? window : global, function ($, Vector2dInteger) {
     "use strict";
 
     /**

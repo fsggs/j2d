@@ -18,7 +18,7 @@ requirejs.config({
     baseUrl: '/base/src/js',
 
     paths: {
-        'jquery': 'dist/vendor/jquery.min'
+        'jquery': '../../dist/vendor/jquery.min'
     },
 
     // ask Require.js to load these files (all our tests)
