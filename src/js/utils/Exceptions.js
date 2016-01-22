@@ -170,16 +170,16 @@
     UnexpectedValueException.prototype.constructor = UnexpectedValueException;
 
     if (typeof define !== 'function' || !define.amd) {
-        window.Exception = Exception;
-        window.RuntimeException = RuntimeException;
-        window.InvalidArgumentException = InvalidArgumentException;
-        window.BadFunctionCallException = BadFunctionCallException;
-        window.BadMethodCallException = BadMethodCallException;
-        window.LengthException = LengthException;
-        window.LogicException = LogicException;
-        window.OutOfBoundsException = OutOfBoundsException;
-        window.OutOfRangeException = OutOfRangeException;
-        window.RangeException = RangeException;
-        window.UnexpectedValueException = UnexpectedValueException;
+        global.Exception = Exception;
+        global.RuntimeException = RuntimeException;
+        global.InvalidArgumentException = InvalidArgumentException;
+        global.BadFunctionCallException = BadFunctionCallException;
+        global.BadMethodCallException = BadMethodCallException;
+        global.LengthException = LengthException;
+        global.LogicException = LogicException;
+        global.OutOfBoundsException = OutOfBoundsException;
+        global.OutOfRangeException = OutOfRangeException;
+        global.RangeException = RangeException;
+        global.UnexpectedValueException = UnexpectedValueException;
     }
 }));

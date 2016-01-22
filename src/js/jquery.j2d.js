@@ -135,7 +135,7 @@
         //FrameManager.pulse();
     };
 
-    window.J2D = (window.J2D === undefined) ? J2D : undefined;
+    global.J2D = (global.J2D === undefined) ? J2D : undefined;
 
     return J2D;
 }));

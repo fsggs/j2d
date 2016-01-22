@@ -13,6 +13,9 @@ Object.keys(window.__karma__.files).forEach(function(file) {
 
 console.log(allTestFiles);
 
+if (global === undefined) {var global = window || this}
+if (typeof define !== 'function' || !define.amd) {global.J2D = true; global.exports = {}}
+
 requirejs.config({
     // Karma serves files from '/base'
     baseUrl: '/base/src/js',

@@ -72,7 +72,7 @@
         return "(" + this.x + "," + this.y + ")";
     };
 
-    if (window.J2D === undefined) window.Vector2d = Vector2d;
+    if (global.J2D === undefined) global.Vector2d = Vector2d;
 
     return Vector2d
 }));

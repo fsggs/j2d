@@ -39,7 +39,7 @@
         return this;
     };
 
-    if (window.J2D === undefined) window.Vector2dInteger = Vector2dInteger;
+    if (global.J2D === undefined) global.Vector2dInteger = Vector2dInteger;
 
     return Vector2dInteger;
 }));
