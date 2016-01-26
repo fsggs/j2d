@@ -8,17 +8,17 @@
 
 (function (root, factory) {
     if (typeof define === 'function' && define.amd) {
-        define('core/FrameManager', [], factory);
+        define('core/FrameManager', ['utils/ArrayMap'], factory);
     } else if (typeof module === 'object' && typeof module.exports === 'object') {
-        module.exports = factory();
+        module.exports = factory(require('utils/ArrayMap'));
     } else {
-        factory();
+        factory(root.ArrayMap);
     }
-}(typeof window !== 'undefined' ? window : global, function () {
+}(typeof window !== 'undefined' ? window : global, function (ArrayMap) {
     "use strict";
 
     var instance;
-    var engineStack = [], dataStack = [];
+    var engineStack = new ArrayMap(), dataStack = new ArrayMap();
 
     var options = {
         frameLimit: 60,
@@ -108,20 +108,20 @@
                 var data = dataStack[index];
 
                 data.now = Date.now();
-                data.j2d.options.deltaTime = data.deltaTime = (data.now - data.lastTime) / 100.0;
+                data.j2d.data.deltaTime = data.deltaTime = (data.now - data.lastTime) / 100.0;
 
-                if (data.j2d.options.io && !data.j2d.options.pause) data.j2d.options.io.update();
+                if (data.j2d.data.io && !data.j2d.data.pause) data.j2d.data.io.update();
                 if ((data.deltaTime * 100.0) > data.interval) {
                     data.lastTime = data.now - ((data.deltaTime * 100.0) % data.interval);
 
-                    if (!data.j2d.options.pause) {
-                        data.j2d.options.deltaTime = data.deltaTime;
+                    if (!data.j2d.data.pause) {
+                        data.j2d.data.deltaTime = data.deltaTime;
 
                         engine(timestamp, data);
 
                     }
                 }
-                if (data.j2d.options.io && !data.j2d.options.pause) data.j2d.options.io.clear();
+                if (data.j2d.data.io && !data.j2d.data.pause) data.j2d.data.io.clear();
             }
         }
 
@@ -145,7 +145,7 @@
         }
     };
 
-    if (window.J2D === undefined) window.FrameManager = FrameManager;
+    if (window.J2D === undefined) window.FrameManager = FrameManager.Init();
 
-    return FrameManager;
+    return FrameManager.Init();
 }));
