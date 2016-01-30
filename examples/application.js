@@ -16,9 +16,9 @@ define('Application', [
     J2D.initPlugin();
 
     $(global.document).ready(function () {
-        var j2d = window.j2ds = $('#j2d').j2d();
-        j2d.setSmoothing(false);
-        // j2d.enableWebGL();
+        var j2d = window.j2d = $('#j2d').j2d();
+        j2d.smoothing = false;
+        // j2d.WebGL = true;
 
         var scene = j2d.getSceneManager();
 

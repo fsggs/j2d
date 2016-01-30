@@ -6,33 +6,34 @@
  * @version 0.2.0-dev
  */
 
+/*
+ * TODO:: Events System
+ */
+
 (function (root, factory) {
     if (typeof define === 'function' && define.amd) {
         define('jquery.j2d', [
             'jquery',
-            'core/WebGL2D',
             'core/FrameManager',
             'core/SceneManager',
-            'core/LayersManager'
+            'utils/DeviceUtil'
         ], factory);
     } else if (typeof module === 'object' && typeof module.exports === 'object') {
         module.exports = factory(
             require('jquery'),
-            require('core/WebGL2D'),
             require('core/FrameManager'),
             require('core/SceneManager'),
-            require('core/LayersManager')
+            require('utils/DeviceUtil')
         );
     } else {
         factory(
             root.jQuery,
-            root.WebGL2D,
             root.FrameManager,
             root.SceneManager,
-            root.LayersManager
+            root.DeviceUtil
         );
     }
-}(typeof window !== 'undefined' ? window : global, function ($, WebGL2D, FrameManager, SceneManager, LayersManager) {
+}(typeof window !== 'undefined' ? window : global, function ($, FrameManager, SceneManager, DeviceUtil) {
     "use strict";
 
     var defaults = {
@@ -49,107 +50,94 @@
     };
 
     var J2D = function J2D(element, data) {
+        var j2d = this;
         this.element = element;
         this.data = data;
 
-        this.layers = new LayersManager(this, WebGL2D);
-        this.scene = new SceneManager(this, WebGL2D);
+        this.device = new DeviceUtil();
+        this.scene = new SceneManager(this);
+
+        Object.defineProperty(this, 'WebGL', {
+            get: function () {
+                return j2d.data.webGL;
+            },
+            set: function (value) {
+                j2d.data.webGL = !!value;
+                if (!!value && !j2d.data.webGL) {
+                    j2d.element.addClass('WebGL');
+                } else if (!value && j2d.data.webGL) {
+                    j2d.element.removeClass('WebGL');
+                }
+            }
+        });
+
+        Object.defineProperty(this, 'smoothing', {
+            get: function () {
+                return j2d.data.smoothing;
+            },
+            set: function (value) {
+                j2d.data.smoothing = !!value;
+            }
+        });
+
+        Object.defineProperty(this, 'isPlay', {
+            get: function () {
+                return !j2d.data.pause;
+            },
+            set: function () {
+            }
+        });
     };
 
     J2D.prototype.getIOHandler = function () {
         return this.data.io;
     };
-    /** -links getters **/
 
-    /** +GameEngine **/
     J2D.prototype.IOHandler = function (handler) {
         return this.data.io = handler;
     };
 
-    // старт игры
-    J2D.prototype.start = function (engine, frameLimit) {
-        var j2d = this;
-
-        engine = engine || function () {
-                j2d.element.html('Please init game engine function!');
-                console.warn('Please init game engine function for ' + j2d.data.id + '!');
-            };
-
-        FrameManager.start(j2d.data.id, engine, {
-            j2d: j2d,
-            frameLimit: frameLimit
-        });
-
-        j2d.data.frameLimit = frameLimit;
-
-        j2d.element.trigger('start');
+    /** +GameEngine **/
+    J2D.prototype.start = function () {
+        this.scene.start();
+        this.trigger('start');
     };
 
     J2D.prototype.stop = function () {
-        FrameManager.stop(this.data.id);
-        this.element.trigger('stop');
+        this.scene.stop();
+        this.trigger('stop');
     };
 
     J2D.prototype.pause = function () {
         if (this.data.io) this.data.io.flush();
         this.data.pause = true;
         this.element.addClass('pause');
-        this.element.trigger('pause');
+        this.trigger('pause');
     };
 
     J2D.prototype.resume = function () {
         this.element.removeClass('pause').focus();
         this.data.pause = false;
         if (this.data.io) this.data.io.flush();
-        this.element.trigger('resume');
-    };
-
-    J2D.prototype.isPlay = function () {
-        return !this.data.pause;
-    };
-
-    J2D.prototype.enableWebGL = function () {
-        this.data.webGL = true;
-        this.element.addClass('WebGL');
-    };
-
-    J2D.prototype.setSmoothing = function (value) {
-        this.data.smoothing = !!value;
-    };
-
-    J2D.prototype.disableWebGL = function () {
-        this.data.webGL = false;
-        this.element.removeClass('WebGL');
-    };
-
-    J2D.prototype.setGameState = function (engine) {
-        var j2d = this;
-
-        engine = engine || function () {
-                j2d.element.html('Please set game engine function!');
-                console.warn('Please set game engine function for ' + j2d.data.id + '!');
-            };
-
-        FrameManager.stop(j2d.data.id);
-
-        FrameManager.start(j2d.data.id, engine, {
-            j2d: j2d,
-            frameLimit: j2d.data.frameLimit
-        });
+        this.trigger('resume');
     };
     /** -GameEngine **/
-
-    /** +Layers **/
-    J2D.prototype.getLayerManager = function () {
-        return this.layers;
-    };
-    /** -Layers **/
 
     /** +Scene **/
     J2D.prototype.getSceneManager = function () {
         return this.scene;
     };
     /** -Scene **/
+
+    /** +Layers **/
+    J2D.prototype.getLayersManager = function () {
+        return this.scene.layersManager;
+    };
+    /** -Layers **/
+
+    J2D.prototype.getFrameManager = function () {
+        return this.scene.frameManager;
+    };
 
     J2D.prototype.on = function () {
     };
@@ -211,11 +199,7 @@
                 $array.push($(this).data('j2d'));
             });
 
-            if (1 === $array.length) {
-                return $(this).data('j2d');
-            } else {
-                return $array;
-            }
+            return (1 === $array.length) ? $(this).data('j2d') : $array;
         };
 
         var isFullScreen = function () {
@@ -230,7 +214,7 @@
         $(document).on('fullscreenchange webkitfullscreenchange mozfullscreenchange MSFullscreenChange', function () {
             var fullScreen = isFullScreen();
             if (!fullScreen) {
-                // $('div.canvas[guid].active').data('j2d').scene.resizeToFullPage(fullScreen); TODO::
+                $('div.canvas[guid].active').data('j2d').scene.resizeToFullPage(fullScreen);
                 $('div.canvas[guid]:not(.active)').toggle(!fullScreen);
             }
         });
@@ -271,15 +255,15 @@
 
         $(window).on('resize', function () {
             $('div.canvas[guid]').each(function () {
-                $(this).data('j2d').device.resize();
+                $(this).data('j2d').device.onResize();
             });
             var fullScreen = isFullScreen();
             if (fullScreen) {
-                // $('div.canvas[guid].active').data('j2d').scene.resizeToFullPage(fullScreen); TODO::
+                $('div.canvas[guid].active').data('j2d').scene.resizeToFullPage(fullScreen);
             }
         });
 
-        FrameManager.pulse();
+        FrameManager.Init().pulse();
     };
 
     global.J2D = (global.J2D === undefined) ? J2D : undefined;

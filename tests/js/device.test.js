@@ -18,7 +18,7 @@
     "use strict";
 
     test('DeviceUtil()', function () {
-        var device = (new Device()).reCalculateSize();
+        var device = (new Device()).onResize();
         deepEqual(device.getSize(), new Vector2dInteger(400, 300));
         equal(device.getWidth(), 400);
         equal(device.getHeight(), 300);

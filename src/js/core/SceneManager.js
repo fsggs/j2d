@@ -6,18 +6,39 @@
  * @version 0.2.0-dev
  */
 
+/*
+ * TODO:: global layer collection
+ * TODO:: render
+ *
+ * TODO:: GameStateManager to Scene
+ * TODO:: ViewportManager
+ */
+
 (function (root, factory) {
     if (typeof define === 'function' && define.amd) {
-        define('core/SceneManager', ['jquery'], factory);
+        define('core/SceneManager', [
+            'jquery',
+            'core/WebGL2D',
+            'core/FrameManager',
+            'core/LayersManager'
+        ], factory);
     } else if (typeof module === 'object' && typeof module.exports === 'object') {
-        module.exports = factory(require('jquery'));
+        module.exports = factory(
+            require('jquery'),
+            require('core/WebGL2D'),
+            require('core/FrameManager'),
+            require('core/LayersManager')
+        );
     } else {
-        factory(root.jQuery);
+        factory(
+            root.jQuery,
+            root.WebGL2D,
+            root.FrameManager,
+            root.LayersManager
+        );
     }
-}(typeof window !== 'undefined' ? window : global, function ($) {
+}(typeof window !== 'undefined' ? window : global, function ($, WebGL2D, FrameManager, LayersManager) {
     "use strict";
-
-    var WebGL2D;
 
     var defaults = {
         width: 0,
@@ -27,6 +48,7 @@
         originalHeight: 0,
         originalMargin: 0,
 
+        visible: true,
         position: 'absolute',
         top: 0,
         left: 0,
@@ -36,19 +58,27 @@
 
         frameLimit: 60,
 
-        enableFullScreen: false
+        enableFullScreen: false,
+
+        viewport: {x: 0, y: 0},
+
+        // TODO::
+        gameState: function () {
+        }
     };
 
-    var SceneManager = function (j2d, WebGL_API) {
+    var SceneManager = function (j2d) {
         var sceneManager = this;
         this.j2d = j2d;
 
         this.canvas = null;
         this.context = null;
 
-        WebGL2D = WebGL_API;
+        /** @type {FrameManager} */
+        this.frameManager = FrameManager.Init();
+        this.layersManager = new LayersManager(this.j2d);
 
-        Object.defineProperty(this, "backgroundColor", {
+        Object.defineProperty(this, 'backgroundColor', {
             get: function () {
                 return sceneManager.data.backgroundColor;
             },
@@ -59,7 +89,7 @@
             }
         });
 
-        Object.defineProperty(this, "opacity", {
+        Object.defineProperty(this, 'opacity', {
             get: function () {
                 return sceneManager.data.opacity;
             },
@@ -69,9 +99,33 @@
             }
         });
 
-        //this.enableFullscreen = false;
-        //this.layerName = 'sceneNode';
-        //this.layers = (parent.layers) ? parent.layers : {};
+        Object.defineProperty(this, 'visible', {
+            get: function () {
+                return sceneManager.data.visible;
+            },
+            set: function (value) {
+                sceneManager.data.visible = !!value;
+                sceneManager.canvas.style.display = (!!value) ? 'block' : 'none';
+            }
+        });
+
+        Object.defineProperty(this, 'zIndex', {
+            get: function () {
+                return 1000 - sceneManager.data.zIndex;
+            },
+            set: function (value) {
+                sceneManager.data.zIndex = 1000 + value;
+                sceneManager.canvas.style.zIndex = 1000 + value;
+            }
+        });
+
+        Object.defineProperty(this, 'viewport', {
+            get: function () {
+                return sceneManager.data.viewport;
+            },
+            set: function () {
+            }
+        });
     };
 
     SceneManager.prototype.init = function (options) {
@@ -117,132 +171,149 @@
         this.context.shadowColor = 'rgba(0,0,0,0)';
         if (this.data.backgroundColor) this.backgroundColor = this.data.backgroundColor;
         if (this.data.opacity) this.opacity = this.data.opacity;
+        if (this.data.visible) this.visible = this.data.visible;
+        if (this.data.zIndex) this.zIndex = this.data.zIndex;
 
         this.j2d.element.append(this.canvas);
     };
 
-    SceneManager.prototype.start = function () {
+    SceneManager.prototype.clear = function (pos, size) {
+        if (pos !== undefined && size !== undefined) {
+            this.context.clearRect(pos.x - this.viewport.x, pos.y - this.viewport.y, size.x, size.y);
+        } else {
+            this.context.clearRect(0, 0, this.data.width, this.data.height);
+        }
+        return this;
+    };
 
+    SceneManager.prototype.resize = function (width, height) {
+        this.canvas.width = this.data.width = width;
+        this.canvas.height = this.data.height = height;
+
+        if (this.data.backgroundColor) {
+            this.context.save();
+
+            this.clear();
+            this.backgroundColor = this.data.backgroundColor;
+
+            this.context.restore();
+        }
+        if (!this.j2d.data.smoothing) {
+            this.j2d.util.disableSmoothing(this.context);
+        }
         return this;
     };
 
     SceneManager.prototype.setGameState = function (gameState) {
-        this.j2d.setGameState(gameState);
+        this.data.gameState = gameState || function () {
+                console.warn('Error in game state function!');
+            };
+
+        this.frameManager.stop(this.j2d.data.id);
+        this.frameManager.start(this.j2d.data.id, this.data.gameState, {
+            j2d: this.j2d,
+            frameLimit: this.data.frameLimit
+        });
+
+        this.j2d.trigger('changedGameState');
         return this;
     };
 
-    //SceneManager.prototype.resize = function (width, height) {
-    //    var j2d = this.parent;
-    //
-    //    this.width = width;
-    //    this.height = height;
-    //
-    //    for (var i in j2d.layers.list) {
-    //        if (j2d.layers.list.hasOwnProperty(i)) {
-    //            j2d.layers.list[i].resize(width, height);
-    //        }
-    //    }
-    //};
-    //
-    //SceneManager.prototype.async = function (callback, data) {
-    //    setTimeout(callback.call(callback, data), 0);
-    //};
-    //
-    //SceneManager.prototype.setGameState = function (engine) {
-    //    this.parent.setEngine(engine);
-    //    this.parent.element.trigger('changedGameState');
-    //};
-    //
-    //SceneManager.prototype.start = function (engine, frameLimit) {
-    //    if (this.parent.options.io) {
-    //        this.parent.options.io.init();
-    //    }
-    //    this.parent.element.trigger('beforeStart');
-    //    this.parent.start(engine, frameLimit);
-    //    this.parent.element.trigger('afterStart');
-    //};
+    SceneManager.prototype.async = function (callback, data) {
+        setTimeout(callback.call(callback, data), 0);
+        return this;
+    };
 
-    //SceneManager.prototype.fullScreen = function (fullscreen) {
-    //    var element = document.getElementById(this.parent.element.attr('id'));
-    //
-    //    if (undefined === element.requestFullscreen) {
-    //        element.requestFullscreen = element.webkitRequestFullscreen
-    //            || element.webkitRequestFullScreen
-    //            || element.mozRequestFullScreen
-    //            || element.msRequestFullscreen;
-    //    }
-    //
-    //    if (undefined === document.exitFullscreen) {
-    //        document.exitFullscreen = document.webkitExitFullscreen
-    //            || document.webkitCancelFullScreen
-    //            || document.mozCancelFullScreen
-    //            || document.msExitFullscreen;
-    //    }
-    //    if (fullscreen) {
-    //        element.requestFullscreen();
-    //    } else {
-    //        document.exitFullscreen();
-    //    }
-    //};
-    //
-    //SceneManager.prototype.resizeToFullPage = function (fullscreen) {
-    //    $('div.canvas[guid]:not(.active)').toggle(fullscreen);
-    //
-    //    var j2d = this.parent;
-    //    var scene = this;
-    //
-    //    if (fullscreen) {
-    //        scene.originalWidth = scene.width;
-    //        scene.originalHeight = scene.height;
-    //
-    //        scene.resize(j2d.device.width, j2d.device.height);
-    //        scene.enableFullscreen = true;
-    //
-    //        this.parent.element.width(j2d.device.width).height(j2d.device.height).css('margin', 0);
-    //    } else {
-    //        scene.resize(scene.originalWidth, scene.originalHeight);
-    //        scene.enableFullscreen = false;
-    //
-    //        this.parent.element.width(scene.originalWidth).height(scene.originalHeight).css('margin', scene.originalMargin);
-    //    }
-    //};
-    //
-    //SceneManager.prototype.scaleToFullScreen = function (fullscreen) {
-    //    $('div.canvas[guid]:not(.active)').toggle(fullscreen);
-    //
-    //    var layer, i;
-    //    if (fullscreen) {
-    //        for (i in this.parent.layers.list) {
-    //            if (this.parent.layers.list.hasOwnProperty(i)) {
-    //                layer = this.parent.layers.list[i].canvas;
-    //                layer.style.width = this.parent.device.width + 'px';
-    //                layer.style.height = this.parent.device.height + 'px';
-    //            }
-    //        }
-    //        this.enableFullscreen = true;
-    //        this.parent.element.width(this.parent.device.width).height(this.parent.device.height).css('margin', 0);
-    //    } else {
-    //        for (i in this.parent.layers.list) {
-    //            if (this.parent.layers.list.hasOwnProperty(i)) {
-    //                layer = this.parent.layers.list[i].canvas;
-    //                layer.style.width = this.width + 'px';
-    //                layer.style.height = this.height + 'px';
-    //            }
-    //        }
-    //        this.enableFullscreen = false;
-    //        this.parent.element.width(this.width).height(this.height).css('margin', this.originalMargin);
-    //    }
-    //};
-    //
-    //SceneManager.prototype.toggleFullScreen = function (j2d, data) {
-    //    if (data === undefined) {
-    //        data = {fullscreen: undefined};
-    //    }
-    //    if (!j2d.scene.enableFullscreen || data.fullscreen) {
-    //        j2d.scene.fullScreen(true);
-    //    } else {
-    //        j2d.scene.fullScreen(false);
-    //    }
+    SceneManager.prototype.start = function () {
+        if (this.j2d.data.io) {
+            this.j2d.data.io.init();
+        }
+        this.j2d.trigger('beforeStart');
+
+        this.frameManager.stop(this.j2d.data.id);
+        this.frameManager.start(this.j2d.data.id, this.data.gameState, {
+            j2d: this.j2d,
+            frameLimit: this.data.frameLimit
+        });
+
+        this.j2d.trigger('afterStart');
+        return this;
+    };
+
+    SceneManager.prototype.stop = function () {
+        this.frameManager.stop(this.j2d.data.id);
+        return this;
+    };
+
+    SceneManager.prototype.fullScreen = function (fullscreen) {
+        var element = document.getElementById(this.j2d.element.attr('id'));
+
+        if (undefined === element.requestFullscreen) {
+            //noinspection JSUnresolvedVariable
+            element.requestFullscreen = element.webkitRequestFullscreen
+                || element.webkitRequestFullScreen
+                || element.mozRequestFullScreen
+                || element.msRequestFullscreen;
+        }
+
+        if (undefined === document.exitFullscreen) {
+            //noinspection JSUnresolvedVariable
+            document.exitFullscreen = document.webkitExitFullscreen
+                || document.webkitCancelFullScreen
+                || document.mozCancelFullScreen
+                || document.msExitFullscreen;
+        }
+        if (fullscreen) {
+            element.requestFullscreen();
+        } else {
+            document.exitFullscreen();
+        }
+        return this;
+    };
+
+    SceneManager.prototype.resizeToFullPage = function (fullscreen) {
+        $('div.canvas[guid]:not(.active)').toggle(fullscreen);
+
+        var j2d = this.j2d;
+        var sceneManager = this;
+
+        if (fullscreen) {
+            sceneManager.data.originalWidth = sceneManager.data.width;
+            sceneManager.data.originalHeight = sceneManager.data.height;
+
+            sceneManager.resize(j2d.device.width, j2d.device.height);
+            sceneManager.data.enableFullscreen = true;
+
+            j2d.element
+                .width(j2d.device.width)
+                .height(j2d.device.height)
+                .css('margin', 0);
+        } else {
+            sceneManager.resize(sceneManager.data.originalWidth, sceneManager.data.originalHeight);
+            sceneManager.data.enableFullscreen = false;
+
+            j2d.element
+                .width(sceneManager.data.originalWidth)
+                .height(sceneManager.data.originalHeight)
+                .css('margin', sceneManager.data.originalMargin);
+        }
+        return this;
+    };
+
+    SceneManager.prototype.toggleFullScreen = function (j2d, data) {
+        if (data === undefined) {
+            data = {fullscreen: undefined};
+        }
+        if (!j2d.scene.enableFullscreen || data.fullscreen) {
+            j2d.scene.fullScreen(true);
+        } else {
+            j2d.scene.fullScreen(false);
+        }
+        return this;
+    };
+
+    //SceneManager.prototype.getLayer = function () {
+    //    return this.parent.layers.getLayer('sceneNode');
     //};
 
     //// Устанавливает позицию для камеры
@@ -261,50 +332,6 @@
     //SceneManager.prototype.viewMove = function (position) {
     //    this.parent.scene.viewport.x += position.x;
     //    this.parent.scene.viewport.y += position.y;
-    //};
-
-    //! Очистка отрисованного предыдущего кадра сцены
-    //SceneManager.prototype.clear = function () {
-    //    this.getLayer().clear();
-    //};
-
-    //SceneManager.prototype.getLayer = function () {
-    //    return this.parent.layers.getLayer('sceneNode');
-    //};
-
-    //// инициализация сцены
-    //SceneManager.prototype.init = function (width, heigth) {
-    //    var j2d = this.parent;
-    //    j2d.element.trigger('beforeInit');
-    //
-    //    this.width = this.originalWidth = width;
-    //    this.height = this.originalHeight = heigth;
-    //    this.originalMargin = j2d.element.css('margin');
-    //
-    //    this.parent.element.width(width).height(heigth);
-    //
-    //    j2d.layers.add('sceneNode', 0);
-    //
-    //    this.context = j2d.layers.getLayer('sceneNode').context;
-    //    this.canvas = j2d.layers.getLayer('sceneNode').canvas;
-    //    this.visible = true;
-    //
-    //    this.cancelClear = false;
-    //
-    //    /* Вид "камеры" */
-    //    this.viewport = j2d.vector.v2f(0, 0);
-    //
-    //    j2d.element.trigger('afterInit');
-    //
-    //    $(window).ready(function () {
-    //        for (var i in j2d.layers.list) {
-    //            if (j2d.layers.list.hasOwnProperty(i)) {
-    //                j2d.element.append(j2d.layers.getLayer(i).canvas);
-    //            }
-    //        }
-    //        j2d.options.ready = true;
-    //        j2d.element.trigger('ready');
-    //    });
     //};
 
     if (global.J2D !== undefined) global.SceneManager = SceneManager;

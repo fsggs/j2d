@@ -28,7 +28,7 @@ interface Vector2dInteger extends Vector2d {
 
 interface DeviceUtil {
     constructor() : DeviceUtil
-    reCalculateSize() : DeviceUtil
+    onResize() : DeviceUtil
 
     getWidth(): number
     getHeight(): number

@@ -28,7 +28,7 @@
     /**
      * @returns {DeviceUtil}
      */
-    DeviceUtil.prototype.reCalculateSize = function () {
+    DeviceUtil.prototype.onResize = function () {
         this.width = window.innerWidth;
         this.height = window.innerHeight;
         return this;
