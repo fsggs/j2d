@@ -72,7 +72,7 @@
                 sceneStartTime: 0,
                 sceneSkipTime: 0,
 
-                asyncRender: false
+                asyncRender: true
             };
 
             if (params.frameLimit !== undefined && params.frameLimit <= options.frameLimit) data.frameLimit = params.frameLimit;
@@ -109,39 +109,39 @@
             }
             options.frameRun = true;
 
+            requestAnimationFrame(function (timestamp) {
+                frameManager.runMainLoop(timestamp, frameManager);
+            });
+
             engineStack.each(function (index) {
                 if (engineStack.hasOwnProperty(index) && 'object' === typeof engineStack[index]) {
                     var engine = engineStack[index];
                     var data = dataStack[index];
 
                     data.now = Date.now();
-                    data.j2d.data.deltaTime = data.deltaTime = (data.now - data.lastTime) / 100.0;
+                    data.deltaTime = (data.now - data.lastTime) / 100.0;
 
                     if (data.j2d.data.io && !data.j2d.data.pause) data.j2d.data.io.update();
-                    if ((data.deltaTime * 100.0) > data.interval) {
-                        data.lastTime = data.now - ((data.deltaTime * 100.0) % data.interval);
 
-                        if (!data.j2d.data.pause) {
-                            data.j2d.data.deltaTime = data.deltaTime;
+                    if (!data.j2d.data.pause) {
+                        if (engine.update !== undefined && 'function' === typeof engine.update) {
+                            setTimeout(engine.update.bind(this, timestamp, data), 0);
+                        }
 
-                            if (engine.update !== undefined && 'function' === typeof engine.update) {
-                                setTimeout(engine.update.call(engine.update, data), 0);
-                            }
+                        if ((data.deltaTime * 100.0) > data.interval) {
+                            data.lastTime = data.now - ((data.deltaTime * 100.0) % data.interval);
+
                             if (engine.render !== undefined && 'function' === typeof engine.render) {
-                                if (this.data.asyncRender) {
-                                    setTimeout(engine.render.call(engine.render, data), 0);
+                                if (data.asyncRender) {
+                                    setTimeout(engine.render.bind(this, timestamp, data), 0);
                                 } else {
-                                    engine.render.call(engine.render, data);
+                                    engine.render(timestamp, data);
                                 }
                             }
                         }
                     }
                     if (data.j2d.data.io && !data.j2d.data.pause) data.j2d.data.io.clear();
                 }
-            });
-
-            requestAnimationFrame(function (timestamp) {
-                frameManager.runMainLoop(timestamp, frameManager);
             });
         };
 

@@ -14,26 +14,23 @@
     if (typeof define === 'function' && define.amd) {
         define('jquery.j2d', [
             'jquery',
-            'core/FrameManager',
             'core/SceneManager',
             'utils/DeviceUtil'
         ], factory);
     } else if (typeof module === 'object' && typeof module.exports === 'object') {
         module.exports = factory(
             require('jquery'),
-            require('core/FrameManager'),
             require('core/SceneManager'),
             require('utils/DeviceUtil')
         );
     } else {
         factory(
             root.jQuery,
-            root.FrameManager,
             root.SceneManager,
             root.DeviceUtil
         );
     }
-}(typeof window !== 'undefined' ? window : global, function ($, FrameManager, SceneManager, DeviceUtil) {
+}(typeof window !== 'undefined' ? window : global, function ($, SceneManager, DeviceUtil) {
     "use strict";
 
     var defaults = {
@@ -168,7 +165,7 @@
 
     /* ------------------------------ Plugin ------------------------------ */
 
-    J2D.initPlugin = function () {
+    (J2D.initPlugin = function () {
         if (window.j2dPlugin !== undefined) return null;
         window.j2dPlugin = {pluginInit: true};
 
@@ -263,9 +260,7 @@
                 $('div.canvas[guid].active').data('j2d').scene.resizeToFullPage(fullScreen);
             }
         });
-
-        FrameManager.Init().pulse();
-    };
+    })();
 
     global.J2D = (global.J2D === undefined) ? J2D : undefined;
 

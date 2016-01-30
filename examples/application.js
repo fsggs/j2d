@@ -14,8 +14,6 @@ define('Application', [
 ], function ($, J2D, InputManager) {
     "use strict";
 
-    J2D.initPlugin();
-
     $(global.document).ready(function () {
         var j2d = window.j2d = $('#j2d').j2d();
         j2d.smoothing = false;
@@ -27,22 +25,25 @@ define('Application', [
         var scene = j2d.getSceneManager();
 
         var GameState = function () {
-            this.update = function (timestamp, data) {
+            var t, x, y;
 
+            this.update = function (timestamp, data) {
+                t = new Date().getTime() * 0.0008;
+                x = Math.sin(t) * 100 + 150;
+                y = Math.cos(t * 0.9) * 100 + 150;
             };
             this.render = function (timestamp, data) {
                 scene.clear();
-                scene.strokeStyle = 'green';
-                scene.context.rect(20, 20, 150, 100);
-                scene.context.stroke();
+                scene.backgroundColor = 'black';
+
+                scene.context.fillStyle = 'yellow';
+                scene.context.fillRect(x, y, 20, 20);
             };
-            // console.log('bu');
         };
 
         scene.init({
             width: 400,
-            height: 300,
-            backgroundColor: 'black'
+            height: 300
         }).setGameState(new GameState).start();
     });
 

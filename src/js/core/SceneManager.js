@@ -172,7 +172,7 @@
         if (this.data.backgroundColor) this.backgroundColor = this.data.backgroundColor;
         if (this.data.opacity) this.opacity = this.data.opacity;
         if (this.data.visible) this.visible = this.data.visible;
-        if (this.data.zIndex) this.zIndex = this.data.zIndex;
+        if (this.data.zIndex) this.zIndex = 1000 - this.data.zIndex;
 
         this.j2d.element.append(this.canvas);
     };
