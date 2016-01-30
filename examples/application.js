@@ -30,6 +30,12 @@ define('Application', [
             this.update = function (timestamp, data) {
 
             };
+            this.render = function (timestamp, data) {
+                scene.clear();
+                scene.strokeStyle = 'green';
+                scene.context.rect(20, 20, 150, 100);
+                scene.context.stroke();
+            };
             // console.log('bu');
         };
 

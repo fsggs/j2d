@@ -70,7 +70,9 @@
                 deltaTime: 0,
                 lastTime: 0,
                 sceneStartTime: 0,
-                sceneSkipTime: 0
+                sceneSkipTime: 0,
+
+                asyncRender: false
             };
 
             if (params.frameLimit !== undefined && params.frameLimit <= options.frameLimit) data.frameLimit = params.frameLimit;
@@ -107,8 +109,8 @@
             }
             options.frameRun = true;
 
-            for (var index in engineStack) {
-                if (engineStack.hasOwnProperty(index) && 'function' === typeof engineStack[index]) {
+            engineStack.each(function (index) {
+                if (engineStack.hasOwnProperty(index) && 'object' === typeof engineStack[index]) {
                     var engine = engineStack[index];
                     var data = dataStack[index];
 
@@ -122,13 +124,21 @@
                         if (!data.j2d.data.pause) {
                             data.j2d.data.deltaTime = data.deltaTime;
 
-                            engine(timestamp, data);
-
+                            if (engine.update !== undefined && 'function' === typeof engine.update) {
+                                setTimeout(engine.update.call(engine.update, data), 0);
+                            }
+                            if (engine.render !== undefined && 'function' === typeof engine.render) {
+                                if (this.data.asyncRender) {
+                                    setTimeout(engine.render.call(engine.render, data), 0);
+                                } else {
+                                    engine.render.call(engine.render, data);
+                                }
+                            }
                         }
                     }
                     if (data.j2d.data.io && !data.j2d.data.pause) data.j2d.data.io.clear();
                 }
-            }
+            });
 
             requestAnimationFrame(function (timestamp) {
                 frameManager.runMainLoop(timestamp, frameManager);
