@@ -9,8 +9,9 @@ requirejs.config({
 
 define('Application', [
     'jquery',
-    'jquery.j2d'
-], function ($, J2D) {
+    'jquery.j2d',
+    'io/InputManager'
+], function ($, J2D, InputManager) {
     "use strict";
 
     J2D.initPlugin();
@@ -19,6 +20,9 @@ define('Application', [
         var j2d = window.j2d = $('#j2d').j2d();
         j2d.smoothing = false;
         // j2d.WebGL = true;
+
+        j2d.io = new InputManager(j2d);
+        j2d.io.toggleCursor(true); // enable cursor
 
         var scene = j2d.getSceneManager();
 

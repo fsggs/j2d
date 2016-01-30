@@ -80,6 +80,15 @@
             }
         });
 
+        Object.defineProperty(this, 'io', {
+            get: function () {
+                return j2d.data.io;
+            },
+            set: function (value) {
+                return j2d.data.io = value
+            }
+        });
+
         Object.defineProperty(this, 'isPlay', {
             get: function () {
                 return !j2d.data.pause;
@@ -87,14 +96,6 @@
             set: function () {
             }
         });
-    };
-
-    J2D.prototype.getIOHandler = function () {
-        return this.data.io;
-    };
-
-    J2D.prototype.IOHandler = function (handler) {
-        return this.data.io = handler;
     };
 
     /** +GameEngine **/

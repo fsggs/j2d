@@ -24,6 +24,10 @@
     ArrayMap.prototype = Object.create(Array.prototype);
     ArrayMap.prototype.constructor = ArrayMap;
 
+    ArrayMap.prototype.last = function () {
+        return this[this.length - 1];
+    };
+
     /**
      * @param {ArrayMap} array
      * @returns {boolean}
