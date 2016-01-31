@@ -302,7 +302,7 @@
 
     SceneManager.prototype.toggleFullScreen = function (j2d, data) {
         if (data === undefined) {
-            data = {fullscreen: undefined};
+            data = {fullscreen: null};
         }
         if (!j2d.scene.enableFullscreen || data.fullscreen) {
             j2d.scene.fullScreen(true);

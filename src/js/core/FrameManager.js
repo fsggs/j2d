@@ -24,6 +24,7 @@
 
         var instance;
         var engineStack = new ArrayMap(), dataStack = new ArrayMap();
+        var timestamp = 0;
 
         var options = {
             frameLimit: 60,
@@ -37,20 +38,20 @@
                 window.mozRequestAnimationFrame ||
                 window.oRequestAnimationFrame ||
                 window.msRequestAnimationFrame ||
-                function (callback) {
+                (function (callback) {
                     if (!options.breakAnimationFrame) {
-                        window.setTimeout(callback.call(callback, [
-                            Date.now() //TODO:: fix this
-                        ]), 1000.0 / options.frameLimit);
+                        if (timestamp >= Number.MAX_SAFE_INTEGER - 1) timestamp = 0;
+                        if (timestamp === 0) timestamp = Date.now();
+
+                        window.setTimeout(callback.bind(this, Date.now() - timestamp), 1000.0 / options.frameLimit);
                     } else {
                         options.breakAnimationFrame = false
                     }
-                };
+                });
         })();
 
         var cancelAnimationFrame = (function () {
-            options.breakAnimationFrame = true;
-
+            timestamp = 0;
             return window.cancelAnimationFrame ||
                 window.webkitCancelAnimationFrame ||
                 window.mozCancelAnimationFrame ||
@@ -64,7 +65,7 @@
 
         FrameManager.prototype.start = function (name, engine, params) {
             var data = {
-                j2d: undefined,
+                j2d: null,
                 frameLimit: options.frameLimit,
                 now: 0,
                 deltaTime: 0,
@@ -72,6 +73,7 @@
                 sceneStartTime: 0,
                 sceneSkipTime: 0,
 
+                asyncUpdate: true,
                 asyncRender: true
             };
 
@@ -104,6 +106,7 @@
             if (frameManager === undefined) frameManager = this;
 
             if (engineStack.length <= 0 && options.frameRun) {
+                options.breakAnimationFrame = true;
                 options.frameRun = false;
                 return cancelAnimationFrame(this.runMainLoop);
             }
@@ -125,7 +128,11 @@
 
                     if (!data.j2d.data.pause) {
                         if (engine.update !== undefined && 'function' === typeof engine.update) {
-                            setTimeout(engine.update.bind(this, timestamp, data), 0);
+                            if (data.asyncUpdate) {
+                                setTimeout(engine.update.bind(this, timestamp, data), 0);
+                            } else {
+                                engine.update(timestamp, data);
+                            }
                         }
 
                         if ((data.deltaTime * 100.0) > data.interval) {

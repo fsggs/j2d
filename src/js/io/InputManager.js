@@ -350,7 +350,7 @@
     };
 
     InputManager.prototype.flush = function () {
-        this.data.keysPressed = new ArrayMap();
+        this.data.keysPressed.length = 0;
     };
 
     InputManager.prototype.clear = function () {

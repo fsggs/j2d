@@ -34,8 +34,8 @@
     "use strict";
 
     var defaults = {
-        id: undefined,
-        io: undefined,
+        id: null,
+        io: null,
         deltaTime: 0,
         pause: false,
         ready: false,
@@ -181,11 +181,11 @@
 
                 $(this).attr('guid', guid);
                 var id = $(this).attr('id');
-                if (typeof id === typeof undefined || id === false) {
+                if (typeof id === 'undefined' || id === false) {
                     $(this).attr('id', guid);
                 }
                 var tabIndex = $(this).attr('tabindex');
-                if (typeof tabIndex === typeof undefined || tabIndex === false) {
+                if (typeof tabIndex === 'undefined' || tabIndex === false) {
                     $(this).attr('tabindex', '-1');
                 }
                 $(this).data('j2d', new J2D($(this), options)).addClass('j2d');
@@ -262,7 +262,7 @@
         });
     })();
 
-    global.J2D = (global.J2D === undefined) ? J2D : undefined;
+    if (global.J2D === undefined) global.J2D = J2D;
 
     return J2D;
 }));
