@@ -1,4 +1,4 @@
-# jQuery.j2d
+# jQuery.j2d [![Dependency Status](https://www.versioneye.com/user/projects/56afa5f63d82b9003761dfc8/badge.svg?style=flat)](https://www.versioneye.com/user/projects/56afa5f63d82b9003761dfc8)
 jQuery.j2d is jQuery Canvas Graphic Engine plugin.
 
 ## Documentation
