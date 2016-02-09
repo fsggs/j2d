@@ -17,8 +17,24 @@
 }(typeof window !== 'undefined' ? window : global, function (ArrayMap, CameraNode, Vector2d) {
     "use strict";
 
+    /**
+     * @param {{x: number, y: number}} screen
+     * @param {{offset: {x: number, y: number}, size: {x: number, y: number}, scale: number}} viewport
+     * @returns {{offset: {x: number, y: number}, size: {x: number, y: number}, scale: number}}
+     */
     var calculateScale = function (screen, viewport) {
-        return 1.0;
+        var data = {
+            offset: {x: viewport.offset.x, y: viewport.offset.y},
+            size: {x: 0, y: 0},
+            scale: 1.0
+        };
+
+        data.size.x = (screen.x < viewport.size.x) ? screen.x : viewport.size.x;
+        data.size.y = (screen.y < viewport.size.y) ? screen.y : viewport.size.y;
+
+        // TODO:: check with test & fix this in future
+        data.scale = ((screen.x / viewport.size.x) + (screen.y / viewport.size.y)) / 2;
+        return data;
     };
 
     /**
@@ -32,20 +48,14 @@
         this.screen = {x: 0, y: 0};
 
         this.data = {
-            offset: {
-                x: 0.0,
-                y: 0.0
-            },
-            size: {
-                x: 0.0,
-                y: 0.0
-            },
+            offset: {x: 0.0, y: 0.0},
+            size: {x: 0.0, y: 0.0},
             scale: 1.0
         };
     };
 
     /**
-     * @param data
+     * @param {{x: number|undefined, y: number|undefined}|Array<number>} data
      * @returns {ViewportManager}
      */
     ViewportManager.prototype.setScreen = function (data) {
@@ -62,8 +72,8 @@
     };
 
     /**
-     * @param key
-     * @param node
+     * @param {string} key
+     * @param {CameraNode} node
      * @returns {ViewportManager}
      */
     ViewportManager.prototype.addCamera = function (key, node) {
@@ -75,7 +85,7 @@
     };
 
     /**
-     * @param key
+     * @param {string} key
      * @returns {ViewportManager}
      */
     ViewportManager.prototype.removeCamera = function (key) {
@@ -92,7 +102,7 @@
     };
 
     /**
-     * @param key
+     * @param {string} key
      * @returns {ViewportManager}
      */
     ViewportManager.prototype.updateViewport = function (key) {
@@ -104,6 +114,9 @@
 
     /**
      * @deprecated
+     *
+     * @param {Vector2d} offset
+     * @param {Vector2d} size
      * @returns {ViewportManager}
      */
     ViewportManager.prototype.setViewport = function (offset, size) {
