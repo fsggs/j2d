@@ -43,7 +43,7 @@
     /**
      * @returns {Vector2d}
      */
-    Vector2d.prototype.getCoordinates = function () {
+    Vector2d.prototype.getVector = function () {
         return this;
     };
 
