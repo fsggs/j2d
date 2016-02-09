@@ -8,31 +8,57 @@
 
 (function (root, factory) {
     if (typeof define === 'function' && define.amd) {
-        define('nodes/CameraNode', ['nodes/BaseNode'], factory);
+        define('nodes/CameraNode', ['jquery', 'nodes/BaseNode'], factory);
     } else if (typeof module === 'object' && typeof module.exports === 'object') {
-        module.exports = factory(require('nodes/BaseNode'));
+        module.exports = factory(require('jquery'), require('nodes/BaseNode'));
     } else {
-        factory(root.BaseNode);
+        factory(root.jQuery, root.BaseNode);
     }
-}(typeof window !== 'undefined' ? window : global, function (BaseNode) {
+}(typeof window !== 'undefined' ? window : global, function ($, BaseNode) {
     "use strict";
 
     /**
+     * @param {BaseNode.defaults|CameraNode.defaults} data data
      * @constructor
+     * @property {BaseNode.defaults|CameraNode.defaults} data
      */
-    var CameraNode = function () {
+    var CameraNode = function (data) {
+        BaseNode.call(this, $.extend(true, {}, defaults, data));
     };
 
     CameraNode.prototype = Object.create(BaseNode.prototype);
     CameraNode.prototype.constructor = CameraNode;
 
+    CameraNode.defaults = {
+        type: 'CameraNode'
+    };
+
     /**
      * @param {{x: number, y: number}} screen
      * @param {Function|callback} calculate
-     * @returns {{offset: {x: number, y: number}, size: {x: number, y: number}, scale: number}|null}
+     * @returns {{offset: {x: number, y: number}, size: {x: number, y: number}, scale: number}}
      */
     CameraNode.prototype.getCameraViewport = function (screen, calculate) {
-        return null;
+        return calculate(screen, {
+            offset: this.data.position,
+            size: this.data.size,
+            scale: 1.0
+        });
+    };
+
+    /* ------------------------------ Render ------------------------------ */
+
+    /**
+     * @override
+     *
+     * @param {object} context
+     * @param {{offset: {x: number, y: number}, size: {x: number, y: number}, scale: number}} viewport
+     * @param {CollectionNode} collection
+     * @param {object} data
+     * @returns {CameraNode}
+     */
+    CameraNode.prototype.render = function (context, viewport, collection, data) {
+        return this;
     };
 
     if (global.J2D !== undefined) global.CameraNode = CameraNode;

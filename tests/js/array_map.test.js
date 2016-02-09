@@ -43,8 +43,8 @@
         }));
 
         var am2 = (new ArrayMap()).add('test1', 1.2).add('test2', 3.4);
-        console.log(am);
-        console.log(am2);
+        //console.log(am);
+        //console.log(am2);
 
         ok(am.equals(am2));
     });

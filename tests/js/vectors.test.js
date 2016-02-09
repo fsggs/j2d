@@ -22,7 +22,7 @@
         var v2d = new Vector2d().fromArray([1.0, 2.1]);
         equal(v2d.getX(), 1.0);
         equal(v2d.getY(), 2.1);
-        deepEqual(v2d.getVector(), v2d);
+        deepEqual(v2d.getVector(), {x: 1.0, y: 2.1});
         equal(v2d.toString(), '(1,2.1)')
     });
 

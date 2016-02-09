@@ -19,7 +19,7 @@ interface Vector2d {
 
     getX() : number
     getY() : number
-    getVector() : Vector2d
+    getVector() : {x: number, y: number}
 }
 
 interface Vector2dInteger extends Vector2d {

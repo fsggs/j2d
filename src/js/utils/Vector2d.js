@@ -41,10 +41,10 @@
     };
 
     /**
-     * @returns {Vector2d}
+     * @returns {{x: number, y: number}}
      */
     Vector2d.prototype.getVector = function () {
-        return this;
+        return {x: this.x, y: this.y};
     };
 
     /**
