@@ -14,4 +14,3 @@ Consequently, it supports the following natively:
 ## License
 
 BSD. © 2015 Dimitriy Kalugin, Zlib. © 2015 Нагель Петр
-
