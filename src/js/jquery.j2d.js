@@ -33,19 +33,6 @@
 }(typeof window !== 'undefined' ? window : global, function ($, SceneManager, DeviceUtil) {
     "use strict";
 
-    var defaults = {
-        id: null,
-        io: null,
-        deltaTime: 0,
-        pause: false,
-        ready: false,
-
-        frameLimit: 60,
-        smoothing: true,
-
-        webGL: false
-    };
-
     var J2D = function J2D(element, data) {
         var j2d = this;
         this.element = element;
@@ -93,6 +80,19 @@
             set: function () {
             }
         });
+    };
+
+    J2D.defaults = {
+        id: null,
+        io: null,
+        deltaTime: 0,
+        pause: false,
+        ready: false,
+
+        frameLimit: 60,
+        smoothing: true,
+
+        webGL: false
     };
 
     /** +GameEngine **/
@@ -171,7 +171,7 @@
 
         $.fn.j2d = function (options) {
             this.filter('div.canvas:not([guid])').each(function () {
-                var options = $.extend(true, {}, defaults, options);
+                var options = $.extend(true, {}, J2D.defaults, options);
 
                 var guid = 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function (c) {
                     var r = Math.random() * 16 | 0, v = c == 'x' ? r : (r & 0x3 | 0x8);

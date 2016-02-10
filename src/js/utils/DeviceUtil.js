@@ -56,6 +56,5 @@
     };
 
     if (global.J2D === undefined) global.DeviceUtil = DeviceUtil;
-
     return DeviceUtil;
 }));

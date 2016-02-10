@@ -19,7 +19,7 @@
 
     var LayersManager = function (j2d) {
         this.j2d = j2d;
-        this.list = {};
+        this.layers = {};
     };
 
     if (global.J2D !== undefined) global.LayersManager = LayersManager;

@@ -139,6 +139,7 @@
 
         this.j2d.element.width(this.data.width).height(this.data.height);
 
+        // TODO:: check if exist
         this.initCanvas();
 
         this.j2d.trigger('afterInit');

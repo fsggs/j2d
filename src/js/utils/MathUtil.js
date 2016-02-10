@@ -85,6 +85,5 @@
     };
 
     if (global.J2D === undefined) global.MathUtil = MathUtil;
-
     return MathUtil
 }));

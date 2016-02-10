@@ -437,9 +437,9 @@
         return this.checkPressedKeyList(keyList);
     };
 
-    InputManager.prototype.getPosition = function () {
-        return this.j2d.vector.v2f(this.data.viewport.x + 0.5, this.data.viewport.y + 0.5);
-    };
+    //InputManager.prototype.getPosition = function () {
+    //    return this.j2d.vector.v2f(this.data.viewport.x + 0.5, this.data.viewport.y + 0.5);
+    //};
 
     //InputManager.prototype.onNode = function (id) {
     //    if (!id.layer.visible) return false;
@@ -450,7 +450,7 @@
 
     /** +Input Write Mode **/
     InputManager.prototype.setWriteMode = function (mode) {
-        this.data.writeMode = mode;
+        this.data.writeMode = !!mode;
     };
 
     InputManager.prototype.isWriteMode = function () {
@@ -466,7 +466,7 @@
 
     InputManager.prototype.toggleCursor = function (enable) {
         if (enable !== undefined) {
-            this.data.cursor.enable = enable;
+            this.data.cursor.enable = !!enable;
         } else {
             this.data.cursor.enable = !this.data.cursor.enable;
         }
@@ -480,7 +480,7 @@
     };
 
     InputManager.prototype.isCursorVisible = function () {
-        return this.data.cursor.enable;
+        return !!this.data.cursor.enable;
     };
     /** -Cursor **/
 
