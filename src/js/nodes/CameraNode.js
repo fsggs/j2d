@@ -36,7 +36,7 @@
     /**
      * @param {{x: number, y: number}} screen
      * @param {Function|callback} calculate
-     * @returns {{offset: {x: number, y: number}, size: {x: number, y: number}, scale: number}}
+     * @returns {{offset: {x: number, y: number}, size: {x: number, y: number}, scale: number, angle: number}}
      */
     CameraNode.prototype.getCameraViewport = function (screen, calculate) {
         return calculate(screen, {
@@ -52,7 +52,7 @@
      * @override
      *
      * @param {object} context
-     * @param {{offset: {x: number, y: number}, size: {x: number, y: number}, scale: number}} viewport
+     * @param {{offset: {x: number, y: number}, size: {x: number, y: number}, scale: number, angle: number}} viewport
      * @param {CollectionNode} collection
      * @param {object} data
      * @returns {CameraNode}

@@ -19,14 +19,15 @@
 
     /**
      * @param {{x: number, y: number}} screen
-     * @param {{offset: {x: number, y: number}, size: {x: number, y: number}, scale: number}} viewport
-     * @returns {{offset: {x: number, y: number}, size: {x: number, y: number}, scale: number}}
+     * @param {{offset: {x: number, y: number}, size: {x: number, y: number}, scale: number, angle: number}} viewport
+     * @returns {{offset: {x: number, y: number}, size: {x: number, y: number}, scale: number, angle: number}}
      */
     var calculateScale = function (screen, viewport) {
         var data = {
             offset: {x: viewport.offset.x, y: viewport.offset.y},
             size: {x: 0, y: 0},
-            scale: 1.0
+            scale: 1.0,
+            angle: viewport.angle
         };
 
         data.size.x = (screen.x < viewport.size.x) ? screen.x : viewport.size.x;
@@ -50,7 +51,8 @@
         this.data = {
             offset: {x: 0.0, y: 0.0},
             size: {x: 0.0, y: 0.0},
-            scale: 1.0
+            scale: 1.0,
+            angle: 0.0
         };
     };
 
@@ -95,7 +97,8 @@
             this.data = {
                 offset: {x: 0.0, y: 0.0},
                 size: {x: 0.0, y: 0.0},
-                scale: 1.0
+                scale: 1.0,
+                angle: 0.0
             }
         }
         return this;
@@ -113,7 +116,7 @@
     };
 
     /**
-     * @deprecated
+     * @deprecated Please use CameraNode
      *
      * @param {Vector2d} offset
      * @param {Vector2d} size
@@ -137,7 +140,7 @@
     };
 
     /**
-     * @returns {{offset: {x: number, y: number}, size: {x: number, y: number}, scale: number}}
+     * @returns {{offset: {x: number, y: number}, size: {x: number, y: number}, scale: number, angle: number}}
      */
     ViewportManager.prototype.getViewport = function () {
         return this.data;

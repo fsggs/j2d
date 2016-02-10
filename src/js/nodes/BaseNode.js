@@ -158,7 +158,7 @@
      * @overridable
      *
      * @param {object} context
-     * @param {{offset: {x: number, y: number}, size: {x: number, y: number}, scale: number}} viewport
+     * @param {{offset: {x: number, y: number}, size: {x: number, y: number}, scale: number, angle: number}} viewport
      * @param {CollectionNode} collection
      * @param {object} data
      * @returns {BaseNode}
