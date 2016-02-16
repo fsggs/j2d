@@ -216,7 +216,11 @@ interface SceneManager {
 
 interface LayersManager {
     j2d:J2D;
-    layers:Object;
+    layers:ArrayMap;
+
+    addLayer(name:string|undefined, node:CollectionNode|undefined):LayersManager
+    removeLayer(name:string):LayersManager
+    getLayer(name:string):CollectionNode|null
 }
 
 interface ViewportManager {

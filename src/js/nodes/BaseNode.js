@@ -24,7 +24,7 @@
      */
     var BaseNode = function (data) {
         var baseNode = this;
-        this.data = $.extend(true, {}, defaults, data);
+        this.data = $.extend(true, {}, BaseNode.defaults, data);
 
         if (this.data.id === null) {
             this.data.id = 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function (c) {
@@ -71,6 +71,7 @@
     };
 
     BaseNode.defaults = {
+        /** @type {string|null} */
         id: null,
         type: 'BaseNode',
 

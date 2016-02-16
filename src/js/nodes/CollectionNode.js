@@ -23,11 +23,21 @@
      * @property {BaseNode.defaults|CollectionNode.defaults} data
      */
     var CollectionNode = function (data) {
-        BaseNode.call(this, $.extend(true, {}, defaults, data));
+        var collectionNode = this;
+        BaseNode.call(this, $.extend(true, {}, CollectionNode.defaults, data));
 
         if (this.data.collection === null) {
             this.data.collection = new ArrayMap();
         }
+
+        Object.defineProperty(this, 'zIndex', {
+            get: function () {
+                return 1000 - collectionNode.data.zIndex;
+            },
+            set: function (value) {
+                collectionNode.data.zIndex = 1000 + value;
+            }
+        });
     };
 
     CollectionNode.prototype = Object.create(BaseNode.prototype);
@@ -35,7 +45,9 @@
 
     CollectionNode.defaults = {
         type: 'CollectionNode',
-        collection: null
+        /** @type {ArrayMap|null} */
+        collection: null,
+        zIndex: 1000
     };
 
     /**
@@ -44,7 +56,8 @@
      * @returns {CollectionNode}
      */
     CollectionNode.prototype.add = function (node, key) {
-        if (typeof key === 'string' && node instanceof BaseNode) {
+        if (node instanceof BaseNode) {
+            key = key || node.data.id;
             this.data.collection.add(key, node);
         }
         return this;
@@ -57,7 +70,7 @@
      */
     CollectionNode.prototype.remove = function (node, key) {
         if (node instanceof BaseNode) {
-            this.data.collection.remove(this.data.collection[node.id]);
+            this.data.collection.remove(this.data.collection[node.data.id]);
         }
         if (typeof key === 'string' && node === null) {
             this.data.collection.remove(key);
@@ -86,7 +99,16 @@
      * @returns {CollectionNode}
      */
     CollectionNode.prototype.render = function (context, viewport, collection, data) {
-        //TODO:: make this
+        var collectionNode = this;
+
+        if (this.data.collection.length !== 0) {
+            this.data.collection.each(function (index) {
+                if (collectionNode.data.collection.hasOwnProperty(index)
+                    && collectionNode.data.collection[index] instanceof BaseNode) {
+                    collectionNode.data.collection[index].render(context, viewport, collection, data);
+                }
+            });
+        }
         return this;
     };
 

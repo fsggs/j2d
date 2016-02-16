@@ -10,43 +10,50 @@ requirejs.config({
 define('Application', [
     'jquery',
     'jquery.j2d',
-    'io/InputManager'
-], function ($, J2D, InputManager) {
+    'io/InputManager',
+    'utils/Vector2d',
+    'nodes/RectNode'
+], function ($, J2D, InputManager, Vector2d, RectNode) {
     "use strict";
 
     $(global.document).ready(function () {
         var j2d = global.j2d = $('#j2d').j2d();
         j2d.smoothing = false;
-        //j2d.WebGL = true;
+        j2d.WebGL = true;
 
         j2d.io = new InputManager(j2d);
         j2d.io.toggleCursor(true); // enable cursor
-
         var scene = j2d.getSceneManager();
+
+        var rectangle = (new RectNode({color: 'red'}).setSize(new Vector2d(20, 20)));
+        scene.add(rectangle);
 
         var GameState = function () {
             var t, x, y;
-            var ts = false;
+            var ts = true;
 
             this.update = function (timestamp, data) {
                 t = new Date().getTime() * 0.0008;
                 x = Math.sin(t) * 100 + 150;
                 y = Math.cos(t * 0.9) * 100 + 150;
                 t = null;
+
+                rectangle.setPosition(new Vector2d(x, y)).setColor(ts ? 'yellow' : 'grey');
             };
             this.render = function (timestamp, data) {
-                //scene.clear();
-                //scene.backgroundColor = 'black';
                 ts = !ts;
-                scene.context.fillStyle = ts ? 'yellow' : 'grey';
-                scene.context.fillRect(x, y, 20, 20);
+
+                scene.clear();
+                scene.fillBackground();
+                scene.render(data);
             };
         };
 
         scene.init({
             width: 400,
-            height: 300
-        }).setGameState(new GameState).start();
+            height: 300,
+            backgroundColor: 'black'
+        }).setGameState(GameState).start();
     });
 
 });

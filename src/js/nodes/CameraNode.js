@@ -23,7 +23,7 @@
      * @property {BaseNode.defaults|CameraNode.defaults} data
      */
     var CameraNode = function (data) {
-        BaseNode.call(this, $.extend(true, {}, defaults, data));
+        BaseNode.call(this, $.extend(true, {}, CameraNode.defaults, data));
     };
 
     CameraNode.prototype = Object.create(BaseNode.prototype);
