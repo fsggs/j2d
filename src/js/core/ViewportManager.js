@@ -42,11 +42,16 @@
      * @constructor
      */
     var ViewportManager = function () {
+        /** @type ArrayMap.<CameraNode>|CameraNode[] */
         this.cameras = new ArrayMap();
 
+        /** @type string */
         this.camera = 'No active cameras';
 
+        /** @type {{x: number, y: number}} */
         this.screen = {x: 0, y: 0};
+
+        this.init = false;
 
         this.data = {
             offset: {x: 0.0, y: 0.0},
@@ -118,8 +123,8 @@
     /**
      * @deprecated Please use CameraNode
      *
-     * @param {Vector2d} offset
-     * @param {Vector2d} size
+     * @param {Vector2d} [offset]
+     * @param {Vector2d} [size]
      * @returns {ViewportManager}
      */
     ViewportManager.prototype.setViewport = function (offset, size) {
@@ -136,6 +141,18 @@
         }
 
         this.data.scale = calculateScale(this.screen, this.data);
+        return this;
+    };
+
+    /**
+     * @param {{offset: {x: number, y: number}, size: {x: number, y: number}, scale: number, angle: number}} viewport
+     * @returns {ViewportManager}
+     */
+    ViewportManager.prototype.setDefaultViewport = function (viewport) {
+        if (!this.init) {
+            this.data = viewport;
+            this.init = true;
+        }
         return this;
     };
 

@@ -48,14 +48,14 @@
     };
 
     /**
-     * @returns {Array<number>}
+     * @returns {Array.<number>}
      */
     Vector2d.prototype.toArray = function () {
         return [this.x, this.y];
     };
 
     /**
-     * @param {Array<number>} array
+     * @param {Array.<number>} array
      * @returns {Vector2d}
      */
     Vector2d.prototype.fromArray = function (array) {

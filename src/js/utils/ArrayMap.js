@@ -29,7 +29,7 @@
     };
 
     /**
-     * @param {ArrayMap} array
+     * @param {ArrayMap.<T>} array
      * @returns {boolean}
      */
     ArrayMap.prototype.equals = function (array) {
@@ -86,7 +86,7 @@
     /**
      * @param {string|Object} key
      * @param {*} value
-     * @returns {ArrayMap}
+     * @returns {ArrayMap.<T>}
      */
     ArrayMap.prototype.add = function (key, value) {
         if (this.contains(key))
@@ -101,7 +101,7 @@
 
     /**
      * @param {string|Object} key
-     * @returns {ArrayMap}
+     * @returns {ArrayMap.<T>}
      */
     ArrayMap.prototype.remove = function (key) {
         for (var i = 0; i < this.length; ++i) {

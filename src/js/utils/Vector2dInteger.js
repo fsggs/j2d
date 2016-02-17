@@ -29,7 +29,7 @@
     Vector2dInteger.prototype.constructor = Vector2dInteger;
 
     /**
-     * @param {Array<number>} array
+     * @param {Array.<number>} array
      * @returns {Vector2d|Vector2dInteger}
      */
     Vector2dInteger.prototype.fromArray = function (array) {

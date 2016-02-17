@@ -33,12 +33,29 @@
 }(typeof window !== 'undefined' ? window : global, function ($, SceneManager, DeviceUtil) {
     "use strict";
 
+    /**
+     * @param {Element|jQuery} element
+     * @param {J2D.defaults} data
+     *
+     * @constructor
+     * @property {boolean} WebGL
+     * @property {boolean} smoothing
+     * @property {InputManager|null} io
+     * @property {boolean} isPlay
+     */
     var J2D = function J2D(element, data) {
         var j2d = this;
+
+        /** @type {Element|jQuery} */
         this.element = element;
+
+        /** @type J2D.defaults */
         this.data = data;
 
+        /** @type DeviceUtil */
         this.device = new DeviceUtil();
+
+        /** @type SceneManager */
         this.scene = new SceneManager(this);
 
         Object.defineProperty(this, 'WebGL', {
@@ -121,20 +138,20 @@
     };
     /** -GameEngine **/
 
-    /** +Scene **/
     J2D.prototype.getSceneManager = function () {
         return this.scene;
     };
-    /** -Scene **/
 
-    /** +Layers **/
     J2D.prototype.getLayersManager = function () {
         return this.scene.layersManager;
     };
-    /** -Layers **/
 
     J2D.prototype.getFrameManager = function () {
         return this.scene.frameManager;
+    };
+
+    J2D.prototype.getViewportManager = function () {
+        return this.scene.viewportManager;
     };
 
     J2D.prototype.on = function () {
@@ -148,6 +165,9 @@
 
     /** Utils **/
     J2D.util = {
+        /**
+         * @param {CanvasRenderingContext2D} context
+         */
         disableSmoothing: function (context) {
             var chrome = global.navigator.userAgent.match(/Chrom(e|ium)\/([0-9]+)\./);
             var version = chrome ? parseInt(chrome[2], 10) : false;
@@ -169,6 +189,10 @@
         if (window.j2dPlugin !== undefined) return null;
         window.j2dPlugin = {pluginInit: true};
 
+        /**
+         * @param {J2D.defaults} [options]
+         * @returns {J2D|J2D[]|Array.<J2D>}
+         */
         $.fn.j2d = function (options) {
             this.filter('div.canvas:not([guid])').each(function () {
                 var options = $.extend(true, {}, J2D.defaults, options);
@@ -263,6 +287,5 @@
     })();
 
     if (global.J2D === undefined) global.J2D = J2D;
-
     return J2D;
 }));

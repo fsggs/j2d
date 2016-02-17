@@ -18,7 +18,7 @@
     "use strict";
 
     /**
-     * @param {BaseNode.defaults|RectNode.defaults} data data
+     * @param {BaseNode.defaults|RectNode.defaults|Object} [data]
      * @constructor
      * @property {BaseNode.defaults|RectNode.defaults} data
      */
@@ -54,7 +54,7 @@
     /* ------------------------------ Draw ------------------------------ */
 
     /**
-     * @param {object} context
+     * @param {CanvasRenderingContext2D} context
      * @param {{offset: {x: number, y: number}, size: {x: number, y: number}, scale: number, angle: number}} viewport
      * @param {CollectionNode} collection
      * @param {object} data
@@ -69,25 +69,25 @@
                 context.globalAlpha = this.options.opacity;
             }
 
-            if (this.data.angle) {
+            if (this.data.angle || viewport.angle !== 0.0) {
                 context.save();
 
-                context.translate(this.getPosition().x - viewport.x, this.getPosition().y - viewport.y);
-                context.rotate(MathUtil.degree2Radian(this.data.angle));
-                context.translate(-(this.getPosition().x - viewport.x), -(this.getPosition().y - viewport.y));
+                context.translate(this.getPosition().x - viewport.offset.x, this.getPosition().y - viewport.offset.y);
+                context.rotate(MathUtil.degree2Radian(this.data.angle + viewport.angle));
+                context.translate(-(this.getPosition().x - viewport.offset.x), -(this.getPosition().y - viewport.offset.y));
             }
 
             context.fillStyle = this.data.color;
             context.lineWidth = 0;
 
             context.fillRect(
-                this.data.position.x - viewport.x,
-                this.data.position.y - viewport.y,
-                this.data.size.x,
-                this.data.size.y
+                this.data.position.x - viewport.offset.x,
+                this.data.position.y - viewport.offset.y,
+                this.data.size.x * viewport.scale,
+                this.data.size.y * viewport.scale
             );
 
-            if (this.data.angle) {
+            if (this.data.angle || viewport.angle !== 0.0) {
                 context.restore();
             }
 
@@ -103,7 +103,7 @@
     /**
      * @override
      *
-     * @param {object} context
+     * @param {CanvasRenderingContext2D} context
      * @param {{offset: {x: number, y: number}, size: {x: number, y: number}, scale: number, angle: number}} viewport
      * @param {CollectionNode} collection
      * @param {object} data

@@ -58,7 +58,7 @@
     /**
      * @param {number} min
      * @param {number} max
-     * @param {boolean} omitZero
+     * @param {boolean} [omitZero]
      * @returns {number}
      */
     MathUtil.random = function (min, max, omitZero) {

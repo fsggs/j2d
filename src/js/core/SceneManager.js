@@ -8,6 +8,8 @@
 
 /*
  * TODO:: GameStateManager to Scene
+ * TODO:: Fullscreen camera size & centering
+ * TODO:: Viewport camera centering
  */
 
 (function (root, factory) {
@@ -16,6 +18,7 @@
             'jquery',
             'core/WebGL2D',
             'core/FrameManager',
+            'core/ViewportManager',
             'core/LayersManager'
         ], factory);
     } else if (typeof module === 'object' && typeof module.exports === 'object') {
@@ -23,6 +26,7 @@
             require('jquery'),
             require('core/WebGL2D'),
             require('core/FrameManager'),
+            require('core/ViewportManager'),
             require('core/LayersManager')
         );
     } else {
@@ -30,22 +34,45 @@
             root.jQuery,
             root.WebGL2D,
             root.FrameManager,
+            root.ViewportManager,
             root.LayersManager
         );
     }
-}(typeof window !== 'undefined' ? window : global, function ($, WebGL2D, FrameManager, LayersManager) {
+}(typeof window !== 'undefined' ? window : global, function ($, WebGL2D, FrameManager, ViewportManager, LayersManager) {
     "use strict";
 
+    /**
+     * @param {J2D} j2d
+     * @constructor
+     *
+     * @property {SceneManager.defaults} data
+     *
+     * @property {string} backgroundColor
+     * @property {number} opacity
+     * @property {boolean} visible
+     * @property {number} zIndex
+     * @property {{x:number, y:number}} viewport
+     */
     var SceneManager = function (j2d) {
         var sceneManager = this;
+
+        /** @type J2D */
         this.j2d = j2d;
 
+        /** @type {HTMLCanvasElement} */
         this.canvas = null;
+
+        /** @type {CanvasRenderingContext2D} */
         this.context = null;
 
         /** @type {FrameManager} */
         this.frameManager = FrameManager.Init();
+
+        /** @type {LayersManager} */
         this.layersManager = new LayersManager();
+
+        /** @type {ViewportManager} */
+        this.viewportManager = new ViewportManager();
 
         this.initLayers();
 
@@ -121,11 +148,15 @@
 
         viewport: {x: 0, y: 0},
 
+        /** @type Function */
         gameState: function () {
             this.id = 'DefaultGameState';
         }
     };
 
+    /**
+     * @returns {SceneManager}
+     */
     SceneManager.prototype.fixGameStateRender = function () {
         var sceneManager = this;
         if (typeof this.data.gameState === 'function' && this.data.gameState.prototype.render === undefined) {
@@ -136,6 +167,10 @@
         return this;
     };
 
+    /**
+     * @param {SceneManager.defaults|Object|undefined} options
+     * @returns {SceneManager}
+     */
     SceneManager.prototype.init = function (options) {
         this.data = $.extend(true, {}, SceneManager.defaults, options);
 
@@ -149,11 +184,30 @@
 
         this.initCanvas();
 
+        this.viewportManager.setScreen({
+            x: this.data.width,
+            y: this.data.height
+        }).setDefaultViewport({
+            offset: {
+                x: 0.0,
+                y: 0.0
+            },
+            size: {
+                x: this.data.width,
+                y: this.data.height
+            },
+            scale: 1.0,
+            angle: 0.0
+        });
+
         this.j2d.trigger('afterInit');
 
         return this;
     };
 
+    /**
+     * @returns {SceneManager}
+     */
     SceneManager.prototype.initLayers = function () {
         if (!this.layersManager.getLayer('scene')) {
             this.layersManager.addLayer('scene', 0);
@@ -161,6 +215,9 @@
         return this;
     };
 
+    /**
+     * @returns {SceneManager}
+     */
     SceneManager.prototype.initCanvas = function () {
         if ($(this.j2d.element.selector + ' canvas').length === 0) {
             this.canvas = document.createElement('canvas');
@@ -195,6 +252,11 @@
         return this;
     };
 
+    /**
+     * @param {{x:number, y:number}|Vector2d} [pos]
+     * @param {{x:number, y:number}|Vector2d} [size]
+     * @returns {SceneManager}
+     */
     SceneManager.prototype.clear = function (pos, size) {
         if (pos !== undefined && size !== undefined) {
             this.context.clearRect(pos.x - this.viewport.x, pos.y - this.viewport.y, size.x, size.y);
@@ -204,6 +266,11 @@
         return this;
     };
 
+    /**
+     * @param {number} width
+     * @param {number} height
+     * @returns {SceneManager}
+     */
     SceneManager.prototype.resize = function (width, height) {
         this.canvas.width = this.data.width = width;
         this.canvas.height = this.data.height = height;
@@ -222,6 +289,10 @@
         return this;
     };
 
+    /**
+     * @param {Function|callback} gameState
+     * @returns {SceneManager}
+     */
     SceneManager.prototype.setGameState = function (gameState) {
         this.data.gameState = gameState || function () {
                 console.warn('Error in game state function!');
@@ -238,11 +309,19 @@
         return this;
     };
 
+    /**
+     * @param {Function|callback} callback
+     * @param {*} data
+     * @returns {SceneManager}
+     */
     SceneManager.prototype.async = function (callback, data) {
         setTimeout(callback.call(callback, data), 0);
         return this;
     };
 
+    /**
+     * @returns {SceneManager}
+     */
     SceneManager.prototype.start = function () {
         if (this.j2d.data.io) {
             this.j2d.data.io.init();
@@ -261,11 +340,18 @@
         return this;
     };
 
+    /**
+     * @returns {SceneManager}
+     */
     SceneManager.prototype.stop = function () {
         this.frameManager.stop(this.j2d.data.id);
         return this;
     };
 
+    /**
+     * @param {boolean} [fullscreen]
+     * @returns {SceneManager}
+     */
     SceneManager.prototype.fullScreen = function (fullscreen) {
         var element = document.getElementById(this.j2d.element.attr('id'));
 
@@ -292,6 +378,10 @@
         return this;
     };
 
+    /**
+     * @param {boolean} [fullscreen]
+     * @returns {SceneManager}
+     */
     SceneManager.prototype.resizeToFullPage = function (fullscreen) {
         $('div.canvas[guid]:not(.active)').toggle(fullscreen);
 
@@ -309,6 +399,11 @@
                 .width(j2d.device.width)
                 .height(j2d.device.height)
                 .css('margin', 0);
+
+            sceneManager.viewportManager.setScreen({
+                x: j2d.device.width,
+                y: j2d.device.height
+            });
         } else {
             sceneManager.resize(sceneManager.data.originalWidth, sceneManager.data.originalHeight);
             sceneManager.data.enableFullscreen = false;
@@ -317,13 +412,23 @@
                 .width(sceneManager.data.originalWidth)
                 .height(sceneManager.data.originalHeight)
                 .css('margin', sceneManager.data.originalMargin);
+
+            sceneManager.viewportManager.setScreen({
+                x: sceneManager.data.originalWidth,
+                y: sceneManager.data.originalHeight
+            });
         }
         return this;
     };
 
+    /**
+     * @param {J2D} j2d
+     * @param {{fullscreen: boolean}} data
+     * @returns {SceneManager}
+     */
     SceneManager.prototype.toggleFullScreen = function (j2d, data) {
         if (data === undefined) {
-            data = {fullscreen: null};
+            data = {fullscreen: false};
         }
         if (!j2d.scene.enableFullscreen || data.fullscreen) {
             j2d.scene.fullScreen(true);
@@ -333,10 +438,16 @@
         return this;
     };
 
+    /**
+     * @returns {CollectionNode|null}
+     */
     SceneManager.prototype.getSceneLayer = function () {
         return this.layersManager.getLayer('scene');
     };
 
+    /**
+     * @returns {SceneManager}
+     */
     SceneManager.prototype.fillBackground = function () {
         if (this.data.backgroundColor) {
             this.backgroundColor = this.data.backgroundColor;
@@ -344,12 +455,16 @@
         return this;
     };
 
+    /**
+     * @param {Object} data
+     * @returns {SceneManager}
+     */
     SceneManager.prototype.render = function (data) {
         var sceneManager = this;
         sceneManager.layersManager.layers.forEach(function (value, index) {
             sceneManager.layersManager.layers[index].render(
                 sceneManager.context,
-                sceneManager.data.viewport,
+                sceneManager.viewportManager.getViewport(),
                 sceneManager.layersManager.globalCollection,
                 data || {}
             );
@@ -357,17 +472,45 @@
         return this;
     };
 
+    /**
+     * @param {BaseNode} node
+     * @param {string} [key]
+     * @returns {SceneManager}
+     */
     SceneManager.prototype.add = function (node, key) {
-        if (this.layersManager.globalCollection['scene'] !== undefined) {
-            this.layersManager.globalCollection['scene'].add(node, key);
+        if (this.layersManager.globalCollection.has('scene')) {
+            this.layersManager.globalCollection.get('scene').add(node, key);
         }
         return this;
     };
 
+    /**
+     * @param {BaseNode} [node]
+     * @param {string} [key]
+     * @returns {SceneManager}
+     */
     SceneManager.prototype.remove = function (node, key) {
-        if (this.layersManager.globalCollection['scene'] !== undefined) {
-            this.layersManager.globalCollection['scene'].remove(node, key);
+        if (this.layersManager.globalCollection.has('scene')) {
+            this.layersManager.globalCollection.get('scene').remove(node, key);
         }
+        return this;
+    };
+
+    /**
+     * @param {CameraNode} node
+     * @returns {SceneManager}
+     */
+    SceneManager.prototype.registerCamera = function (node) {
+        this.viewportManager.addCamera(node.data.id, node);
+        return this;
+    };
+
+    /**
+     * @param {CameraNode} node
+     * @returns {SceneManager}
+     */
+    SceneManager.prototype.updateViewport = function (node) {
+        this.viewportManager.updateViewport(node.data.id);
         return this;
     };
 

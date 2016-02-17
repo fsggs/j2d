@@ -18,7 +18,7 @@
     "use strict";
 
     /**
-     * @param {BaseNode.defaults|CameraNode.defaults} data data
+     * @param {BaseNode.defaults|CameraNode.defaults|Object} [data]
      * @constructor
      * @property {BaseNode.defaults|CameraNode.defaults} data
      */
@@ -42,6 +42,7 @@
         return calculate(screen, {
             offset: this.data.position,
             size: this.data.size,
+            angle: this.data.angle,
             scale: 1.0
         });
     };
@@ -51,7 +52,7 @@
     /**
      * @override
      *
-     * @param {object} context
+     * @param {CanvasRenderingContext2D} context
      * @param {{offset: {x: number, y: number}, size: {x: number, y: number}, scale: number, angle: number}} viewport
      * @param {CollectionNode} collection
      * @param {object} data

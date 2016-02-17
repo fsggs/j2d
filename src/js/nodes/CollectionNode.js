@@ -18,7 +18,7 @@
     "use strict";
 
     /**
-     * @param {BaseNode.defaults|CollectionNode.defaults} data
+     * @param {BaseNode.defaults|CollectionNode.defaults|Object} [data]
      * @constructor
      * @property {BaseNode.defaults|CollectionNode.defaults} data
      */
@@ -80,6 +80,25 @@
     };
 
     /**
+     * @param {string} key
+     * @returns {boolean}
+     */
+    CollectionNode.prototype.has = function (key) {
+        return this.data.collection[key] !== undefined;
+    };
+
+    /**
+     * @param {string} key
+     * @returns {BaseNode|CollectionNode|boolean}
+     */
+    CollectionNode.prototype.get = function (key) {
+        if (this.data.collection[key] !== undefined) {
+            return this.data.collection[key];
+        }
+        return false;
+    };
+
+    /**
      * @returns {CollectionNode}
      */
     CollectionNode.prototype.flush = function () {
@@ -92,7 +111,7 @@
     /**
      * @override
      *
-     * @param {object} context
+     * @param {CanvasRenderingContext2D} context
      * @param {{offset: {x: number, y: number}, size: {x: number, y: number}, scale: number, angle: number}} viewport
      * @param {CollectionNode} collection
      * @param {object} data

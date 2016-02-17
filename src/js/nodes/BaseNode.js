@@ -18,7 +18,7 @@
     "use strict";
 
     /**
-     * @param {BaseNode.defaults} data
+     * @param {BaseNode.defaults|Object} [data]
      * @constructor
      * @property {BaseNode.defaults} data
      */
@@ -158,7 +158,7 @@
      * @deprecated
      * @overridable
      *
-     * @param {object} context
+     * @param {CanvasRenderingContext2D} context
      * @param {{offset: {x: number, y: number}, size: {x: number, y: number}, scale: number, angle: number}} viewport
      * @param {CollectionNode} collection
      * @param {object} data

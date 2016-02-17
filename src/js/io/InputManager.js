@@ -17,10 +17,17 @@
 }(typeof window !== 'undefined' ? window : global, function ($, ArrayMap) {
     "use strict";
 
+    /**
+     * @param {J2D} j2d
+     * @constructor
+     */
     var InputManager = function (j2d) {
         this.j2d = j2d;
 
-        this.id = j2d.id;
+        /** @type string */
+        this.id = j2d.data.id;
+
+        /** @type Element|jQuery */
         this.element = j2d.element;
 
         this.data = {
@@ -54,12 +61,18 @@
                 image: 'auto'
             }
         };
+
         this.keyMap = {
             //DEBUG_INFO: [[InputManager.key.KEY_CTRL, InputManager.key.KEY_F1], 'j2d.debug.toggleScreen', {}],
             FULLSCREEN: [[InputManager.key.KEY_CTRL, InputManager.key.KEY_F11], 'j2d.scene.toggleFullScreen', {}]
         };
     };
 
+    /**
+     * @param e
+     * @param {boolean} [enableCallback]
+     * @returns {boolean}
+     */
     var checkKeyMap = function (e, enableCallback) {
         if (enableCallback === undefined) enableCallback = true;
 
@@ -94,7 +107,6 @@
         }
         return false
     };
-
     var events = {
         onMouseClick: function (e) {
             var manager = e.data.manager;
@@ -292,6 +304,9 @@
         }
     };
 
+    /**
+     * @param {InputManager} manager
+     */
     var bindEvents = function (manager) {
         var selector = '[guid=' + manager.id + ']';
 
@@ -310,6 +325,9 @@
         $(document).on('touchmove ', selector, {manager: manager}, events.onTouchMove);
     };
 
+    /**
+     * @param {InputManager} manager
+     */
     var unbindEvents = function (manager) {
         var selector = '[guid=' + manager.id + ']';
 
@@ -328,14 +346,21 @@
         $(document).off('touchmove ', selector, {manager: manager}, events.onTouchMove);
     };
 
+    /**
+     * @returns {InputManager}
+     */
     InputManager.prototype.init = function () {
         if (!this.data.enabled && global.j2dPlugin.pluginInit) {
             bindEvents(this);
 
             this.data.enabled = true;
         }
+        return this;
     };
 
+    /**
+     * @returns {boolean}
+     */
     InputManager.prototype.update = function () {
         if (!this.data.enabled) return false;
 
@@ -347,15 +372,27 @@
         var offset = this.element.offset();
         this.data.viewport.x = this.j2d.scene.viewport.x + x - offset.left;
         this.data.viewport.y = this.j2d.scene.viewport.y + y - offset.top;
+        return true;
     };
 
+    /**
+     * @returns {InputManager}
+     */
     InputManager.prototype.flush = function () {
         this.data.keysPressed.length = 0;
+        return this;
     };
 
+    /**
+     * @returns {InputManager}
+     */
     InputManager.prototype.clear = function () {
+        return this;
     };
 
+    /**
+     * @returns {InputManager}
+     */
     InputManager.prototype.fixMouseWheel = function () {
         var keyPressed = this.data.keysPressed;
         if (-1 !== $.inArray(InputManager.key.SCROLL_MOUSE_UP, keyPressed)) {
@@ -363,38 +400,64 @@
         } else if (-1 !== $.inArray(InputManager.key.SCROLL_MOUSE_DOWN, keyPressed)) {
             events.mouseWheelCancel(keyPressed, InputManager.key.SCROLL_MOUSE_DOWN);
         }
+        return this;
     };
 
+    /**
+     * @returns {InputManager}
+     */
     InputManager.prototype.enable = function () {
         if (!this.data.enabled) {
             //bindEvents(this);
             this.data.enabled = false;
         }
+        return this;
     };
 
+    /**
+     * @returns {InputManager}
+     */
     InputManager.prototype.disable = function () {
         if (this.data.enabled) {
             //unbindEvents(this);
             this.data.enabled = false;
         }
+        return this;
     };
 
+    /**
+     * @param {string} newKeyMap
+     * @returns {string}
+     */
     InputManager.prototype.load = function (newKeyMap) {
         var oldKeyMap = JSON.stringify(this.keyMap);
         this.keyMap = JSON.parse(newKeyMap);
         return oldKeyMap;
     };
 
+    /**
+     * @returns {string}
+     */
     InputManager.prototype.save = function () {
         return JSON.stringify(this.keyMap);
     };
 
-    /** +KeyMap Manager **/
+    /**
+     * KeyMap Manager
+     *
+     * @param mapObject
+     * @returns {InputManager}
+     */
     InputManager.prototype.setKeys = function (mapObject) {
         this.keyMap = $.extend(true, {}, this.keyMap, mapObject);
+        return this;
     };
-    /** -KeyMap Manager **/
 
+    /**
+     * @param {InputManager} manager
+     * @param {Array.<number>|number[]} keyList
+     * @returns {{keyList:, time:number}|boolean}
+     */
     var getPressData = function (manager, keyList) {
         if (!manager.data.enableAdditionalData) return true;
         return {
@@ -403,12 +466,19 @@
         };
     };
 
+    /**
+     * @returns {{current: number, previous: number}}
+     */
     InputManager.prototype.getMouseMoveDistance = function () {
         if (!this.data.enableAdditionalData) return 0;
         return {current: this.data.mouse.distance, previous: this.data.mouse.previousDistance};
     };
 
-    /** +Input Checkers **/
+    /* +Input Checkers **/
+    /**
+     * @param {Array.<number>|number[]|number} keyList
+     * @returns {boolean}
+     */
     InputManager.prototype.checkPressedKeyList = function (keyList) {
         if ($.isArray(keyList)) {
             if (keyList.length !== this.data.keysPressed.length) {
@@ -430,6 +500,10 @@
         return false;
     };
 
+    /**
+     * @param {string} key
+     * @returns {boolean}
+     */
     InputManager.prototype.checkPressedKeyMap = function (key) {
         if (this.keyMap[key] === undefined) return false;
         var keyList = this.keyMap[key][0];
@@ -446,24 +520,40 @@
     //    return (this.data.viewport.x > id.options.position.x && this.data.viewport.x < id.options.position.x + id.options.size.x) &&
     //        (this.data.viewport.y > id.options.position.y && this.data.viewport.y < id.options.position.y + id.options.size.y);
     //};
-    /** -Input Checkers **/
+    /* -Input Checkers **/
 
-    /** +Input Write Mode **/
+    /* +Input Write Mode **/
+    /**
+     * @param {boolean} mode
+     * @returns {InputManager}
+     */
     InputManager.prototype.setWriteMode = function (mode) {
         this.data.writeMode = !!mode;
+        return this;
     };
 
+    /**
+     * @returns {boolean}
+     */
     InputManager.prototype.isWriteMode = function () {
         return !!this.data.writeMode;
     };
-    /** -Input Write Mode **/
+    /* -Input Write Mode **/
 
-    /** +Cursor **/
+    /**
+     * @param {string} image
+     * @returns {InputManager}
+     */
     InputManager.prototype.setCursorImage = function (image) {
         this.data.cursor.image = 'url("' + image + '"), auto';
         $(this.element).css('cursor', this.data.cursor.image);
+        return this;
     };
 
+    /**
+     * @param {boolean} enable
+     * @returns {InputManager}
+     */
     InputManager.prototype.toggleCursor = function (enable) {
         if (enable !== undefined) {
             this.data.cursor.enable = !!enable;
@@ -477,8 +567,12 @@
         } else {
             $(this.element).css('cursor', this.data.cursor.image);
         }
+        return this;
     };
 
+    /**
+     * @returns {boolean}
+     */
     InputManager.prototype.isCursorVisible = function () {
         return !!this.data.cursor.enable;
     };
@@ -597,6 +691,11 @@
         KEY_RIGHT_COMMAND: 224
     };
 
+    /**
+     * @param {Object} object
+     * @param {number} value
+     * @returns {T}
+     */
     function getKey(object, value) {
         return Object.keys(object).filter(function (key) {
             return object[key] === value

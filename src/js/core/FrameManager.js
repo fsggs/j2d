@@ -22,6 +22,7 @@
     function (ArrayMap) {
         "use strict";
 
+        /** @type FrameManager */
         var instance;
         var engineStack = new ArrayMap(), dataStack = new ArrayMap();
         var timestamp = 0;
@@ -60,9 +61,18 @@
         })();
 
 
+        /**
+         * @constructor
+         */
         var FrameManager = function () {
         };
 
+        /**
+         * @param {string} name
+         * @param {Function|callback} engine
+         * @param {Object} [params]
+         * @returns {FrameManager}
+         */
         FrameManager.prototype.start = function (name, engine, params) {
             var data = {
                 j2d: null,
@@ -95,17 +105,28 @@
             return this;
         };
 
+        /**
+         * @param {string} name
+         * @returns {FrameManager}
+         */
         FrameManager.prototype.stop = function (name) {
             engineStack.remove(name);
             dataStack.remove(name);
             return this;
         };
 
+        /**
+         * @returns {FrameManager}
+         */
         FrameManager.prototype.pulse = function () {
             this.runMainLoop(Date.now());
             return this;
         };
 
+        /**
+         * @param {number} timestamp
+         * @param {FrameManager} [frameManager]
+         */
         FrameManager.prototype.runMainLoop = function (timestamp, frameManager) {
             if (frameManager === undefined) frameManager = this;
 
@@ -156,6 +177,10 @@
             });
         };
 
+        /**
+         * @param {number} frameLimit
+         * @returns {FrameManager}
+         */
         FrameManager.prototype.setDefaultFrameLimit = function (frameLimit) {
             if (frameLimit <= 60 && frameLimit > 0) {
                 options.frameLimit = frameLimit

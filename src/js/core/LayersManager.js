@@ -17,10 +17,15 @@
 }(typeof window !== 'undefined' ? window : global, function (ArrayMap, BaseNode, CollectionNode) {
     "use strict";
 
+    //TODO:: fix this!!!
     var LayersManager = function () {
-        this.globalCollection = new ArrayMap();
+        /** @type CollectionNode */
+        this.globalCollection = new CollectionNode({id: 'GlobalLayer'});
 
+        /** @type Array.<CollectionNode>|CollectionNode[] */
         this.layers = [];
+
+        /** @type number */
         this.index = 1000;
     };
 
@@ -46,7 +51,7 @@
 
             node = node || new CollectionNode({id: name, zIndex: zIndex});
 
-            this.globalCollection.add(name, node);
+            this.globalCollection.add(node, name);
             this.layers[zIndex] = node;
 
             return this;
@@ -59,8 +64,8 @@
      * @returns {LayersManager}
      */
     LayersManager.prototype.removeLayer = function (name) {
-        delete this.layers[this.globalCollection[name].zIndex];
-        this.globalCollection.remove(name);
+        delete this.layers[this.globalCollection.get(name).zIndex];
+        this.globalCollection.remove(null, name);
         return this;
     };
 
@@ -69,8 +74,8 @@
      * @returns {CollectionNode|null}
      */
     LayersManager.prototype.getLayer = function (name) {
-        if (this.globalCollection[name] !== undefined) {
-            return this.globalCollection[name];
+        if (this.globalCollection.has(name)) {
+            return this.globalCollection.get(name);
         }
         return null;
     };
@@ -81,10 +86,10 @@
      * @returns {LayersManager}
      */
     LayersManager.prototype.setZIndex = function (name, zIndex) {
-        if (this.globalCollection[name] !== undefined) {
-            delete this.layers[this.globalCollection[name].zIndex];
-            this.globalCollection[name].zIndex = zIndex;
-            this.layers[this.globalCollection[name].zIndex] = zIndex;
+        if (this.globalCollection.has(name)) {
+            delete this.layers[this.globalCollection.get(name).zIndex];
+            this.globalCollection.get(name).zIndex = zIndex;
+            this.layers[zIndex] = this.globalCollection.get(name);
         }
         return this;
     };

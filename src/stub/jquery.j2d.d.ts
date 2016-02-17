@@ -114,9 +114,11 @@ interface J2D {
     start():void;
     pause():void;
     resume():void;
+
     getSceneManager():SceneManager;
     getLayersManager():LayersManager;
     getFrameManager():FrameManager;
+    getViewportManager():ViewportManager;
 
     on():void;
     once():void;
@@ -175,6 +177,7 @@ interface SceneManager {
 
     frameManager:FrameManager;
     layersManager:LayersManager;
+    viewportManager:ViewportManager;
 
     backgroundColor:string|CanvasGradient|CanvasPattern;
     opacity:number;
@@ -220,6 +223,9 @@ interface SceneManager {
     add(node:BaseNode, key?:string):SceneManager;
     remove(node?:BaseNode, key?:string):SceneManager;
 
+    registerCamera(node:CameraNode):SceneManager
+    updateViewport(node:CameraNode):SceneManager
+
     fixGameStateRender():SceneManager;
 }
 
@@ -250,6 +256,7 @@ interface ViewportManager {
     updateViewport(key:string):ViewportManager;
     setViewport(offset:Vector2d, size:Vector2d):ViewportManager;
     getViewport():{offset: {x: number, y: number}, size: {x: number, y: number}, scale: number, angle: number};
+    setDefaultViewport(viewport:{offset: {x: number, y: number}, size: {x: number, y: number}, scale: number, angle: number}):ViewportManager;
 }
 
 /* ------------------------------------------ IO ------------------------------------------ */
@@ -482,8 +489,7 @@ interface RectNode extends BaseNode {
     draw(context:CanvasRenderingContext2D,
          viewport:{offset:{x:number, y:number}, size:{x:number, y:number}, scale:number, angle:number},
          collection:CollectionNode,
-         data:Object
-    ):Object;
+         data:Object):Object;
 }
 
 
