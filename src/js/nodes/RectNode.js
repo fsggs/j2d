@@ -58,7 +58,7 @@
      * @param {{offset: {x: number, y: number}, size: {x: number, y: number}, scale: number, angle: number}} viewport
      * @param {CollectionNode} collection
      * @param {object} data
-     * @returns {RectNode}
+     * @returns {null}
      */
     RectNode.prototype.draw = function (context, viewport, collection, data) {
         //if (this.data.visible && this.isLookScene()) {

@@ -91,15 +91,19 @@
             engineStack.add(name, engine);
             dataStack.add(name, data);
             if (!options.frameRun) this.pulse();
+
+            return this;
         };
 
         FrameManager.prototype.stop = function (name) {
             engineStack.remove(name);
             dataStack.remove(name);
+            return this;
         };
 
         FrameManager.prototype.pulse = function () {
             this.runMainLoop(Date.now());
+            return this;
         };
 
         FrameManager.prototype.runMainLoop = function (timestamp, frameManager) {
@@ -156,6 +160,7 @@
             if (frameLimit <= 60 && frameLimit > 0) {
                 options.frameLimit = frameLimit
             }
+            return this;
         };
 
         /**

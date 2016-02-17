@@ -224,8 +224,8 @@
 
     SceneManager.prototype.setGameState = function (gameState) {
         this.data.gameState = gameState || function () {
-            console.warn('Error in game state function!');
-        };
+                console.warn('Error in game state function!');
+            };
         this.frameManager.stop(this.j2d.data.id);
 
         this.fixGameStateRender();
@@ -272,17 +272,17 @@
         if (undefined === element.requestFullscreen) {
             //noinspection JSUnresolvedVariable
             element.requestFullscreen = element.webkitRequestFullscreen
-            || element.webkitRequestFullScreen
-            || element.mozRequestFullScreen
-            || element.msRequestFullscreen;
+                || element.webkitRequestFullScreen
+                || element.mozRequestFullScreen
+                || element.msRequestFullscreen;
         }
 
         if (undefined === document.exitFullscreen) {
             //noinspection JSUnresolvedVariable
             document.exitFullscreen = document.webkitExitFullscreen
-            || document.webkitCancelFullScreen
-            || document.mozCancelFullScreen
-            || document.msExitFullscreen;
+                || document.webkitCancelFullScreen
+                || document.mozCancelFullScreen
+                || document.msExitFullscreen;
         }
         if (fullscreen) {
             element.requestFullscreen();

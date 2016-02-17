@@ -158,12 +158,12 @@ interface FrameManager {
 
         asyncUpdate:boolean|undefined,
         asyncRender:boolean|undefined
-    }):void;
-    stop(name):void;
-    pulse():void;
+    }):FrameManager;
+    stop(name):FrameManager;
+    pulse():FrameManager;
 
     runMainLoop(timestamp, frameManager):void;
-    setDefaultFrameLimit(frameLimit):void;
+    setDefaultFrameLimit(frameLimit):FrameManager;
 
     Init():FrameManager;
 }
@@ -201,10 +201,11 @@ interface SceneManager {
         gameState:IGameStateManager|undefined
     }):SceneManager;
 
-    initCanvas():void;
+    initCanvas():SceneManager;
+    initCanvas():SceneManager;
     clear(pos:number, size:number):SceneManager;
     resize(width:number, height:number):SceneManager;
-    setGameState(gameState:IGameStateManager):SceneManager;
+    setGameState(gameState:IGameStateManager|Function):SceneManager;
     async(callback:Function, data:any):SceneManager;
     start():SceneManager;
     stop():SceneManager;
@@ -212,6 +213,14 @@ interface SceneManager {
     fullScreen(fullscreen:boolean):SceneManager;
     resizeToFullPage(fullscreen:boolean):SceneManager;
     toggleFullScreen(j2d:J2D, data:{fullscreen:boolean}):SceneManager;
+
+    getSceneLayer():CollectionNode;
+    fillBackground():SceneManager;
+    render(data:Object):SceneManager;
+    add(node:BaseNode, key?:string):SceneManager;
+    remove(node?:BaseNode, key?:string):SceneManager;
+
+    fixGameStateRender():SceneManager;
 }
 
 interface LayersManager {
@@ -220,7 +229,7 @@ interface LayersManager {
 
     addLayer(name:string|undefined, node:CollectionNode|undefined):LayersManager
     removeLayer(name:string):LayersManager
-    getLayer(name:string):CollectionNode|null
+    getLayer(name:string):CollectionNode
 }
 
 interface ViewportManager {
@@ -436,35 +445,45 @@ interface BaseNode {
     angle:number;
     cache:boolean;
 
-    constructor(data:IDataBaseNode):BaseNode
+    constructor(data:IDataBaseNode):BaseNode;
 
-    getPosition():Vector2d
-    setPosition(position:Vector2d):BaseNode
+    getPosition():Vector2d;
+    setPosition(position:Vector2d):BaseNode;
 
-    getSize():Vector2d
-    setSize(size:Vector2d):BaseNode
+    getSize():Vector2d;
+    setSize(size:Vector2d):BaseNode;
 
-    getOffset():Vector2d
-    setOffset(offset:Vector2d):BaseNode
+    getOffset():Vector2d;
+    setOffset(offset:Vector2d):BaseNode;
 
     render(context:CanvasRenderingContext2D,
            viewport:{offset:{x:number, y:number}, size:{x:number, y:number}, scale:number, angle:number},
            collection:CollectionNode,
-           data:Object):BaseNode
+           data:Object):BaseNode;
 }
 
 interface CollectionNode extends BaseNode {
-    constructor(data:IDataBaseNode):CollectionNode
+    constructor(data:IDataBaseNode):CollectionNode;
+    add(node:BaseNode, key?:string):CollectionNode;
+    remove(node?:BaseNode, key?:string):CollectionNode;
+    flush():CollectionNode;
 }
 
 interface CameraNode extends BaseNode {
-    constructor(data:IDataBaseNode):CameraNode
+    constructor(data:IDataBaseNode):CameraNode;
     getCameraViewport(screen:{x:number, y:number},
-                      calculate:Function):{offset:{x:number, y:number}, size:{x:number, y:number}, scale:number, angle:number}
+                      calculate:Function):{offset:{x:number, y:number}, size:{x:number, y:number}, scale:number, angle:number};
 }
 
 interface RectNode extends BaseNode {
-    constructor(data:IDataBaseNode):RectNode
+    constructor(data:IDataBaseNode):RectNode;
+    setColor(color:string):RectNode;
+    getColor():string;
+    draw(context:CanvasRenderingContext2D,
+         viewport:{offset:{x:number, y:number}, size:{x:number, y:number}, scale:number, angle:number},
+         collection:CollectionNode,
+         data:Object
+    ):Object;
 }
 
 
