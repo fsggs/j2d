@@ -48,6 +48,7 @@ define('Application', [
                 t = null;
 
                 camera_1st.angle = camera_1st.angle + 1;
+                camera_1st.setSize(new Vector2d(400 + camera_1st.angle, 300 + camera_1st.angle));
 
                 //rectangle.angle = rectangle.angle - 2;
                 rectangle.setPosition(new Vector2d(x, y)).setColor(ts ? 'yellow' : 'grey');
