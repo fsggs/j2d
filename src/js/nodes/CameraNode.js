@@ -62,6 +62,7 @@
         return this;
     };
 
+    if (global.exports !== undefined) global.exports.CameraNode = CameraNode;
     if (global.J2D !== undefined) global.CameraNode = CameraNode;
     return CameraNode;
 }));

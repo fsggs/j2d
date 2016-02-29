@@ -1436,5 +1436,6 @@
         });
     };
 
+    if (global.exports !== undefined) global.exports.WebGL2D = WebGL2D;
     return WebGL2D;
 }));

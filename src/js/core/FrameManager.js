@@ -200,8 +200,8 @@
             }
         };
 
+        if (global.exports !== undefined) global.exports.FrameManager = FrameManager;
         if (global.J2D === undefined) global.FrameManager = FrameManager;
-
         return FrameManager;
     }
 ));

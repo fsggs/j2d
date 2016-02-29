@@ -55,6 +55,7 @@
         return new Vector2dInteger(this.width, this.height);
     };
 
+    if (global.exports !== undefined) global.exports.DeviceUtil = DeviceUtil;
     if (global.J2D === undefined) global.DeviceUtil = DeviceUtil;
     return DeviceUtil;
 }));

@@ -131,6 +131,7 @@
         return this;
     };
 
+    if (global.exports !== undefined) global.exports.CollectionNode = CollectionNode;
     if (global.J2D !== undefined) global.CollectionNode = CollectionNode;
     return CollectionNode;
 }));

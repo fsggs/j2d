@@ -163,6 +163,7 @@
         return this.data;
     };
 
+    if (global.exports !== undefined) global.exports.ViewportManager = ViewportManager;
     if (global.J2D !== undefined) global.ViewportManager = ViewportManager;
     return ViewportManager;
 }));

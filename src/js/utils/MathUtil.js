@@ -84,6 +84,7 @@
         return radian * (180 / Math.PI);
     };
 
+    if (global.exports !== undefined) global.exports.MathUtil = MathUtil;
     if (global.J2D === undefined) global.MathUtil = MathUtil;
     return MathUtil
 }));

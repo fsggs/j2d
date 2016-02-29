@@ -15,22 +15,25 @@
         define('jquery.j2d', [
             'jquery',
             'core/SceneManager',
+            'core/MediaManager',
             'utils/DeviceUtil'
         ], factory);
     } else if (typeof module === 'object' && typeof module.exports === 'object') {
         module.exports = factory(
             require('jquery'),
             require('core/SceneManager'),
+            require('core/MediaManager'),
             require('utils/DeviceUtil')
         );
     } else {
         factory(
             root.jQuery,
             root.SceneManager,
+            root.MediaManager,
             root.DeviceUtil
         );
     }
-}(typeof window !== 'undefined' ? window : global, function ($, SceneManager, DeviceUtil) {
+}(typeof window !== 'undefined' ? window : global, function ($, SceneManager, MediaManager, DeviceUtil) {
     "use strict";
 
     /**
@@ -57,6 +60,9 @@
 
         /** @type SceneManager */
         this.scene = new SceneManager(this);
+
+        /** @type MediaManager */
+        this.mediaManager = new MediaManager(this);
 
         Object.defineProperty(this, 'WebGL', {
             get: function () {
@@ -140,6 +146,10 @@
 
     J2D.prototype.getSceneManager = function () {
         return this.scene;
+    };
+
+    J2D.prototype.getMediaManager = function () {
+        return this.mediaManager;
     };
 
     J2D.prototype.getLayersManager = function () {
@@ -286,6 +296,7 @@
         });
     })();
 
+    if (global.exports !== undefined) global.exports.J2D = J2D;
     if (global.J2D === undefined) global.J2D = J2D;
     return J2D;
 }));

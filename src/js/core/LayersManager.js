@@ -10,7 +10,7 @@
     if (typeof define === 'function' && define.amd) {
         define('core/LayersManager', ['utils/ArrayMap', 'nodes/BaseNode', 'nodes/CollectionNode'], factory);
     } else if (typeof module === 'object' && typeof module.exports === 'object') {
-        module.exports = factory(require('utils/ArrayMap', require('nodes/BaseNode'), require('nodes/CollectionNode')));
+        module.exports = factory(require('utils/ArrayMap'), require('nodes/BaseNode'), require('nodes/CollectionNode'));
     } else {
         factory(root.ArrayMap, root.BaseNode, root.CollectionNode);
     }
@@ -94,6 +94,7 @@
         return this;
     };
 
+    if (global.exports !== undefined) global.exports.LayersManager = LayersManager;
     if (global.J2D !== undefined) global.LayersManager = LayersManager;
     return LayersManager;
 }));

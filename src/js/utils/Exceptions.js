@@ -169,6 +169,20 @@
     UnexpectedValueException.prototype = Object.create(Exception.prototype);
     UnexpectedValueException.prototype.constructor = UnexpectedValueException;
 
+    if (global.exports !== undefined) {
+        global.exports.Exception = Exception;
+        global.exports.RuntimeException = RuntimeException;
+        global.exports.InvalidArgumentException = InvalidArgumentException;
+        global.exports.BadFunctionCallException = BadFunctionCallException;
+        global.exports.BadMethodCallException = BadMethodCallException;
+        global.exports.LengthException = LengthException;
+        global.exports.LogicException = LogicException;
+        global.exports.OutOfBoundsException = OutOfBoundsException;
+        global.exports.OutOfRangeException = OutOfRangeException;
+        global.exports.RangeException = RangeException;
+        global.exports.UnexpectedValueException = UnexpectedValueException;
+    }
+
     if (typeof define !== 'function' || !define.amd) {
         global.Exception = Exception;
         global.RuntimeException = RuntimeException;
