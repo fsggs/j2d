@@ -113,7 +113,6 @@
             node = sound.audioNode,
             index = sound.audioNode.length;
 
-        // create gain node
         node[index] = (audioContext.createGain === undefined)
             ? audioContext.createGainNode()
             : audioContext.createGain();
@@ -124,7 +123,6 @@
         node[index].readyState = 4;
         node[index].connect(masterGain);
 
-        // create the panner
         node[index].panner = audioContext.createPanner();
         node[index].panner.panningModel = this.data.model || 'equalpower';
         node[index].panner.setPosition(this.data.pos3d[0], this.data.pos3d[1], this.data.pos3d[2]);
@@ -184,7 +182,6 @@
                 if (audioNode.error && audioNode.error.code === 4) {
                     html5Audio = false; //TODO:: Check this to local
                 }
-
                 console.error({type: audioNode.error ? audioNode.error.code : 0});
             }, false);
 
@@ -193,7 +190,7 @@
             audioNode.src = url;
             audioNode.pos = 0;
             audioNode.preload = 'auto';
-            audioNode.volume = (this.mediaManager.muted) ? 0 : sound.data.volume * (sound.mediaManager.volume / 100);
+            audioNode.volume = (sound.mediaManager.muted) ? 0 : sound.data.volume * (sound.mediaManager.volume / 100);
 
             var listener = function () {
                 sound.data.duration = Math.ceil(audioNode.duration * 10) / 10;
@@ -228,7 +225,6 @@
             sound.data.urls = (typeof urls === 'string') ? [urls] : urls;
             sound.data.loaded = false;
             sound.load();
-
             return sound;
         } else {
             return sound.data.urls;
@@ -250,7 +246,6 @@
             sound.on('load', function () {
                 sound.play(sprite, callback);
             });
-
             return sound;
         }
 
@@ -276,8 +271,9 @@
 
             var loop = !!(sound.data.loop || sound.data.sprite[sprite][2]);
 
-            var soundId = (typeof callback === 'string') ? callback : Math.round(Date.now() * Math.random()) + '',
-                timerId;
+            var soundId = (typeof callback === 'string')
+                ? callback
+                : Math.round(Date.now() * Math.random()) + '', timerId;
             (function () {
                 var data = {
                     id: soundId,
@@ -322,7 +318,6 @@
                 }
             } else {
                 if (node.readyState === 4 || !node.readyState && navigator.isCocoonJS) {
-                    //node.readyState = 4;
                     node.id = soundId;
                     node.currentTime = pos;
                     node.muted = sound.mediaManager.muted || node.muted;
@@ -366,7 +361,6 @@
             sound.on('play', function () {
                 sound.pause(id);
             });
-
             return sound;
         }
 
@@ -397,19 +391,16 @@
         return sound;
     };
 
-    Sound.prototype.stop = function () {
+    Sound.prototype.stop = function (id) {
         var sound = this;
 
-        // if the sound hasn't been loaded, add it to the event queue
         if (!sound.data.loaded) {
             sound.on('play', function () {
                 sound.stop(id);
             });
-
             return sound;
         }
 
-        // clear 'onend' timer
         sound.clearEndTimer(id);
 
         var activeNode = (id) ? sound.nodeById(id) : sound.activeNode();
@@ -417,7 +408,6 @@
             activeNode.pos = 0;
 
             if (audioContext) {
-                // make sure the sound has been created
                 if (!activeNode.bufferSource || activeNode.paused) {
                     return sound;
                 }
@@ -438,15 +428,13 @@
         return sound;
     };
 
-    Sound.prototype.mute = function () {
+    Sound.prototype.mute = function (id) {
         var sound = this;
 
-        // if the sound hasn't been loaded, add it to the event queue
         if (!sound.data.loaded) {
             sound.on('play', function () {
                 sound.mute(id);
             });
-
             return sound;
         }
 
@@ -462,15 +450,13 @@
         return sound;
     };
 
-    Sound.prototype.unMute = function () {
+    Sound.prototype.unMute = function (id) {
         var sound = this;
 
-        // if the sound hasn't been loaded, add it to the event queue
         if (!sound.data.loaded) {
             sound.on('play', function () {
                 sound.unmute(id);
             });
-
             return sound;
         }
 
@@ -486,21 +472,18 @@
         return sound;
     };
 
-    Sound.prototype.volume = function () {
+    Sound.prototype.volume = function (vol, id) {
         var sound = this;
 
-        // make sure volume is a number
-        var vol = parseFloat(vol);
+        vol = parseFloat(vol);
 
         if (vol >= 0 && vol <= 1) {
             sound.data.volume = vol;
 
-            // if the sound hasn't been loaded, add it to the event queue
             if (!sound.data.loaded) {
                 sound.on('play', function () {
                     sound.volume(vol, id);
                 });
-
                 return sound;
             }
 
@@ -514,49 +497,41 @@
             }
 
             return sound;
-        } else {
-            return sound.data.volume;
         }
+        return sound.data.volume;
     }; // TODO:: @Property
 
-    Sound.prototype.loop = function () {
+    Sound.prototype.loop = function (loop) {
         var sound = this;
 
         if (typeof loop === 'boolean') {
             sound.data.loop = loop;
-
             return sound;
-        } else {
-            return sound.data.loop;
         }
+        return sound.data.loop;
     }; // TODO:: @Property
 
-    Sound.prototype.sprite = function () {
+    Sound.prototype.sprite = function (sprite) {
         var sound = this;
 
         if (typeof sprite === 'object') {
             sound.data.sprite = sprite;
-
             return sound;
-        } else {
-            return sound.data.sprite;
         }
+        return sound.data.sprite;
     }; // TODO:: @Property
 
-    Sound.prototype.pos = function () {
+    Sound.prototype.pos = function (pos, id) {
         var sound = this;
 
-        // if the sound hasn't been loaded, add it to the event queue
         if (!sound.data.loaded) {
             sound.on('load', function () {
                 sound.pos(pos);
             });
-
             return typeof pos === 'number' ? sound : sound.data.pos || 0;
         }
 
-        // make sure we are dealing with a number for pos
-        var pos = parseFloat(pos);
+        pos = parseFloat(pos);
 
         var activeNode = (id) ? sound.nodeById(id) : sound.activeNode();
         if (activeNode) {
@@ -564,7 +539,6 @@
                 sound.pause(id);
                 activeNode.pos = pos;
                 sound.play(activeNode.sprite, id);
-
                 return sound;
             } else {
                 return audioContext ? activeNode.pos + (audioContext.currentTime - sound.data.playStart) : activeNode.currentTime;
@@ -572,7 +546,6 @@
         } else if (pos >= 0) {
             return sound;
         } else {
-            // find the first inactive node to return the pos for
             for (var i = 0; i < sound.audioNode.length; i++) {
                 if (sound.audioNode[i].paused && sound.audioNode[i].readyState === 4) {
                     return (audioContext) ? sound.audioNode[i].pos : sound.audioNode[i].currentTime;
@@ -580,19 +553,17 @@
             }
         }
     };
-    Sound.prototype.pos3d = function () {
+
+    Sound.prototype.pos3d = function (x, y, z, id) {
         var sound = this;
 
-        // set a default for the optional 'y' & 'z'
-        var y = (typeof y === 'undefined' || !y) ? 0 : y;
-        var z = (typeof z === 'undefined' || !z) ? -0.5 : z;
+        y = (typeof y === 'undefined' || !y) ? 0 : y;
+        z = (typeof z === 'undefined' || !z) ? -0.5 : z;
 
-        // if the sound hasn't been loaded, add it to the event queue
         if (!sound.data.loaded) {
             sound.on('play', function () {
                 sound.pos3d(x, y, z, id);
             });
-
             return sound;
         }
 
@@ -615,37 +586,29 @@
     Sound.prototype.unload = function () {
         var sound = this;
 
-        // stop playing any active nodes
         var nodes = sound.audioNode;
         for (var i = 0; i < sound.audioNode.length; i++) {
-            // stop the sound if it is currently playing
             if (!nodes[i].paused) {
                 sound.stop(nodes[i].id);
                 sound.on('end', nodes[i].id);
             }
-
             if (!audioContext) {
-                // remove the source if using HTML5 Audio
                 nodes[i].src = '';
             } else {
-                // disconnect the output from the master gain
                 nodes[i].disconnect(0);
             }
         }
 
-        // make sure all timeouts are cleared
         for (i = 0; i < sound.data.onendTimer.length; i++) {
             clearTimeout(sound.data.onendTimer[i].timer);
         }
 
-        // remove the reference in the global MediaManager object
         var sounds = this.mediaManager.get('sounds');
         var index = sounds.indexOf(sound);
         if (index !== null && index >= 0) {
             sounds.splice(index, 1);
         }
 
-        // delete this sound from the cache
         delete cache[sound.data.src];
         sound = null;
     };
@@ -657,7 +620,6 @@
         var sound = this,
             node = sound.audioNode[0];
 
-        // find the node with this ID
         for (var i = 0; i < sound.audioNode.length; i++) {
             if (sound.audioNode[i].id === id) {
                 node = sound.audioNode[i];
@@ -675,7 +637,6 @@
         var sound = this,
             node = null;
 
-        // find the first playing node
         for (var i = 0; i < sound.audioNode.length; i++) {
             if (!sound.audioNode[i].paused) {
                 node = sound.audioNode[i];
@@ -683,7 +644,6 @@
             }
         }
 
-        // remove excess inactive nodes
         sound.drainPool();
 
         return node;
@@ -696,24 +656,18 @@
         var sound = this,
             node = null;
 
-        // find first inactive node to recycle
         for (var i = 0; i < sound.audioNode.length; i++) {
             if (sound.audioNode[i].paused && sound.audioNode[i].readyState === 4) {
-                // send the node back for use by the new play instance
                 callback(sound.audioNode[i]);
                 node = true;
                 break;
             }
         }
 
-        // remove excess inactive nodes
         sound.drainPool();
 
-        if (node) {
-            return;
-        }
+        if (node) return;
 
-        // create new node if there are no inactives
         var newNode;
         if (audioContext) {
             newNode = sound.setupAudioNode();
@@ -722,7 +676,6 @@
             sound.load();
             newNode = sound.audioNode[sound.audioNode.length - 1];
 
-            // listen for the correct load event and fire the callback
             var listenerEvent = navigator.isCocoonJS ? 'canplaythrough' : 'loadedmetadata';
             var listener = function () {
                 newNode.removeEventListener(listenerEvent, listener, false);
@@ -740,27 +693,17 @@
             inactive = 0,
             i;
 
-        // count the number of inactive nodes
         for (i = 0; i < sound.audioNode.length; i++) {
-            if (sound.audioNode[i].paused) {
-                inactive++;
-            }
+            if (sound.audioNode[i].paused) inactive++;
         }
 
-        // remove excess inactive nodes
         for (i = sound.audioNode.length - 1; i >= 0; i--) {
-            if (inactive <= 5) {
-                break;
-            }
+            if (inactive <= 5) break;
 
             if (sound.audioNode[i].paused) {
-                // disconnect the audio source if using Web Audio
-                if (audioContext) {
-                    sound.audioNode[i].disconnect(0);
-                }
-
-                inactive--;
+                if (audioContext) sound.audioNode[i].disconnect(0);
                 sound.audioNode.splice(i, 1);
+                inactive--;
             }
         }
     };
@@ -772,7 +715,6 @@
         var sound = this,
             index = -1;
 
-        // loop through the timers to find the one associated with this sound
         for (var i = 0; i < sound.data.onendTimer.length; i++) {
             if (sound.data.onendTimer[i].id === soundId) {
                 index = i;
@@ -787,16 +729,16 @@
         }
     };
 
-    Sound.prototype.on = function (event, fn) {
+    Sound.prototype.on = function (event, callback) {
         var sound = this,
             events = sound.data['on' + event];
 
-        if (typeof fn === 'function') {
-            events.push(fn);
+        if (typeof callback === 'function') {
+            events.push(callback);
         } else {
             for (var i = 0; i < events.length; i++) {
-                if (fn) {
-                    events[i].call(sound, fn);
+                if (callback) {
+                    events[i].call(sound, callback);
                 } else {
                     events[i].call(sound);
                 }
@@ -809,17 +751,16 @@
     /**
      * Remove a custom event.
      * @param  {String}   event Event type.
-     * @param  {Function} fn    Listener to remove.
+     * @param  {Function} callback    Listener to remove.
      * @return {Sound}
      */
-    Sound.prototype.off = function (event, fn) {
+    Sound.prototype.off = function (event, callback) {
         var sound = this,
             events = sound.data['on' + event];
 
-        if (fn) {
-            // loop through functions in the event for comparison
+        if (callback) {
             for (var i = 0; i < events.length; i++) {
-                if (fn === events[i]) {
+                if (callback === events[i]) {
                     events.splice(i, 1);
                     break;
                 }
@@ -833,7 +774,8 @@
 
 
     /* WebAudioAPI Helpers */
-    if (audioContext) {
+    if (!audioContext) {
+    } else {
 
         /**
          * Buffer a sound from URL (or from cache) and decode to audio source (Web Audio API).
@@ -841,18 +783,14 @@
          * @param  {String} url The path to the sound file.
          */
         var loadBuffer = function (sound, url) {
-            // check if the buffer has already been cached
             if (url in cache) {
-                // set the duration from the cache
                 sound.data.duration = cache[url].duration;
 
-                // load the sound into this object
                 loadSound(sound);
                 return;
             }
 
             if (/^data:[^;]+;base64,/.test(url)) {
-                // Decode base64 data-URIs because some browsers cannot load data-URIs with XMLHttpRequest.
                 var data = atob(url.split(',')[1]);
                 var dataView = new Uint8Array(data.length);
                 for (var i = 0; i < data.length; ++i) {
@@ -861,7 +799,6 @@
 
                 decodeAudioData(dataView.buffer, sound, url);
             } else {
-                // load the buffer from the URL
                 var xhr = new XMLHttpRequest();
                 xhr.open('GET', url, true);
                 xhr.responseType = 'arraybuffer';
@@ -869,7 +806,6 @@
                     decodeAudioData(xhr.response, sound, url);
                 };
                 xhr.onerror = function () {
-                    // if there is an error, switch the sound to HTML Audio
                     if (audioContext) {
                         sound.data.buffer = true;
                         sound.audioNode = [];
@@ -893,7 +829,6 @@
          * @param  {String} url The path to the sound file.
          */
         var decodeAudioData = function (arraybuffer, sound, url) {
-            // decode the buffer into an audio source
             audioContext.decodeAudioData(
                 arraybuffer,
                 function (buffer) {
@@ -911,18 +846,15 @@
         /**
          * Finishes loading the Web Audio API sound and fires the loaded event
          * @param  {Object}  sound    The Sound object for the sound to load.
-         * @param  {Objecct} buffer The decoded buffer sound source.
+         * @param  {Object} buffer The decoded buffer sound source.
          */
         var loadSound = function (sound, buffer) {
-            // set the duration
             sound.data.duration = (buffer) ? buffer.duration : sound.data.duration;
 
-            // setup a sprite if none is defined
             if (Object.getOwnPropertyNames(sound.data.sprite).length === 0) {
                 sound.data.sprite = {default: [0, sound.data.duration * 1000]};
             }
 
-            // fire the loaded event
             if (!sound.data.loaded) {
                 sound.data.loaded = true;
                 sound.on('load');
@@ -940,10 +872,8 @@
          * @param  {String} id    (optional) The play instance ID.
          */
         var refreshBuffer = function (sound, loop, id) {
-            // determine which node to connect to
             var node = sound.nodeById(id);
 
-            // setup the buffer source for playback
             node.bufferSource = audioContext.createBufferSource();
             node.bufferSource.buffer = cache[sound.data.src];
             node.bufferSource.connect(node.panner);
@@ -952,6 +882,7 @@
                 node.bufferSource.loopStart = loop[1];
                 node.bufferSource.loopEnd = loop[1] + loop[2];
             }
+            //noinspection JSPrimitiveTypeWrapperUsage
             node.bufferSource.playbackRate.value = sound.data.rate;
         };
     }
@@ -961,7 +892,7 @@
 
     /**
      * @param {J2D} j2d
-     * @param {MediaManager.defaults|Object|undefined} data
+     * @param {MediaManager.defaults|Object|undefined} [data]
      * @constructor
      */
     var MediaManager = function (j2d, data) {
@@ -1046,9 +977,8 @@
                 return !!soundManager.data.iOSAutoEnable;
             },
             set: function (value) {
-                if (audioContext
-                    && (soundManager.iOSEnabled || !/iPhone|iPad|iPod/i.test(navigator.userAgent))) {
-                    return;
+                if (audioContext && (soundManager.iOSEnabled || !/iPhone|iPad|iPod/i.test(navigator.userAgent))) {
+                    return value;
                 }
                 soundManager.iOSEnabled = false;
 
@@ -1128,6 +1058,10 @@
     };
 
     MediaManager.prototype.removeSound = function (id) {
+        if (this.media.get('sounds').contains(id)) {
+            this.media.get('sounds').get(id).stop();
+            this.media.get('sounds').remove(id);
+        }
         return this;
     };
 

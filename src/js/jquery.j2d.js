@@ -61,9 +61,6 @@
         /** @type SceneManager */
         this.scene = new SceneManager(this);
 
-        /** @type MediaManager */
-        this.mediaManager = new MediaManager(this);
-
         Object.defineProperty(this, 'WebGL', {
             get: function () {
                 return j2d.data.webGL;
@@ -96,6 +93,15 @@
             }
         });
 
+        Object.defineProperty(this, 'media', {
+            get: function () {
+                return j2d.data.media;
+            },
+            set: function (value) {
+                return j2d.data.media = value
+            }
+        });
+
         Object.defineProperty(this, 'isPlay', {
             get: function () {
                 return !j2d.data.pause;
@@ -108,6 +114,7 @@
     J2D.defaults = {
         id: null,
         io: null,
+        media: null,
         deltaTime: 0,
         pause: false,
         ready: false,
@@ -144,22 +151,22 @@
     };
     /** -GameEngine **/
 
+    /** @returns {SceneManager} */
     J2D.prototype.getSceneManager = function () {
         return this.scene;
     };
 
-    J2D.prototype.getMediaManager = function () {
-        return this.mediaManager;
-    };
-
+    /** @returns {LayersManager} */
     J2D.prototype.getLayersManager = function () {
         return this.scene.layersManager;
     };
 
+    /** @returns {FrameManager} */
     J2D.prototype.getFrameManager = function () {
         return this.scene.frameManager;
     };
 
+    /** @returns {ViewportManager} */
     J2D.prototype.getViewportManager = function () {
         return this.scene.viewportManager;
     };

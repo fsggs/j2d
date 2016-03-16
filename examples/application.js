@@ -11,10 +11,11 @@ define('Application', [
     'jquery',
     'jquery.j2d',
     'io/InputManager',
+    'io/MediaManager',
     'utils/Vector2d',
     'nodes/RectNode',
     'nodes/CameraNode'
-], function ($, J2D, InputManager, Vector2d, RectNode, Camera) {
+], function ($, J2D, InputManager, MediaManager, Vector2d, RectNode, Camera) {
     "use strict";
 
     $(global.document).ready(function () {
@@ -25,16 +26,17 @@ define('Application', [
         j2d.io = new InputManager(j2d);
         j2d.io.toggleCursor(true); // enable cursor
 
-        /* Managers */
-        var scene = j2d.getSceneManager();
-        var media = j2d.getMediaManager();
+        j2d.media = new MediaManager(j2d);
 
-        media.addSound({
+        j2d.media.addSound({
             id: "test",
             urls: ['sound.ogg']
         });
 
-        media.sound("test").play();
+        j2d.media.sound("test").play();
+
+        /* Managers */
+        var scene = j2d.getSceneManager();
 
         /* Nodes */
         /** @type {BaseNode|RectNode} */
@@ -62,6 +64,7 @@ define('Application', [
                 rectangle.setPosition(new Vector2d(x, y)).setColor(ts ? 'yellow' : 'grey');
                 scene.updateViewport(camera_1st);
             };
+
             this.render = function (timestamp, data) {
                 //ts = !ts;
 
@@ -71,11 +74,11 @@ define('Application', [
             };
         };
 
-        //scene.init({
-        //    width: 400,
-        //    height: 300,
-        //    backgroundColor: 'black'
-        //}).setGameState(GameState).start();
+        scene.init({
+            width: 400,
+            height: 300,
+            backgroundColor: 'black'
+        }).setGameState(GameState).start();
     });
 
 });
