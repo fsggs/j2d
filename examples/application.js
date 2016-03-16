@@ -27,6 +27,14 @@ define('Application', [
 
         /* Managers */
         var scene = j2d.getSceneManager();
+        var media = j2d.getMediaManager();
+
+        media.addSound({
+            id: "test",
+            urls: ['sound.ogg']
+        });
+
+        media.sound("test").play();
 
         /* Nodes */
         /** @type {BaseNode|RectNode} */
@@ -63,11 +71,11 @@ define('Application', [
             };
         };
 
-        scene.init({
-            width: 400,
-            height: 300,
-            backgroundColor: 'black'
-        }).setGameState(GameState).start();
+        //scene.init({
+        //    width: 400,
+        //    height: 300,
+        //    backgroundColor: 'black'
+        //}).setGameState(GameState).start();
     });
 
 });

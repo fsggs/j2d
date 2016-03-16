@@ -15,14 +15,14 @@
         define('jquery.j2d', [
             'jquery',
             'core/SceneManager',
-            'core/MediaManager',
+            'io/MediaManager',
             'utils/DeviceUtil'
         ], factory);
     } else if (typeof module === 'object' && typeof module.exports === 'object') {
         module.exports = factory(
             require('jquery'),
             require('core/SceneManager'),
-            require('core/MediaManager'),
+            require('io/MediaManager'),
             require('utils/DeviceUtil')
         );
     } else {

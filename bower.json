@@ -19,8 +19,7 @@
     "webgl",
     "jquery",
     "j2d",
-    "j2Ds",
-    "ES6"
+    "j2Ds"
   ],
   "license": [
     "BSD-4-Clause"

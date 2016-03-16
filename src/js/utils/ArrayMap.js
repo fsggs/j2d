@@ -101,6 +101,15 @@
 
     /**
      * @param {string|Object} key
+     * @returns {*}
+     */
+    ArrayMap.prototype.get = function (key) {
+        return this.contains(key) ? this[key] : null;
+    };
+    Object.defineProperty(ArrayMap.prototype, 'get', {enumerable: false});
+
+    /**
+     * @param {string|Object} key
      * @returns {ArrayMap.<T>}
      */
     ArrayMap.prototype.remove = function (key) {
