@@ -28,12 +28,12 @@ define('Application', [
 
         j2d.media = new MediaManager(j2d);
 
-        j2d.media.addSound({
-            id: "test",
-            urls: ['sound.ogg']
+        j2d.media.addAudio({
+            id: 'test',
+            src: 'test.ogg'
         });
 
-        j2d.media.sound("test").play();
+        j2d.media.audio("test").play();
 
         /* Managers */
         var scene = j2d.getSceneManager();
