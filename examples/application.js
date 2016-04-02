@@ -28,7 +28,7 @@ define('Application', [
 
         j2d.media = new MediaManager(j2d);
 
-        j2d.media.addAudio({
+        j2d.media.addSound({
             id: 'test',
             src: 'test.ogg'
         });
@@ -47,36 +47,49 @@ define('Application', [
         scene.add(rectangle);
         scene.registerCamera(camera_1st);
 
+        var width = 400,
+            height = 300;
+
         var GameState = function () {
             var t, x, y;
             var ts = true;
 
             this.update = function (timestamp, data) {
-                t = timestamp * 0.0008;
+                t = timestamp * 0.0018;
                 x = Math.sin(t) * 100 + 150;
                 y = Math.cos(t * 0.9) * 100 + 150;
                 t = null;
 
-                camera_1st.angle = camera_1st.angle + 1;
-                camera_1st.setSize(new Vector2d(400 + camera_1st.angle, 300 + camera_1st.angle));
+                camera_1st.angle = camera_1st.angle + (ts ? 1 : -1);
+                camera_1st.setSize(new Vector2d(width + camera_1st.angle, height + camera_1st.angle));
+                camera_1st.scale = camera_1st.angle / 50;
+
+                if(camera_1st.angle >= 360-1) ts = false;
+                if(camera_1st.angle == 0) ts = true;
 
                 //rectangle.angle = rectangle.angle - 2;
-                rectangle.setPosition(new Vector2d(x, y)).setColor(ts ? 'yellow' : 'grey');
+                rectangle.setPosition(new Vector2d(x, y)).setColor(!ts ? 'yellow' : 'grey');
                 scene.updateViewport(camera_1st);
+
+                //scene.updateViewport();
             };
 
             this.render = function (timestamp, data) {
-                //ts = !ts;
-
                 scene.clear();
                 scene.fillBackground();
                 scene.render(data);
             };
         };
 
+        // Fix for Camera
+        $(window).on('resize', function() {
+            width = j2d.element.width();
+            height = j2d.element.height();
+        });
+
         scene.init({
-            width: 400,
-            height: 300,
+            width: width,
+            height: height,
             backgroundColor: 'black'
         }).setGameState(GameState).start();
     });

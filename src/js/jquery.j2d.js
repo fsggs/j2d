@@ -112,6 +112,7 @@
     };
 
     J2D.defaults = {
+        /** @type string|null */
         id: null,
         io: null,
         media: null,

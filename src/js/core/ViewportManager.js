@@ -18,23 +18,25 @@
     "use strict";
 
     /**
-     * @param {{x: number, y: number}} screen
+     * @param {{x: number, y: number, offsetX: number, offsetY: number}} screen
      * @param {{offset: {x: number, y: number}, size: {x: number, y: number}, scale: number, angle: number}} viewport
      * @returns {{offset: {x: number, y: number}, size: {x: number, y: number}, scale: number, angle: number}}
      */
     var calculateScale = function (screen, viewport) {
         var data = {
-            offset: {x: viewport.offset.x, y: viewport.offset.y},
+            offset: {x: 0, y: 0},
             size: {x: 0, y: 0},
             scale: 1.0,
             angle: viewport.angle
         };
 
+        data.offset.x = screen.offsetX + viewport.offset.x;
+        data.offset.y = screen.offsetY + viewport.offset.y;
+
         data.size.x = (screen.x < viewport.size.x) ? screen.x : viewport.size.x;
         data.size.y = (screen.y < viewport.size.y) ? screen.y : viewport.size.y;
 
-        // TODO:: check with test & fix this in future
-        data.scale = ((screen.x / viewport.size.x) + (screen.y / viewport.size.y)) / 2;
+        data.scale = viewport.scale * (((screen.x / viewport.size.x) + (screen.y / viewport.size.y)) / 2);
         return data;
     };
 
@@ -49,7 +51,12 @@
         this.camera = 'No active cameras';
 
         /** @type {{x: number, y: number}} */
-        this.screen = {x: 0, y: 0};
+        this.screen = {
+            x: 0,
+            y: 0,
+            offsetX: 0,
+            offsetY: 0
+        };
 
         this.init = false;
 
@@ -68,11 +75,48 @@
     ViewportManager.prototype.setScreen = function (data) {
         if (typeof data == 'object') {
             if (data instanceof Array && data.length == 2) {
-                this.screen = {x: data[0], y: data[1]};
+                this.screen = {
+                    x: data[0],
+                    y: data[1],
+                    offsetX: this.screen.offsetX,
+                    offsetY: this.screen.offsetY
+                };
                 return this;
             }
             if (data.x !== undefined && data.y !== undefined) {
-                this.screen = {x: data.x, y: data.y};
+                this.screen = {
+                    x: data.x,
+                    y: data.y,
+                    offsetX: this.screen.offsetX,
+                    offsetY: this.screen.offsetY
+                };
+            }
+        }
+        return this;
+    };
+
+    /**
+     * @param {{x: number|undefined, y: number|undefined}|Array<number>} data
+     * @returns {ViewportManager}
+     */
+    ViewportManager.prototype.setOffset = function (data) {
+        if (typeof data == 'object') {
+            if (data instanceof Array && data.length == 2) {
+                this.screen = {
+                    x: this.screen.x,
+                    y: this.screen.y,
+                    offsetX: data[0],
+                    offsetY: data[1]
+                };
+                return this;
+            }
+            if (data.x !== undefined && data.y !== undefined) {
+                this.screen = {
+                    x: this.screen.x,
+                    y: this.screen.y,
+                    offsetX: data.x,
+                    offsetY: data.y
+                };
             }
         }
         return this;
@@ -123,8 +167,8 @@
     /**
      * @deprecated Please use CameraNode
      *
-     * @param {Vector2d} [offset]
-     * @param {Vector2d} [size]
+     * @param {Vector2d|null} [offset]
+     * @param {Vector2d|null} [size]
      * @returns {ViewportManager}
      */
     ViewportManager.prototype.setViewport = function (offset, size) {
@@ -136,11 +180,11 @@
 
         if (size !== undefined && typeof size == 'object') {
             if (size instanceof Vector2d) {
-                this.data.offset = size.getVector();
+                this.data.size = size.getVector();
             }
         }
 
-        this.data.scale = calculateScale(this.screen, this.data);
+        this.data = calculateScale(this.screen, this.data);
         return this;
     };
 

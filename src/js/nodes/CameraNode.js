@@ -34,7 +34,7 @@
     };
 
     /**
-     * @param {{x: number, y: number}} screen
+     * @param {{x: number, y: number, offsetX: number, offsetY: number}} screen
      * @param {Function|callback} calculate
      * @returns {{offset: {x: number, y: number}, size: {x: number, y: number}, scale: number, angle: number}}
      */
@@ -43,7 +43,7 @@
             offset: this.data.position,
             size: this.data.size,
             angle: this.data.angle,
-            scale: 1.0
+            scale: this.data.scale
         });
     };
 

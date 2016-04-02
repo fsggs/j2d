@@ -72,9 +72,13 @@
             if (this.data.angle || viewport.angle !== 0.0) {
                 context.save();
 
-                context.translate(this.getPosition().x - viewport.offset.x, this.getPosition().y - viewport.offset.y);
+                context.translate(
+                    this.getPosition().x - viewport.offset.x,
+                    this.getPosition().y - viewport.offset.y);
                 context.rotate(MathUtil.degree2Radian(this.data.angle + viewport.angle));
-                context.translate(-(this.getPosition().x - viewport.offset.x), -(this.getPosition().y - viewport.offset.y));
+                context.translate(
+                    -(this.getPosition().x - viewport.offset.x),
+                    -(this.getPosition().y - viewport.offset.y));
             }
 
             context.fillStyle = this.data.color;
@@ -83,8 +87,8 @@
             context.fillRect(
                 this.data.position.x - viewport.offset.x,
                 this.data.position.y - viewport.offset.y,
-                this.data.size.x * viewport.scale,
-                this.data.size.y * viewport.scale
+                this.data.size.x * this.data.scale * viewport.scale,
+                this.data.size.y * this.data.scale * viewport.scale
             );
 
             if (this.data.angle || viewport.angle !== 0.0) {

@@ -1,7 +1,17 @@
 .j2d {
     border: 0;
     cursor: none;
-    position: relative
+    position: relative;
+}
+
+.j2d canvas {
+    transform: translate3d(0, 0, 0);
+    backface-visibility: hidden;
+    perspective: 1000px;
+
+    -webkit-transform: translate3d(0, 0, 0);
+    -webkit-backface-visibility: hidden;
+    -webkit-perspective: 1000px;
 }
 
 .j2d:fullscreen, .j2d:-webkit-full-screen, .j2d:-moz-full-screen, .j2d:-o-full-screen, .j2d:-ms-fullscreen {

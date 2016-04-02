@@ -60,6 +60,15 @@
             }
         });
 
+        Object.defineProperty(this, 'scale', {
+            get: function () {
+                return baseNode.data.scale;
+            },
+            set: function (value) {
+                baseNode.data.scale = value;
+            }
+        });
+
         Object.defineProperty(this, 'cache', {
             get: function () {
                 return baseNode.data.enabledCache;
@@ -89,8 +98,9 @@
         },
 
         visible: true,
-        angle: 0,
-        opacity: 1,
+        angle: 0.0,
+        scale: 1.0,
+        opacity: 1.0,
 
         cache: null,
         enabledCache: false // TODO:: Collections & AnimatedPrimitiveNode

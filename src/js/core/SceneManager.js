@@ -8,8 +8,6 @@
 
 /*
  * TODO:: GameStateManager to Scene
- * TODO:: Fullscreen camera size & centering
- * TODO:: Viewport camera centering
  */
 
 (function (root, factory) {
@@ -403,6 +401,9 @@
             sceneManager.viewportManager.setScreen({
                 x: j2d.device.width,
                 y: j2d.device.height
+            }).setOffset({
+                x: -(j2d.device.width - sceneManager.data.originalWidth) / 2,
+                y: -(j2d.device.height - sceneManager.data.originalHeight) / 2
             });
         } else {
             sceneManager.resize(sceneManager.data.originalWidth, sceneManager.data.originalHeight);
@@ -416,6 +417,9 @@
             sceneManager.viewportManager.setScreen({
                 x: sceneManager.data.originalWidth,
                 y: sceneManager.data.originalHeight
+            }).setOffset({
+                x: 0,
+                y: 0
             });
         }
         return this;
@@ -506,10 +510,24 @@
     };
 
     /**
-     * @param {CameraNode} node
+     * Hack to mode without Cameras
+     * @returns {SceneManager}
+     */
+    var updateNoCamerasViewport = function (scene) {
+        // This hack use deprecated method, i known.
+        scene.viewportManager.setViewport(
+            new Vector2d(0, 0),
+            new Vector2d(scene.data.width, scene.data.height)
+        );
+
+        return scene;
+    };
+    /**
+     * @param {CameraNode} [node]
      * @returns {SceneManager}
      */
     SceneManager.prototype.updateViewport = function (node) {
+        if (node === undefined) return updateNoCamerasViewport(this);
         this.viewportManager.updateViewport(node.data.id);
         return this;
     };
