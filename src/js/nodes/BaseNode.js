@@ -179,6 +179,19 @@
         return this;
     };
 
+    //TODO:: Fix on fullscreen
+    /**
+     * @param {{offset: {x: number, y: number}, size: {x: number, y: number}, scale: number, angle: number}} viewport
+     * @returns {boolean}
+     */
+    BaseNode.prototype.inViewport = function (viewport) {
+        return !((this.data.position.x > viewport.offset.x + viewport.size.x
+        || this.data.position.x + viewport.size.x < viewport.offset.x)
+        || (this.data.position.y > viewport.offset.y + viewport.size.y
+        || this.data.position.y + viewport.size.y < viewport.offset.y));
+
+    };
+
     if (global.exports !== undefined) global.exports.BaseNode = BaseNode;
     if (global.J2D !== undefined) global.BaseNode = BaseNode;
     return BaseNode;

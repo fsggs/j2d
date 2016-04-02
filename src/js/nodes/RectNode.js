@@ -62,8 +62,8 @@
      */
     RectNode.prototype.draw = function (context, viewport, collection, data) {
         //if (this.data.visible && this.isLookScene()) {
-        if (this.data.visible) {
-
+        if (this.data.visible && this.inViewport(viewport)) {
+            console.log(this.inViewport(viewport));
             if (this.data.opacity !== 1.0) {
                 var tempOpacity = context.globalAlpha;
                 context.globalAlpha = this.options.opacity;

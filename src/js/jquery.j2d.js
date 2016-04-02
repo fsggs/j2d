@@ -137,6 +137,7 @@
         this.trigger('stop');
     };
 
+    // TODO:: add MediaManager
     J2D.prototype.pause = function () {
         if (this.data.io) this.data.io.flush();
         this.data.pause = true;
@@ -144,6 +145,7 @@
         this.trigger('pause');
     };
 
+    // TODO:: add MediaManager
     J2D.prototype.resume = function () {
         this.element.removeClass('pause').focus();
         this.data.pause = false;
