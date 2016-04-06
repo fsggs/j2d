@@ -12,13 +12,18 @@
 
 (function (root, factory) {
     if (typeof define === 'function' && define.amd) {
-        define('jquery.j2d', ['jquery', 'core/SceneManager', 'utils/DeviceUtil'], factory);
+        define('jquery.j2d', ['jquery', 'core/SceneManager', 'utils/DeviceUtil', 'utils/UUID'], factory);
     } else if (typeof module === 'object' && typeof module.exports === 'object') {
-        module.exports = factory(require('jquery'), require('core/SceneManager'), require('utils/DeviceUtil'));
+        module.exports = factory(
+            require('jquery'),
+            require('core/SceneManager'),
+            require('utils/DeviceUtil'),
+            require('utils/UUID')
+        );
     } else {
-        factory(root.jQuery, root.j2d.core.SceneManager, root.j2d.utils.DeviceUtil);
+        factory(root.jQuery, root.j2d.core.SceneManager, root.j2d.utils.DeviceUtil, root.j2d.utils.UUID);
     }
-}(typeof window !== 'undefined' ? window : global, function ($, SceneManager, DeviceUtil) {
+}(typeof window !== 'undefined' ? window : global, function ($, SceneManager, DeviceUtil, UUID) {
     "use strict";
 
     /**
@@ -203,16 +208,12 @@
             this.filter('div.canvas:not([guid])').each(function () {
                 var options = $.extend(true, {}, J2D.defaults, options);
 
-                var guid = 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function (c) {
-                    var r = Math.random() * 16 | 0, v = c == 'x' ? r : (r & 0x3 | 0x8);
-                    return v.toString(16);
-                });
-                options.id = guid;
+                options.id = UUID.generate();
 
-                $(this).attr('guid', guid);
+                $(this).attr('guid', options.id);
                 var id = $(this).attr('id');
                 if (typeof id === 'undefined' || id === false) {
-                    $(this).attr('id', guid);
+                    $(this).attr('id', options.id);
                 }
                 var tabIndex = $(this).attr('tabindex');
                 if (typeof tabIndex === 'undefined' || tabIndex === false) {

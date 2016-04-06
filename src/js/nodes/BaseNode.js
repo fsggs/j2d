@@ -18,8 +18,9 @@
     "use strict";
 
     /**
-     * @param {BaseNode.defaults|Object} [data]
+     * @abstract
      * @constructor
+     * @param {BaseNode.defaults|Object} [data]
      * @property {BaseNode.defaults} data
      */
     var BaseNode = function (data) {

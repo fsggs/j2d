@@ -8,25 +8,29 @@
 
 (function (root, factory) {
     if (typeof define === 'function' && define.amd) {
-        define('nodes/RectNode', ['jquery', 'nodes/BaseNode', 'utils/MathUtil'], factory);
+        define('nodes/RectNode', ['jquery', 'nodes/BaseNode', 'nodes/AnimatedNode', 'utils/MathUtil'], factory);
     } else if (typeof module === 'object' && typeof module.exports === 'object') {
-        module.exports = factory(require('jquery'), require('nodes/BaseNode'), require('utils/MathUtil'));
+        module.exports = factory(
+            require('jquery'),
+            require('nodes/BaseNode'),
+            require('nodes/AnimatedNode'),
+            require('utils/MathUtil'));
     } else {
-        factory(root.jQuery, root.j2d.nodes.BaseNode, root.j2d.utils.MathUtil);
+        factory(root.jQuery, root.j2d.nodes.BaseNode, root.j2d.nodes.AnimatedNode, root.j2d.utils.MathUtil);
     }
-}(typeof window !== 'undefined' ? window : global, function ($, BaseNode, MathUtil) {
+}(typeof window !== 'undefined' ? window : global, function ($, BaseNode, AnimatedNode, MathUtil) {
     "use strict";
 
     /**
-     * @param {BaseNode.defaults|RectNode.defaults|Object} [data]
+     * @param {BaseNode.defaults|AnimatedNode.defaults|RectNode.defaults|Object} [data]
      * @constructor
-     * @property {BaseNode.defaults|RectNode.defaults} data
+     * @property {BaseNode.defaults|AnimatedNode.defaults|RectNode.defaults} data
      */
     var RectNode = function (data) {
         BaseNode.call(this, $.extend(true, {}, RectNode.defaults, data));
     };
 
-    RectNode.prototype = Object.create(BaseNode.prototype);
+    RectNode.prototype = Object.create(AnimatedNode.prototype);
     RectNode.prototype.constructor = RectNode;
 
     RectNode.defaults = {

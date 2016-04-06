@@ -8,23 +8,28 @@
 
 (function (root, factory) {
     if (typeof define === 'function' && define.amd) {
-        define('nodes/CollectionNode', ['jquery', 'nodes/BaseNode', 'utils/ArrayMap'], factory);
+        define('nodes/CollectionNode', ['jquery', 'nodes/BaseNode', 'nodes/AnimatedNode', 'utils/ArrayMap'], factory);
     } else if (typeof module === 'object' && typeof module.exports === 'object') {
-        module.exports = factory(require('jquery'), require('nodes/BaseNode'), require('utils/ArrayMap'));
+        module.exports = factory(
+            require('jquery'),
+            require('nodes/BaseNode'),
+            require('nodes/AnimatedNode'),
+            require('utils/ArrayMap')
+        );
     } else {
-        factory(root.jQuery, root.j2d.nodes.BaseNode, root.j2d.utils.ArrayMap);
+        factory(root.jQuery, root.j2d.nodes.BaseNode, root.j2d.nodes.AnimatedNode, root.j2d.utils.ArrayMap);
     }
-}(typeof window !== 'undefined' ? window : global, function ($, BaseNode, ArrayMap) {
+}(typeof window !== 'undefined' ? window : global, function ($, BaseNode, AnimatedNode, ArrayMap) {
     "use strict";
 
     /**
-     * @param {BaseNode.defaults|CollectionNode.defaults|Object} [data]
+     * @param {BaseNode.defaults|AnimatedNode.defaults|CollectionNode.defaults|Object} [data]
      * @constructor
-     * @property {BaseNode.defaults|CollectionNode.defaults} data
+     * @property {BaseNode.defaults|AnimatedNode.defaults|CollectionNode.defaults} data
      */
     var CollectionNode = function (data) {
         var collectionNode = this;
-        BaseNode.call(this, $.extend(true, {}, CollectionNode.defaults, data));
+        AnimatedNode.call(this, $.extend(true, {}, CollectionNode.defaults, data));
 
         if (this.data.collection === null) {
             this.data.collection = new ArrayMap();
@@ -40,7 +45,7 @@
         });
     };
 
-    CollectionNode.prototype = Object.create(BaseNode.prototype);
+    CollectionNode.prototype = Object.create(AnimatedNode.prototype);
     CollectionNode.prototype.constructor = CollectionNode;
 
     CollectionNode.defaults = {

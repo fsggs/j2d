@@ -8,25 +8,25 @@
 
 (function (root, factory) {
     if (typeof define === 'function' && define.amd) {
-        define('nodes/CameraNode', ['jquery', 'nodes/BaseNode'], factory);
+        define('nodes/CameraNode', ['jquery', 'nodes/BaseNode', 'nodes/AnimatedNode'], factory);
     } else if (typeof module === 'object' && typeof module.exports === 'object') {
-        module.exports = factory(require('jquery'), require('nodes/BaseNode'));
+        module.exports = factory(require('jquery'), require('nodes/BaseNode'), require('nodes/AnimatedNode'));
     } else {
-        factory(root.jQuery, root.j2d.nodes.BaseNode);
+        factory(root.jQuery, root.j2d.nodes.BaseNode, root.j2d.nodes.AnimatedNode);
     }
-}(typeof window !== 'undefined' ? window : global, function ($, BaseNode) {
+}(typeof window !== 'undefined' ? window : global, function ($, BaseNode, AnimatedNode) {
     "use strict";
 
     /**
-     * @param {BaseNode.defaults|CameraNode.defaults|Object} [data]
+     * @param {BaseNode.defaults|AnimatedNode.defaults|CameraNode.defaults|Object} [data]
      * @constructor
-     * @property {BaseNode.defaults|CameraNode.defaults} data
+     * @property {BaseNode.defaults|AnimatedNode.defaults|CameraNode.defaults} data
      */
     var CameraNode = function (data) {
         BaseNode.call(this, $.extend(true, {}, CameraNode.defaults, data));
     };
 
-    CameraNode.prototype = Object.create(BaseNode.prototype);
+    CameraNode.prototype = Object.create(AnimatedNode.prototype);
     CameraNode.prototype.constructor = CameraNode;
 
     CameraNode.defaults = {

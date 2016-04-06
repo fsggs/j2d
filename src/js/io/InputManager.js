@@ -8,13 +8,13 @@
 
 (function (root, factory) {
     if (typeof define === 'function' && define.amd) {
-        define('io/InputManager', ['jquery', 'utils/ArrayMap'], factory);
+        define('io/InputManager', ['jquery', 'utils/ArrayMap', 'utils/Vector2d'], factory);
     } else if (typeof module === 'object' && typeof module.exports === 'object') {
-        module.exports = factory(require('jquery'), require('utils/ArrayMap'));
+        module.exports = factory(require('jquery'), require('utils/ArrayMap'), require('utils/Vector2d'));
     } else {
-        factory(root.jQuery, root.j2d.utils.ArrayMap);
+        factory(root.jQuery, root.j2d.utils.ArrayMap, root.j2d.utils.Vector2d);
     }
-}(typeof window !== 'undefined' ? window : global, function ($, ArrayMap) {
+}(typeof window !== 'undefined' ? window : global, function ($, ArrayMap, Vector2d) {
     "use strict";
 
     /**
@@ -364,12 +364,13 @@
     InputManager.prototype.update = function () {
         if (!this.data.enabled) return false;
 
-        var dX = this.j2d.scene.canvas.offsetWidth / this.j2d.scene.width,
-            dY = this.j2d.scene.canvas.offsetHeight / this.j2d.scene.height,
+        var dX = this.j2d.scene.canvas.offsetWidth / this.j2d.scene.data.width,
+            dY = this.j2d.scene.canvas.offsetHeight / this.j2d.scene.data.height,
             x = this.data.mouse.currentPosition.x / dX,
             y = this.data.mouse.currentPosition.y / dY;
 
         var offset = this.element.offset();
+
         this.data.viewport.x = this.j2d.scene.viewport.x + x - offset.left;
         this.data.viewport.y = this.j2d.scene.viewport.y + y - offset.top;
         return true;
@@ -511,9 +512,9 @@
         return this.checkPressedKeyList(keyList);
     };
 
-    //InputManager.prototype.getPosition = function () {
-    //    return this.j2d.vector.v2f(this.data.viewport.x + 0.5, this.data.viewport.y + 0.5);
-    //};
+    InputManager.prototype.getPosition = function () {
+        return new Vector2d(this.data.viewport.x + 0.5, this.data.viewport.y + 0.3);
+    };
 
     //InputManager.prototype.onNode = function (id) {
     //    if (!id.layer.visible) return false;

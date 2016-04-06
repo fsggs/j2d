@@ -140,7 +140,7 @@
                         sound._nodeById(sound, data.id).pos = 0;
                         sound._clearEndTimer(sound, data.id);
                     }
-                    sound.events.trigger('end', soundId);
+                    sound.events.trigger('unload', soundId);
                 }, (duration / sound.data.rate) * 1000);
 
                 sound.data.onEndTimer.push({timer: timerId, id: data.id});

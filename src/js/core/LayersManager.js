@@ -8,16 +8,23 @@
 
 (function (root, factory) {
     if (typeof define === 'function' && define.amd) {
-        define('core/LayersManager', ['utils/ArrayMap', 'nodes/BaseNode', 'nodes/CollectionNode'], factory);
+        define('core/LayersManager', ['utils/ArrayMap', 'nodes/BaseNode', 'nodes/CollectionNode', 'utils/UUID'], factory);
     } else if (typeof module === 'object' && typeof module.exports === 'object') {
-        module.exports = factory(require('utils/ArrayMap'), require('nodes/BaseNode'), require('nodes/CollectionNode'));
+        module.exports = factory(
+            require('utils/ArrayMap'),
+            require('nodes/BaseNode'),
+            require('nodes/CollectionNode'),
+            require('utils/UUID')
+        );
     } else {
-        factory(root.j2d.utils.ArrayMap, root.j2d.nodes.BaseNode, root.j2d.nodes.CollectionNode);
+        factory(root.j2d.utils.ArrayMap, root.j2d.nodes.BaseNode, root.j2d.nodes.CollectionNode, root.j2d.utils.UUID);
     }
-}(typeof window !== 'undefined' ? window : global, function (ArrayMap, BaseNode, CollectionNode) {
+}(typeof window !== 'undefined' ? window : global, function (ArrayMap, BaseNode, CollectionNode, UUID) {
     "use strict";
 
-    //TODO:: fix this!!!
+    /**
+     * @constructor
+     */
     var LayersManager = function () {
         /** @type CollectionNode */
         this.globalCollection = new CollectionNode({id: 'GlobalLayer'});
@@ -36,10 +43,7 @@
      * @returns {LayersManager}
      */
     LayersManager.prototype.addLayer = function (name, zIndex, node) {
-        name = name || 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function (c) {
-                var r = Math.random() * 16 | 0, v = c == 'x' ? r : (r & 0x3 | 0x8);
-                return v.toString(16);
-            });
+        name = name || UUID.generate();
 
         if (node === undefined || node instanceof CollectionNode) {
             if (zIndex === undefined) {

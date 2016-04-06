@@ -18,6 +18,7 @@
     "use strict";
 
     /**
+     * @constructor
      * @param {number} x
      * @param {number} y
      */

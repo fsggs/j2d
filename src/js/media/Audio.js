@@ -149,7 +149,7 @@
         for (var i = 0; i < audio.audioNode.length; i++) {
             if (!nodes[i].paused) {
                 audio.stop(nodes[i].id);
-                audio.events.trigger('end', nodes[i].id); // TODO:: unload
+                audio.events.trigger('unload', nodes[i].id);
             }
             audio._unload(nodes[i]);
         }
@@ -227,7 +227,7 @@
                         audio.stop(data.id);
                     }
 
-                    audio.events.trigger('end', soundId);
+                    audio.events.trigger('unload', soundId);
                 }, (duration / audio.data.rate) * 1000);
 
                 audio.data.onEndTimer.push({timer: timerId, id: data.id});
