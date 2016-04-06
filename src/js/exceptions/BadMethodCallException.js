@@ -22,14 +22,14 @@
      * Create custom exception with message
      *
      * @param {string} message
+     * @property {string} message
      */
     var BadMethodCallException = function (message) {
-        Error.call(this);
-        this.message = message;
+        Exception.call(this, message);
 
         /**
          * Convert exception to String
-         * @returns {string|}
+         * @returns {string}
          */
         this.toString = function () {
             return this.message;
@@ -39,7 +39,7 @@
     BadMethodCallException.prototype = Object.create(Exception.prototype);
     BadMethodCallException.prototype.constructor = BadMethodCallException;
 
-    if (global.exports !== undefined)  global.exports.BadMethodCallException = BadMethodCallException;
+    if (typeof module === 'object' && typeof module.exports === 'object') module.exports.BadMethodCallException = BadMethodCallException;
     if (typeof define !== 'function' || !define.amd) global.BadMethodCallException = BadMethodCallException;
     return BadMethodCallException;
 }));

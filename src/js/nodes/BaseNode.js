@@ -8,13 +8,13 @@
 
 (function (root, factory) {
     if (typeof define === 'function' && define.amd) {
-        define('nodes/BaseNode', ['jquery', 'utils/Vector2d'], factory);
+        define('nodes/BaseNode', ['jquery', 'utils/Vector2d', 'utils/UUID'], factory);
     } else if (typeof module === 'object' && typeof module.exports === 'object') {
-        module.exports = factory(require('jquery'), require('utils/Vector2d'));
+        module.exports = factory(require('jquery'), require('utils/Vector2d'), require('utils/UUID'));
     } else {
-        factory(root.jQuery, root.Vector2d);
+        factory(root.jQuery, root.Vector2d, UUID);
     }
-}(typeof window !== 'undefined' ? window : global, function ($, Vector2d) {
+}(typeof window !== 'undefined' ? window : global, function ($, Vector2d, UUID) {
     "use strict";
 
     /**
@@ -27,10 +27,7 @@
         this.data = $.extend(true, {}, BaseNode.defaults, data);
 
         if (this.data.id === null) {
-            this.data.id = 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function (c) {
-                var r = Math.random() * 16 | 0, v = c == 'x' ? r : (r & 0x3 | 0x8);
-                return v.toString(16);
-            });
+            this.data.id = UUID.generate();
         }
 
         Object.defineProperty(this, 'opacity', {
@@ -114,12 +111,16 @@
     };
 
     /**
-     * @param {Vector2d} position
+     * @param {Vector2d|BaseNode} position
      * @returns {BaseNode}
      */
     BaseNode.prototype.setPosition = function (position) {
-        if (position !== undefined && position instanceof Vector2d) {
-            this.data.position = position.getVector();
+        if (position !== undefined) {
+            if (position instanceof Vector2d) {
+                this.data.position = position.getVector();
+            } else if (position instanceof BaseNode) {
+                this.data.position = position.getPosition().getVector();
+            }
         }
         return this;
     };
@@ -132,12 +133,16 @@
     };
 
     /**
-     * @param {Vector2d} size
+     * @param {Vector2d|BaseNode} size
      * @returns {BaseNode}
      */
     BaseNode.prototype.setSize = function (size) {
-        if (size !== undefined && size instanceof Vector2d) {
-            this.data.size = size.getVector();
+        if (size !== undefined) {
+            if (size instanceof Vector2d) {
+                this.data.size = size.getVector();
+            } else if (size instanceof BaseNode) {
+                this.data.size = size.getSize().getVector();
+            }
         }
         return this;
     };
@@ -150,12 +155,16 @@
     };
 
     /**
-     * @param {Vector2d} offset
+     * @param {Vector2d|BaseNode} offset
      * @returns {BaseNode}
      */
     BaseNode.prototype.setOffset = function (offset) {
-        if (offset !== undefined && offset instanceof Vector2d) {
-            this.data.offset = offset.getVector();
+        if (offset !== undefined) {
+            if (offset instanceof Vector2d) {
+                this.data.offset = offset.getVector();
+            } else if (offset instanceof BaseNode) {
+                this.data.offset = offset.getOffset().getVector();
+            }
         }
         return this;
     };
@@ -189,10 +198,9 @@
         || this.data.position.x + viewport.size.x < viewport.offset.x)
         || (this.data.position.y > viewport.offset.y + viewport.size.y
         || this.data.position.y + viewport.size.y < viewport.offset.y));
-
     };
 
-    if (global.exports !== undefined) global.exports.BaseNode = BaseNode;
+    if (typeof module === 'object' && typeof module.exports === 'object') module.exports.BaseNode = BaseNode;
     if (global.J2D !== undefined) global.BaseNode = BaseNode;
     return BaseNode;
 }));

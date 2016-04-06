@@ -583,7 +583,7 @@
         }
     };
 
-    if (global.exports !== undefined) global.exports.Audio = Audio;
+    if (typeof module === 'object' && typeof module.exports === 'object') module.exports.Audio = Audio;
     if (global.J2D !== undefined) global.Audio = Audio;
     return Audio;
 }));

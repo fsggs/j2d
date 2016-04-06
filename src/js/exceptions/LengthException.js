@@ -22,14 +22,14 @@
      * Create custom exception with message
      *
      * @param {string} message
+     * @property {string} message
      */
     var LengthException = function (message) {
-        Error.call(this);
-        this.message = message;
+        Exception.call(this, message);
 
         /**
          * Convert exception to String
-         * @returns {string|}
+         * @returns {string}
          */
         this.toString = function () {
             return this.message;
@@ -39,7 +39,7 @@
     LengthException.prototype = Object.create(Exception.prototype);
     LengthException.prototype.constructor = LengthException;
 
-    if (global.exports !== undefined)  global.exports.LengthException = LengthException;
+    if (typeof module === 'object' && typeof module.exports === 'object') module.exports.LengthException = LengthException;
     if (typeof define !== 'function' || !define.amd) global.LengthException = LengthException;
     return LengthException;
 }));

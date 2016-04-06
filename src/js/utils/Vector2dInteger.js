@@ -39,7 +39,7 @@
         return this;
     };
 
-    if (global.exports !== undefined) exports.Vector2dInteger = Vector2dInteger;
+    if (typeof module === 'object' && typeof module.exports === 'object') module.exports.Vector2dInteger = Vector2dInteger;
     if (global.J2D === undefined) global.Vector2dInteger = Vector2dInteger;
     return Vector2dInteger;
 }));

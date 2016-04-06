@@ -22,14 +22,14 @@
      * Create custom exception with message
      *
      * @param {string} message
+     * @property {string} message
      */
     var RangeException = function (message) {
-        Error.call(this);
-        this.message = message;
+        Exception.call(this, message);
 
         /**
          * Convert exception to String
-         * @returns {string|}
+         * @returns {string}
          */
         this.toString = function () {
             return this.message;
@@ -39,7 +39,7 @@
     RangeException.prototype = Object.create(Exception.prototype);
     RangeException.prototype.constructor = RangeException;
 
-    if (global.exports !== undefined)  global.exports.RangeException = RangeException;
+    if (typeof module === 'object' && typeof module.exports === 'object') module.exports.RangeException = RangeException;
     if (typeof define !== 'function' || !define.amd) global.RangeException = RangeException;
     return RangeException;
 }));

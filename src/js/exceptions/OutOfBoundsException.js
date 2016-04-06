@@ -22,14 +22,14 @@
      * Create custom exception with message
      *
      * @param {string} message
+     * @property {string} message
      */
     var OutOfBoundsException = function (message) {
-        Error.call(this);
-        this.message = message;
+        Exception.call(this, message);
 
         /**
          * Convert exception to String
-         * @returns {string|}
+         * @returns {string}
          */
         this.toString = function () {
             return this.message;
@@ -39,7 +39,7 @@
     OutOfBoundsException.prototype = Object.create(Exception.prototype);
     OutOfBoundsException.prototype.constructor = OutOfBoundsException;
 
-    if (global.exports !== undefined)  global.exports.OutOfBoundsException = OutOfBoundsException;
+    if (typeof module === 'object' && typeof module.exports === 'object') module.exports.OutOfBoundsException = OutOfBoundsException;
     if (typeof define !== 'function' || !define.amd) global.OutOfBoundsException = OutOfBoundsException;
     return OutOfBoundsException;
 }));

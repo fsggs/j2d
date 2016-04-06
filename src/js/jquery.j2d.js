@@ -306,7 +306,7 @@
         });
     })();
 
-    if (global.exports !== undefined) global.exports.J2D = J2D;
+    if (typeof module === 'object' && typeof module.exports === 'object') module.exports.J2D = J2D;
     if (global.J2D === undefined) global.J2D = J2D;
     return J2D;
 }));

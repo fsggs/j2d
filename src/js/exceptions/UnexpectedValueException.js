@@ -22,14 +22,14 @@
      * Create custom exception with message
      *
      * @param {string} message
+     * @property {string} message
      */
     var UnexpectedValueException = function (message) {
-        Error.call(this);
-        this.message = message;
+        Exception.call(this, message);
 
         /**
          * Convert exception to String
-         * @returns {string|}
+         * @returns {string}
          */
         this.toString = function () {
             return this.message;
@@ -39,7 +39,7 @@
     UnexpectedValueException.prototype = Object.create(Exception.prototype);
     UnexpectedValueException.prototype.constructor = UnexpectedValueException;
 
-    if (global.exports !== undefined)  global.exports.UnexpectedValueException = UnexpectedValueException;
+    if (typeof module === 'object' && typeof module.exports === 'object') module.exports.UnexpectedValueException = UnexpectedValueException;
     if (typeof define !== 'function' || !define.amd) global.UnexpectedValueException = UnexpectedValueException;
     return UnexpectedValueException;
 }));

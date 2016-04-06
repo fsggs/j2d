@@ -22,14 +22,14 @@
      * Create custom exception with message
      *
      * @param {string} message
+     * @property {string} message
      */
     var InvalidArgumentException = function (message) {
-        Error.call(this);
-        this.message = message;
+        Exception.call(this, message);
 
         /**
          * Convert exception to String
-         * @returns {string|}
+         * @returns {string}
          */
         this.toString = function () {
             return this.message;
@@ -39,7 +39,7 @@
     InvalidArgumentException.prototype = Object.create(Exception.prototype);
     InvalidArgumentException.prototype.constructor = InvalidArgumentException;
 
-    if (global.exports !== undefined)  global.exports.InvalidArgumentException = InvalidArgumentException;
+    if (typeof module === 'object' && typeof module.exports === 'object') module.exports.InvalidArgumentException = InvalidArgumentException;
     if (typeof define !== 'function' || !define.amd) global.InvalidArgumentException = InvalidArgumentException;
     return InvalidArgumentException;
 }));

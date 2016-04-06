@@ -22,14 +22,14 @@
      * Create custom exception with message
      *
      * @param {string} message
+     * @property {string} message
      */
     var LogicException = function (message) {
-        Error.call(this);
-        this.message = message;
+        Exception.call(this, message);
 
         /**
          * Convert exception to String
-         * @returns {string|}
+         * @returns {string}
          */
         this.toString = function () {
             return this.message;
@@ -39,7 +39,7 @@
     LogicException.prototype = Object.create(Exception.prototype);
     LogicException.prototype.constructor = LogicException;
 
-    if (global.exports !== undefined)  global.exports.LogicException = LogicException;
+    if (typeof module === 'object' && typeof module.exports === 'object') module.exports.LogicException = LogicException;
     if (typeof define !== 'function' || !define.amd) global.LogicException = LogicException;
     return LogicException;
 }));

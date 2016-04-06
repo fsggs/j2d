@@ -274,8 +274,7 @@
         return this;
     };
 
-    if (global.exports !== undefined) global.exports.MediaManager = MediaManager;
+    if (typeof module === 'object' && typeof module.exports === 'object') module.exports.MediaManager = MediaManager;
     if (global.J2D !== undefined) global.MediaManager = MediaManager;
     return MediaManager;
 }));
-

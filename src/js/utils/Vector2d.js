@@ -72,7 +72,7 @@
         return "(" + this.x + "," + this.y + ")";
     };
 
-    if (global.exports !== undefined) global.exports.Vector2d = Vector2d;
+    if (typeof module === 'object' && typeof module.exports === 'object') module.exports.Vector2d = Vector2d;
     if (global.J2D === undefined) global.Vector2d = Vector2d;
     return Vector2d
 }));

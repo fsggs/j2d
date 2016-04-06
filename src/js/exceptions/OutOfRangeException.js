@@ -22,14 +22,14 @@
      * Create custom exception with message
      *
      * @param {string} message
+     * @property {string} message
      */
     var OutOfRangeException = function (message) {
-        Error.call(this);
-        this.message = message;
+        Exception.call(this, message);
 
         /**
          * Convert exception to String
-         * @returns {string|}
+         * @returns {string}
          */
         this.toString = function () {
             return this.message;
@@ -39,7 +39,7 @@
     OutOfRangeException.prototype = Object.create(Exception.prototype);
     OutOfRangeException.prototype.constructor = OutOfRangeException;
 
-    if (global.exports !== undefined)  global.exports.OutOfRangeException = OutOfRangeException;
+    if (typeof module === 'object' && typeof module.exports === 'object') module.exports.OutOfRangeException = OutOfRangeException;
     if (typeof define !== 'function' || !define.amd) global.OutOfRangeException = OutOfRangeException;
     return OutOfRangeException;
 }));

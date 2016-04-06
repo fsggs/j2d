@@ -22,14 +22,14 @@
      * Create custom exception with message
      *
      * @param {string} message
+     * @property {string} message
      */
     var RuntimeException = function (message) {
-        Error.call(this);
-        this.message = message;
+        Exception.call(this, message);
 
         /**
          * Convert exception to String
-         * @returns {string|}
+         * @returns {string}
          */
         this.toString = function () {
             return this.message;
@@ -39,7 +39,7 @@
     RuntimeException.prototype = Object.create(Exception.prototype);
     RuntimeException.prototype.constructor = RuntimeException;
 
-    if (global.exports !== undefined)  global.exports.RuntimeException = RuntimeException;
+    if (typeof module === 'object' && typeof module.exports === 'object') module.exports.RuntimeException = RuntimeException;
     if (typeof define !== 'function' || !define.amd) global.RuntimeException = RuntimeException;
     return RuntimeException;
 }));

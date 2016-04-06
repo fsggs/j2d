@@ -118,7 +118,7 @@
         return this;
     };
 
-    if (global.exports !== undefined) global.exports.RectNode = RectNode;
+    if (typeof module === 'object' && typeof module.exports === 'object') module.exports.RectNode = RectNode;
     if (global.J2D !== undefined) global.RectNode = RectNode;
     return RectNode;
 }));

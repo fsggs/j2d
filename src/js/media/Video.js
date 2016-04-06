@@ -12,8 +12,8 @@
     var Video = function () {
 
     };
-    
-    if (global.exports !== undefined) global.exports.Video = Video;
+
+    if (typeof module === 'object' && typeof module.exports === 'object') module.exports.Video = Video;
     if (global.J2D !== undefined) global.Video = Video;
     return Video;
 }));

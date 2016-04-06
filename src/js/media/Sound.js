@@ -398,7 +398,7 @@
         node.bufferSource.playbackRate.value = sound.data.rate;
     };
 
-    if (global.exports !== undefined) global.exports.Sound = Sound;
+    if (typeof module === 'object' && typeof module.exports === 'object') module.exports.Sound = Sound;
     if (global.J2D !== undefined) global.Sound = Sound;
     return Sound;
 }));

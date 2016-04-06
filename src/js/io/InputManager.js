@@ -702,7 +702,7 @@
         })[0];
     }
 
-    if (global.exports !== undefined) global.exports.InputManager = InputManager;
+    if (typeof module === 'object' && typeof module.exports === 'object') module.exports.InputManager = InputManager;
     if (global.J2D !== undefined) global.InputManager = InputManager;
     return InputManager;
 }));

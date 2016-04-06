@@ -532,7 +532,7 @@
         return this;
     };
 
-    if (global.exports !== undefined) global.exports.SceneManager = SceneManager;
+    if (typeof module === 'object' && typeof module.exports === 'object') module.exports.SceneManager = SceneManager;
     if (global.J2D !== undefined) global.SceneManager = SceneManager;
     return SceneManager;
 }));

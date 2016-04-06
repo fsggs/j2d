@@ -31,7 +31,7 @@
         });
     };
 
-    if (global.exports !== undefined) global.exports.UUID = UUID;
+    if (typeof module === 'object' && typeof module.exports === 'object') module.exports.UUID = UUID;
     if (global.J2D === undefined) global.UUID = UUID;
     return UUID;
 }));

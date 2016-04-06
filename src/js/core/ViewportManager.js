@@ -42,6 +42,12 @@
 
     /**
      * @constructor
+     *
+     * @property {ArrayMap.<CameraNode>|CameraNode[]} cameras
+     * @property {string} camera
+     * @property {{x: number, y: number, offsetX: number, offsetY: number}} screen
+     * @property {boolean} init
+     * @property {{offset: {x: number, y: number}, size: {x: number, y: number}, scale: number, angle: number}} data
      */
     var ViewportManager = function () {
         /** @type ArrayMap.<CameraNode>|CameraNode[] */
@@ -50,7 +56,7 @@
         /** @type string */
         this.camera = 'No active cameras';
 
-        /** @type {{x: number, y: number}} */
+        /** @type {{x: number, y: number, offsetX: number, offsetY: number}} */
         this.screen = {
             x: 0,
             y: 0,
@@ -207,7 +213,7 @@
         return this.data;
     };
 
-    if (global.exports !== undefined) global.exports.ViewportManager = ViewportManager;
+    if (typeof module === 'object' && typeof module.exports === 'object') module.exports.ViewportManager = ViewportManager;
     if (global.J2D !== undefined) global.ViewportManager = ViewportManager;
     return ViewportManager;
 }));

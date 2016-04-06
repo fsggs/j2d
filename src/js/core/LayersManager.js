@@ -94,7 +94,7 @@
         return this;
     };
 
-    if (global.exports !== undefined) global.exports.LayersManager = LayersManager;
+    if (typeof module === 'object' && typeof module.exports === 'object') module.exports.LayersManager = LayersManager;
     if (global.J2D !== undefined) global.LayersManager = LayersManager;
     return LayersManager;
 }));

@@ -1436,6 +1436,6 @@
         });
     };
 
-    if (global.exports !== undefined) global.exports.WebGL2D = WebGL2D;
+    if (typeof module === 'object' && typeof module.exports === 'object') module.exports.WebGL2D = WebGL2D;
     return WebGL2D;
 }));

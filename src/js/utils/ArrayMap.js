@@ -124,7 +124,7 @@
     };
     Object.defineProperty(ArrayMap.prototype, 'remove', {enumerable: false});
 
-    if (global.exports !== undefined) global.exports.ArrayMap = ArrayMap;
+    if (typeof module === 'object' && typeof module.exports === 'object') module.exports.ArrayMap = ArrayMap;
     if (typeof define !== 'function' || !define.amd) global.ArrayMap = ArrayMap;
     return ArrayMap;
 }));
