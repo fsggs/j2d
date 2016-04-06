@@ -12,7 +12,7 @@
     } else if (typeof module === 'object' && typeof module.exports === 'object') {
         module.exports = factory(require('jquery'), require('nodes/BaseNode'), require('utils/MathUtil'));
     } else {
-        factory(root.jQuery, root.BaseNode, root.MathUtil);
+        factory(root.jQuery, root.j2d.nodes.BaseNode, root.j2d.utils.MathUtil);
     }
 }(typeof window !== 'undefined' ? window : global, function ($, BaseNode, MathUtil) {
     "use strict";
@@ -61,12 +61,11 @@
      * @returns {null}
      */
     RectNode.prototype.draw = function (context, viewport, collection, data) {
-        //if (this.data.visible && this.isLookScene()) {
         if (this.data.visible && this.inViewport(viewport)) {
-            console.log(this.inViewport(viewport));
+            //console.log(this.inViewport(viewport));
             if (this.data.opacity !== 1.0) {
                 var tempOpacity = context.globalAlpha;
-                context.globalAlpha = this.options.opacity;
+                context.globalAlpha = this.data.opacity;
             }
 
             if (this.data.angle || viewport.angle !== 0.0) {
@@ -119,6 +118,6 @@
     };
 
     if (typeof module === 'object' && typeof module.exports === 'object') module.exports.RectNode = RectNode;
-    if (global.J2D !== undefined) global.RectNode = RectNode;
+    if (global.j2d === undefined) global.j2d.nodes.RectNode = RectNode;
     return RectNode;
 }));

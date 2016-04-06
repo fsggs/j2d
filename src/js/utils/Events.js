@@ -113,6 +113,6 @@
     };
 
     if (typeof module === 'object' && typeof module.exports === 'object') module.exports.Events = Events;
-    if (global.J2D === undefined) global.Events = Events;
+    if (global.j2d === undefined) global.j2d.utils.Events = Events;
     return Events;
 }));

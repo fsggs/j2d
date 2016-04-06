@@ -12,28 +12,13 @@
 
 (function (root, factory) {
     if (typeof define === 'function' && define.amd) {
-        define('jquery.j2d', [
-            'jquery',
-            'core/SceneManager',
-            'io/MediaManager',
-            'utils/DeviceUtil'
-        ], factory);
+        define('jquery.j2d', ['jquery', 'core/SceneManager', 'utils/DeviceUtil'], factory);
     } else if (typeof module === 'object' && typeof module.exports === 'object') {
-        module.exports = factory(
-            require('jquery'),
-            require('core/SceneManager'),
-            require('io/MediaManager'),
-            require('utils/DeviceUtil')
-        );
+        module.exports = factory(require('jquery'), require('core/SceneManager'), require('utils/DeviceUtil'));
     } else {
-        factory(
-            root.jQuery,
-            root.SceneManager,
-            root.MediaManager,
-            root.DeviceUtil
-        );
+        factory(root.jQuery, root.j2d.core.SceneManager, root.j2d.utils.DeviceUtil);
     }
-}(typeof window !== 'undefined' ? window : global, function ($, SceneManager, MediaManager, DeviceUtil) {
+}(typeof window !== 'undefined' ? window : global, function ($, SceneManager, DeviceUtil) {
     "use strict";
 
     /**
@@ -41,9 +26,10 @@
      * @param {J2D.defaults} data
      *
      * @constructor
-     * @property {boolean} WebGL
-     * @property {boolean} smoothing
+     * @property {boolean} WebGL // TODO:: To scene
+     * @property {boolean} smoothing // TODO:: To scene
      * @property {InputManager|null} io
+     * @property {MediaManager|null} media
      * @property {boolean} isPlay
      */
     var J2D = function J2D(element, data) {
@@ -307,6 +293,6 @@
     })();
 
     if (typeof module === 'object' && typeof module.exports === 'object') module.exports.J2D = J2D;
-    if (global.J2D === undefined) global.J2D = J2D;
+    if (global.j2d === undefined) global.j2d.J2D = J2D;
     return J2D;
 }));

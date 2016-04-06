@@ -85,6 +85,6 @@
     };
 
     if (typeof module === 'object' && typeof module.exports === 'object') module.exports.MathUtil = MathUtil;
-    if (global.J2D === undefined) global.MathUtil = MathUtil;
+    if (global.j2d === undefined) global.j2d.utils.MathUtil = MathUtil;
     return MathUtil
 }));

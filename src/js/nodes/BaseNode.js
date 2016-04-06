@@ -12,7 +12,7 @@
     } else if (typeof module === 'object' && typeof module.exports === 'object') {
         module.exports = factory(require('jquery'), require('utils/Vector2d'), require('utils/UUID'));
     } else {
-        factory(root.jQuery, root.Vector2d, UUID);
+        factory(root.jQuery, root.j2d.utils.Vector2d, root.j2d.utils.UUID);
     }
 }(typeof window !== 'undefined' ? window : global, function ($, Vector2d, UUID) {
     "use strict";
@@ -201,6 +201,6 @@
     };
 
     if (typeof module === 'object' && typeof module.exports === 'object') module.exports.BaseNode = BaseNode;
-    if (global.J2D !== undefined) global.BaseNode = BaseNode;
+    if (global.j2d === undefined) global.j2d.nodes.BaseNode = BaseNode;
     return BaseNode;
 }));

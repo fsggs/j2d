@@ -12,7 +12,7 @@
     } else if (typeof module === 'object' && typeof module.exports === 'object') {
         module.exports = factory(require('exceptions/Exception'));
     } else {
-        factory(root.Exception);
+        factory(root.j2d.exceptions.Exception);
     }
 }(typeof window !== 'undefined' ? window : global, function (Exception) {
     "use strict";
@@ -40,6 +40,6 @@
     OutOfBoundsException.prototype.constructor = OutOfBoundsException;
 
     if (typeof module === 'object' && typeof module.exports === 'object') module.exports.OutOfBoundsException = OutOfBoundsException;
-    if (typeof define !== 'function' || !define.amd) global.OutOfBoundsException = OutOfBoundsException;
+    if (global.j2d === undefined) global.j2d.exceptions.OutOfBoundsException = OutOfBoundsException;
     return OutOfBoundsException;
 }));

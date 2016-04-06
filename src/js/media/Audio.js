@@ -4,13 +4,13 @@
     } else if (typeof module === 'object' && typeof module.exports === 'object') {
         module.exports = factory(require('utils/UUID'), require('utils/Events'));
     } else {
-        factory(root.UUID, root.Events);
+        factory(root.j2d.utils.UUID, root.j2d.utils.Events);
     }
 }(typeof window !== 'undefined' ? window : global, function (UUID, Events) {
     "use strict";
 
     var cache = {};
-    var AudioNode = global.Audio; // TODO:: fix this bug!
+    var AudioNode = global.Audio;
 
     /**
      * @param {Audio.defaults|Object} [data]
@@ -584,6 +584,6 @@
     };
 
     if (typeof module === 'object' && typeof module.exports === 'object') module.exports.Audio = Audio;
-    if (global.J2D !== undefined) global.Audio = Audio;
+    if (global.j2d === undefined) global.j2d.media.Audio = Audio;
     return Audio;
 }));

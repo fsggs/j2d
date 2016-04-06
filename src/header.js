@@ -7,4 +7,11 @@
  */
 
 if (global === undefined) {var global = window || this}
-if (typeof define !== 'function' || !define.amd) {global.J2D = true;}
+if (typeof define !== 'function' || !define.amd) {global.j2d = {
+    core: {},
+    exceptions: {},
+    io: {},
+    media: {},
+    nodes: {},
+    utils: {}
+};}

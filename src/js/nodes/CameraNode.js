@@ -12,7 +12,7 @@
     } else if (typeof module === 'object' && typeof module.exports === 'object') {
         module.exports = factory(require('jquery'), require('nodes/BaseNode'));
     } else {
-        factory(root.jQuery, root.BaseNode);
+        factory(root.jQuery, root.j2d.nodes.BaseNode);
     }
 }(typeof window !== 'undefined' ? window : global, function ($, BaseNode) {
     "use strict";
@@ -63,6 +63,6 @@
     };
 
     if (typeof module === 'object' && typeof module.exports === 'object') module.exports.CameraNode = CameraNode;
-    if (global.J2D !== undefined) global.CameraNode = CameraNode;
+    if (global.j2d === undefined) global.j2d.nodes.CameraNode = CameraNode;
     return CameraNode;
 }));

@@ -41,6 +41,6 @@
     Exception.prototype.constructor = Exception;
 
     if (typeof module === 'object' && typeof module.exports === 'object') module.exports.Exception = Exception;
-    if (typeof define !== 'function' || !define.amd) global.Exception = Exception;
+    if (global.j2d === undefined) global.j2d.exceptions.Exception = Exception;
     return Exception;
 }));

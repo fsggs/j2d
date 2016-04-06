@@ -125,6 +125,6 @@
     Object.defineProperty(ArrayMap.prototype, 'remove', {enumerable: false});
 
     if (typeof module === 'object' && typeof module.exports === 'object') module.exports.ArrayMap = ArrayMap;
-    if (typeof define !== 'function' || !define.amd) global.ArrayMap = ArrayMap;
+    if (global.j2d === undefined) global.j2d.utils.ArrayMap = ArrayMap;
     return ArrayMap;
 }));

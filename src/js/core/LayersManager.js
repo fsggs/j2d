@@ -12,7 +12,7 @@
     } else if (typeof module === 'object' && typeof module.exports === 'object') {
         module.exports = factory(require('utils/ArrayMap'), require('nodes/BaseNode'), require('nodes/CollectionNode'));
     } else {
-        factory(root.ArrayMap, root.BaseNode, root.CollectionNode);
+        factory(root.j2d.utils.ArrayMap, root.j2d.nodes.BaseNode, root.j2d.nodes.CollectionNode);
     }
 }(typeof window !== 'undefined' ? window : global, function (ArrayMap, BaseNode, CollectionNode) {
     "use strict";
@@ -95,6 +95,6 @@
     };
 
     if (typeof module === 'object' && typeof module.exports === 'object') module.exports.LayersManager = LayersManager;
-    if (global.J2D !== undefined) global.LayersManager = LayersManager;
+    if (global.j2d === undefined) global.j2d.core.LayersManager = LayersManager;
     return LayersManager;
 }));

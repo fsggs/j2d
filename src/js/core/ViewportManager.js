@@ -12,7 +12,7 @@
     } else if (typeof module === 'object' && typeof module.exports === 'object') {
         module.exports = factory(require('utils/ArrayMap'), require('nodes/CameraNode'), require('utils/Vector2d'));
     } else {
-        factory(root.ArrayMap, root.CameraNode, root.Vector2d);
+        factory(root.j2d.utils.ArrayMap, root.j2d.nodes.CameraNode, root.j2d.utils.Vector2d);
     }
 }(typeof window !== 'undefined' ? window : global, function (ArrayMap, CameraNode, Vector2d) {
     "use strict";
@@ -214,6 +214,6 @@
     };
 
     if (typeof module === 'object' && typeof module.exports === 'object') module.exports.ViewportManager = ViewportManager;
-    if (global.J2D !== undefined) global.ViewportManager = ViewportManager;
+    if (global.j2d === undefined) global.j2d.core.ViewportManager = ViewportManager;
     return ViewportManager;
 }));

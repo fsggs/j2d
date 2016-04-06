@@ -12,7 +12,7 @@
     } else if (typeof module === 'object' && typeof module.exports === 'object') {
         module.exports = factory(require('utils/ArrayMap'));
     } else {
-        factory(root.ArrayMap);
+        factory(root.j2d.utils.ArrayMap);
     }
 }(typeof window !== 'undefined' ? window : global, function (ArrayMap) {
     "use strict";

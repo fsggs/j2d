@@ -12,7 +12,7 @@
     } else if (typeof module === 'object' && typeof module.exports === 'object') {
         module.exports = factory(require('jquery'), require('utils/ArrayMap'));
     } else {
-        factory(root.jQuery, root.ArrayMap);
+        factory(root.jQuery, root.j2d.utils.ArrayMap);
     }
 }(typeof window !== 'undefined' ? window : global, function ($, ArrayMap) {
     "use strict";
@@ -703,6 +703,6 @@
     }
 
     if (typeof module === 'object' && typeof module.exports === 'object') module.exports.InputManager = InputManager;
-    if (global.J2D !== undefined) global.InputManager = InputManager;
+    if (global.j2d === undefined) global.j2d.io.InputManager = InputManager;
     return InputManager;
 }));

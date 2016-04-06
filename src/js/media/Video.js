@@ -14,6 +14,6 @@
     };
 
     if (typeof module === 'object' && typeof module.exports === 'object') module.exports.Video = Video;
-    if (global.J2D !== undefined) global.Video = Video;
+    if (global.j2d === undefined) global.j2d.media.Video = Video;
     return Video;
 }));

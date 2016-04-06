@@ -12,7 +12,7 @@
     } else if (typeof module === 'object' && typeof module.exports === 'object') {
         module.exports = factory(require('utils/Vector2d'));
     } else {
-        factory(root.Vector2d);
+        factory(root.j2d.utils.Vector2d);
     }
 }(typeof window !== 'undefined' ? window : global, function (Vector2d) {
     "use strict";
@@ -40,6 +40,6 @@
     };
 
     if (typeof module === 'object' && typeof module.exports === 'object') module.exports.Vector2dInteger = Vector2dInteger;
-    if (global.J2D === undefined) global.Vector2dInteger = Vector2dInteger;
+    if (global.j2d === undefined) global.j2d.utils.Vector2dInteger = Vector2dInteger;
     return Vector2dInteger;
 }));

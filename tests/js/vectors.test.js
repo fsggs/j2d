@@ -12,7 +12,7 @@
     } else if (typeof module === 'object' && typeof module.exports === 'object') {
         module.exports = factory(require('utils/Vector2d'), require('utils/Vector2dInteger'));
     } else {
-        factory(root.Vector2d, root.Vector2dInteger);
+        factory(root.j2d.utils.Vector2d, root.j2d.utils.Vector2dInteger);
     }
 }(typeof window !== 'undefined' ? window : global, function (Vector2d, Vector2dInteger) {
     "use strict";

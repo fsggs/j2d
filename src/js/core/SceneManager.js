@@ -31,9 +31,9 @@
         factory(
             root.jQuery,
             root.WebGL2D,
-            root.FrameManager,
-            root.ViewportManager,
-            root.LayersManager
+            root.j2d.core.FrameManager,
+            root.j2d.core.ViewportManager,
+            root.j2d.core.LayersManager
         );
     }
 }(typeof window !== 'undefined' ? window : global, function ($, WebGL2D, FrameManager, ViewportManager, LayersManager) {
@@ -533,6 +533,6 @@
     };
 
     if (typeof module === 'object' && typeof module.exports === 'object') module.exports.SceneManager = SceneManager;
-    if (global.J2D !== undefined) global.SceneManager = SceneManager;
+    if (global.j2d === undefined) global.j2d.core.SceneManager = SceneManager;
     return SceneManager;
 }));

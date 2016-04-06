@@ -12,7 +12,7 @@
     } else if (typeof module === 'object' && typeof module.exports === 'object') {
         module.exports = factory(require('utils/ArrayMap'));
     } else {
-        factory(root.ArrayMap);
+        factory(root.j2d.utils.ArrayMap);
     }
 }(typeof window !== 'undefined' ? window : global,
     /**
@@ -201,7 +201,7 @@
         };
 
         if (typeof module === 'object' && typeof module.exports === 'object') module.exports.FrameManager = FrameManager;
-        if (global.J2D === undefined) global.FrameManager = FrameManager;
+        if (global.j2d === undefined) global.j2d.core.FrameManager = FrameManager;
         return FrameManager;
     }
 ));

@@ -26,10 +26,10 @@
     } else {
         factory(
             root.jQuery,
-            root.ArrayMap,
-            root.Events,
-            root.Audio,
-            root.Sound
+            root.j2d.utils.ArrayMap,
+            root.j2d.utils.Events,
+            root.j2d.media.Audio,
+            root.j2d.media.Sound
         );
     }
 }(typeof window !== 'undefined' ? window : global, function ($, ArrayMap, Events, Audio, Sound) {
@@ -275,6 +275,6 @@
     };
 
     if (typeof module === 'object' && typeof module.exports === 'object') module.exports.MediaManager = MediaManager;
-    if (global.J2D !== undefined) global.MediaManager = MediaManager;
+    if (global.j2d === undefined) global.j2d.io.MediaManager = MediaManager;
     return MediaManager;
 }));

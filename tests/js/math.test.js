@@ -12,7 +12,7 @@
     } else if (typeof module === 'object' && typeof module.exports === 'object') {
         module.exports = factory(require('utils/MathUtil'));
     } else {
-        factory(root.MathUtil);
+        factory(root.j2d.utils.MathUtil);
     }
 }(typeof window !== 'undefined' ? window : global, function (MathUtil) {
     "use strict";

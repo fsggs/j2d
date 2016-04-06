@@ -32,6 +32,6 @@
     };
 
     if (typeof module === 'object' && typeof module.exports === 'object') module.exports.UUID = UUID;
-    if (global.J2D === undefined) global.UUID = UUID;
+    if (global.j2d === undefined) global.j2d.utils.UUID = UUID;
     return UUID;
 }));
