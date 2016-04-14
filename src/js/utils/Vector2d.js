@@ -73,6 +73,30 @@
         return "(" + this.x + "," + this.y + ")";
     };
 
+    /**
+     * @param {Vector2d} vector1
+     * @param {Vector2d} vector2
+     * @returns {number}
+     */
+    Vector2d.getDistance = function (vector1, vector2) {
+        return Math.sqrt(
+            Math.pow(vector2.getVector().x - vector1.getVector().x, 2) +
+            Math.pow(vector2.getVector().y - vector1.getVector().y, 2)
+        );
+    };
+
+    /**
+     * @param {Vector2d} vector1
+     * @param {Vector2d} vector2
+     * @returns {number}
+     */
+    Vector2d.getAngle = function (vector1, vector2) {
+        return Math.atan2(
+                vector2.getVector().y - vector1.getVector().y,
+                vector2.getVector().x - vector1.getVector().x
+            ) * (180 / Math.PI);
+    };
+
     if (typeof module === 'object' && typeof module.exports === 'object') module.exports.Vector2d = Vector2d;
     if (global.j2d === undefined) global.j2d.utils.Vector2d = Vector2d;
     return Vector2d

@@ -8,18 +8,19 @@
 
 (function (root, factory) {
     if (typeof define === 'function' && define.amd) {
-        define('core/FrameManager', ['utils/ArrayMap'], factory);
+        define('core/FrameManager', ['utils/ArrayMap', 'transitions/Tween'], factory);
     } else if (typeof module === 'object' && typeof module.exports === 'object') {
-        module.exports = factory(require('utils/ArrayMap'));
+        module.exports = factory(require('utils/ArrayMap'), require('transitions/Tween'));
     } else {
-        factory(root.j2d.utils.ArrayMap);
+        factory(root.j2d.utils.ArrayMap, root.j2d.transitions.Tween);
     }
 }(typeof window !== 'undefined' ? window : global,
     /**
      * @param {Function} ArrayMap
+     * @param {Tween} Tween
      * @returns {FrameManager}
      */
-    function (ArrayMap) {
+    function (ArrayMap, Tween) {
         "use strict";
 
         /** @type FrameManager */
@@ -155,8 +156,10 @@
                         if (engine.update !== undefined && 'function' === typeof engine.update) {
                             if (data.asyncUpdate) {
                                 setTimeout(engine.update.bind(this, timestamp, data), 0);
+                                setTimeout(Tween.update, 0);
                             } else {
                                 engine.update(timestamp, data);
+                                Tween.update();
                             }
                         }
 

@@ -49,25 +49,30 @@ define('Application', [
 
             j2d.media = new MediaManager(j2d);
 
-            j2d.media.addSound({
-                id: 'test',
-                src: 'test.ogg'
-            });
+            // j2d.media.addSound({
+            //     id: 'test',
+            //     src: 'test.ogg'
+            // });
 
-            j2d.media.audio("test").play();
+            // j2d.media.audio("test").play();
 
             /* Managers */
             var scene = j2d.getSceneManager();
 
             /* Nodes */
             /** @type {BaseNode|AnimatedNode|RectNode} */
-            var rectangle = (new RectNode({color: 'red'}))
+            var rectangle1 = (new RectNode({color: 'red'}))
                 .setSize(new Vector2d(20, 20))
                 .setPosition(new Vector2d(20, 20));
+
+            var rectangle2 = (new RectNode({color: 'green'}))
+                .setSize(new Vector2d(20, 20))
+                .setPosition(new Vector2d(20, 40));
             /** @type {BaseNode|CameraNode} */
             var camera_1st = (new Camera()).setSize(new Vector2d(400, 300));
 
-            scene.add(rectangle);
+            scene.add(rectangle1);
+            scene.add(rectangle2);
             scene.registerCamera(camera_1st);
 
             var width = 400,
@@ -79,7 +84,11 @@ define('Application', [
 
                 this.update = function (timestamp, data) {
                     if (j2d.io.checkPressedKeyMap('ACTION')) {
-                        rectangle.setPosition(j2d.io.getPosition());
+                        rectangle1.setPosition(new Vector2d(20, 20));
+                        rectangle2.setPosition(new Vector2d(20, 40));
+
+                        rectangle1.moveTo(new Vector2d(200, 20), 4000);
+                        rectangle2.moveTo(new Vector2d(100, 40), 4000);
                     }
 
                     // if (j2d.io.checkPressedKeyMap('MOVE_UP')) rectangle.moveTo(new Vector2d(100, 100));
@@ -106,7 +115,7 @@ define('Application', [
                     if (camera_1st.angle == 0) ts = true;
 
                     //rectangle.angle = rectangle.angle - 2;
-                    rectangle.setPosition(new Vector2d(x, y)).setColor(!ts ? 'yellow' : 'grey');
+                    rectangle1.setPosition(new Vector2d(x, y)).setColor(!ts ? 'yellow' : 'grey');
                     scene.updateViewport(camera_1st);
 
                     //scene.updateViewport();

@@ -105,6 +105,20 @@
     };
 
     /**
+     * @param {BaseNode.defaults|Object} data
+     */
+    BaseNode.prototype.import = function (data) {
+        this.data = $.extend(true, {}, this.data, data);
+    };
+
+    /**
+     * @returns {BaseNode.defaults}
+     */
+    BaseNode.prototype.export = function () {
+        return this.data;
+    };
+
+    /**
      * @returns {Vector2d}
      */
     BaseNode.prototype.getPosition = function () {
