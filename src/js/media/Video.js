@@ -1,3 +1,11 @@
+/**
+ * J2D (jQuery Canvas Graphic Engine plugin)
+ *
+ * @authors DeVinterX
+ * @license BSD
+ * @version 0.2.0-dev
+ */
+
 (function (root, factory) {
     if (typeof define === 'function' && define.amd) {
         define('media/Video', ['jquery', 'utils/ArrayMap'], factory);

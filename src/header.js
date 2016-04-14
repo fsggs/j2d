@@ -6,12 +6,17 @@
  * @version 0.2.0-dev
  */
 
-if (global === undefined) {var global = window || this}
-if (typeof define !== 'function' || !define.amd) {global.j2d = {
-    core: {},
-    exceptions: {},
-    io: {},
-    media: {},
-    nodes: {},
-    utils: {}
-};}
+if (global === undefined) {
+    var global = window || this
+}
+if (typeof define !== 'function' || !define.amd) {
+    global.j2d = {
+        core: {},
+        exceptions: {},
+        io: {},
+        media: {},
+        nodes: {},
+        transitions: {},
+        utils: {}
+    };
+}

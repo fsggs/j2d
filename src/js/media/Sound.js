@@ -1,3 +1,12 @@
+/**
+ * J2D (jQuery Canvas Graphic Engine plugin)
+ *
+ * @authors DeVinterX, James Simpson of GoldFire Studios(howler.js)
+ * @original_source https://github.com/goldfire/howler.js/blob/master/howler.js
+ * @license BSD, MIT(howler.js)
+ * @version 0.2.0-dev
+ */
+
 (function (root, factory) {
     if (typeof define === 'function' && define.amd) {
         define('media/Sound', ['utils/UUID', 'utils/Events', 'media/Audio'], factory);
