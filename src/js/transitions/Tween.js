@@ -97,25 +97,7 @@
         tween.data.startTime = time !== undefined ? time : global.performance.now();
         tween.data.startTime += tween.data.delay;
 
-        // for (var property in tween.data.endProperties) {
-        //     if (tween.data.endProperties.hasOwnProperty(property) && tween.data.startProperties.hasOwnProperty(property)) {
-        //         if (tween.data.endProperties[property] instanceof Array) {
-        //             if (tween.data.endProperties[property].length === 0) continue;
-        //             tween.data.endProperties[property] = [tween.node.data[property]].concat(tween.data.endProperties[property]);
-        //         }
-        //
-        //         if (tween.data.startProperties[property] === undefined) continue;
-        //
-        //         tween.data.startProperties[property] = tween.node.data[property];
-        //
-        //         if (!(tween.data.startProperties[property] instanceof Array)) {
-        //             tween.data.startProperties[property] *= 1.0;
-        //         }
-        //
-        //         tween.data.repeatProperties[property] = tween.data.startProperties[property] || 0;
-        //     }
-        // }
-
+        tween.data.repeatProperties = tween.data.startProperties;
         return this;
     };
 
@@ -169,88 +151,7 @@
         return this;
     };
 
-    Tween.prototype.old_update = function (time) {
-        var tween = this;
-
-        var property;
-        var elapsed;
-        var value;
-
-        if (time < tween.data.startTime) return true;
-
-        if (!tween.data.isStarted) {
-            tween.events.trigger('start', [tween.node]);
-            tween.data.isStarted = true;
-        }
-
-        elapsed = (time - tween.data.startTime) / tween.data.duration;
-        elapsed = elapsed > 1 ? 1 : elapsed;
-
-        value = tween.data.easingFunction(elapsed);
-
-        for (property in tween.data.endProperties) {
-            if (tween.data.endProperties.hasOwnProperty(property) && tween.data.startProperties.hasOwnProperty(property)) {
-                if (tween.data.startProperties[property] === undefined) continue;
-
-                var start = tween.data.startProperties[property] || 0;
-                var end = tween.data.endProperties[property];
-
-                if (end instanceof Array) {
-                    tween.node.data[property] = tween.data.interpolationFunction(end, value);
-                } else {
-                    if (typeof (end) === 'string') {
-                        end = (end.lastIndexOf('+', 0) === 0 || end.lastIndexOf('-', 0) === 0)
-                            ? start + parseFloat(end)
-                            : parseFloat(end);
-                    }
-                    if (typeof (end) === 'number') {
-                        tween.node.data[property] = start + (end - start) * value;
-                    }
-                }
-            }
-        }
-
-        tween.events.trigger('update', [tween.node]);
-
-        if (elapsed === 1) {
-            if (tween.data.repeat > 0) {
-                if (isFinite(tween.data.repeat)) {
-                    tween.data.repeat--;
-                }
-                for (property in tween.data.repeatProperties) {
-                    if (tween.data.repeatProperties.hasOwnProperty(property)) {
-                        if (typeof (tween.data.endProperties[property]) === 'string') {
-                            tween.data.repeatProperties[property] = tween.data.repeatProperties[property] + parseFloat(tween.data.endProperties[property]);
-                        }
-
-                        if (tween.data.yoyo) {
-                            var tmp = tween.data.repeatProperties[property];
-                            tween.data.repeatProperties[property] = tween.data.endProperties[property];
-                            tween.data.endProperties[property] = tmp;
-                        }
-
-                        tween.data.startProperties[property] = tween.data.repeatProperties[property];
-                    }
-                }
-
-                if (tween.data.yoyo) {
-                    tween.data.reversed = !tween.data.reversed;
-                }
-                tween.data.startTime = time + tween.data.delay;
-
-                return true;
-            } else {
-                tween.events.trigger('complete', [tween.node]);
-                for (i = 0; i < tween.data.chainedTweens.length; i++) {
-                    tween.data.chainedTweens[i].start(tween.data.startTime + tween.data.duration);
-                }
-                return false;
-            }
-        }
-        return true;
-    };
-
-    var calcTween = function(endProperties, startProperties, value) {
+    var animateTween = function (startProperties, endProperties, value, reversed) {
         var result = {};
         var property;
         var temp;
@@ -258,13 +159,41 @@
         for (property in endProperties) {
             if (endProperties.hasOwnProperty(property) && startProperties.hasOwnProperty(property)) {
                 temp = null;
-                if (typeof startProperties[property] === 'number') {
-                    temp = startProperties[property] + (endProperties[property] - startProperties[property]) * value;
+                if (typeof endProperties[property] === 'string' && typeof startProperties[property] === 'number') {
+                    temp = startProperties[property] + parseFloat(endProperties[property]) * value;
+                } else if (typeof endProperties[property] === 'number' && typeof startProperties[property] === 'string') {
+                    temp = endProperties[property] - parseFloat(startProperties[property]) * value;
+                } else if (typeof endProperties[property] === 'object') {
+                    temp = animateTween(startProperties[property], endProperties[property], value, reversed);
+                } else {
+                    console.log(typeof endProperties[property], typeof startProperties[property]);
+                    temp = (reversed) // TODO:: bug
+                        ? parseFloat(endProperties[property]) + (startProperties[property] - parseFloat(endProperties[property])) * value
+                        : startProperties[property] + (parseFloat(endProperties[property]) - startProperties[property]) * value;
                 }
-                if (typeof startProperties[property] === 'object') {
-                    temp = calcTween(endProperties[property], startProperties[property], value);
-                }
+                if (temp !== null) result[property] = temp;
+            }
+        }
 
+        return Object.keys(result).length > 0 ? result : null;
+    };
+
+    var repeatTween = function (startProperties, endProperties) {
+        var result = {};
+        var property;
+        var temp;
+
+        for (property in startProperties) {
+            if (startProperties.hasOwnProperty(property) && endProperties.hasOwnProperty(property)) {
+                if (typeof endProperties[property] === 'string' && typeof startProperties[property] === 'number') {
+                    temp = startProperties[property] - parseFloat(endProperties[property]);
+                } else if (typeof endProperties[property] === 'number' && typeof startProperties[property] === 'string') {
+                    temp = endProperties[property] + parseFloat(startProperties[property]);
+                } else if (typeof startProperties[property] === 'object') {
+                    temp = repeatTween(endProperties[property], startProperties[property]);
+                } else {
+                    temp = startProperties[property] + parseFloat(endProperties[property]) - startProperties[property];
+                }
                 if (temp !== null) result[property] = temp;
             }
         }
@@ -275,10 +204,6 @@
     Tween.prototype.update = function (time) {
         var tween = this;
 
-        var property;
-        var elapsed;
-        var data;
-
         if (time < tween.data.startTime) return true;
 
         if (!tween.data.isStarted) {
@@ -286,49 +211,44 @@
             tween.data.isStarted = true;
         }
 
-        elapsed = (time - tween.data.startTime) / tween.data.duration;
+        var elapsed = (time - tween.data.startTime) / tween.data.duration;
         elapsed = elapsed > 1 ? 1 : elapsed;
 
-        data = calcTween(tween.data.endProperties, tween.data.startProperties, tween.data.easingFunction(elapsed));
-        tween.node.import(data);
+        tween.node.import(
+            animateTween(tween.data.startProperties, tween.data.endProperties, tween.data.easingFunction(elapsed), tween.data.yoyo)
+        );
 
         tween.events.trigger('update', [tween.node]);
-        //
-        // if (elapsed === 1) {
-        //     if (tween.data.repeat > 0) {
-        //         if (isFinite(tween.data.repeat)) {
-        //             tween.data.repeat--;
-        //         }
-        //         for (property in tween.data.repeatProperties) {
-        //             if (tween.data.repeatProperties.hasOwnProperty(property)) {
-        //                 if (typeof (tween.data.endProperties[property]) === 'string') {
-        //                     tween.data.repeatProperties[property] = tween.data.repeatProperties[property] + parseFloat(tween.data.endProperties[property]);
-        //                 }
-        //
-        //                 if (tween.data.yoyo) {
-        //                     var tmp = tween.data.repeatProperties[property];
-        //                     tween.data.repeatProperties[property] = tween.data.endProperties[property];
-        //                     tween.data.endProperties[property] = tmp;
-        //                 }
-        //
-        //                 tween.data.startProperties[property] = tween.data.repeatProperties[property];
-        //             }
-        //         }
-        //
-        //         if (tween.data.yoyo) {
-        //             tween.data.reversed = !tween.data.reversed;
-        //         }
-        //         tween.data.startTime = time + tween.data.delay;
-        //
-        //         return true;
-        //     } else {
-        //         tween.events.trigger('complete', [tween.node]);
-        //         for (i = 0; i < tween.data.chainedTweens.length; i++) {
-        //             tween.data.chainedTweens[i].start(tween.data.startTime + tween.data.duration);
-        //         }
-        //         return false;
-        //     }
-        // }
+
+        if (elapsed === 1) {
+            if (tween.data.repeat > 0) {
+                if (isFinite(tween.data.repeat)) {
+                    tween.data.repeat--;
+                }
+
+                tween.data.repeatProperties = repeatTween(tween.data.repeatProperties, tween.data.endProperties);
+
+                if (tween.data.yoyo) {
+                    tween.data.reversed = !tween.data.reversed;
+
+                    var tmp = tween.data.repeatProperties;
+                    tween.data.repeatProperties = tween.data.endProperties;
+                    tween.data.endProperties = tmp;
+                }
+
+                tween.data.startProperties = tween.data.repeatProperties;
+
+                tween.data.startTime = time + tween.data.delay;
+                return true;
+            } else {
+                tween.data.repeatCount = 0;
+                tween.events.trigger('complete', [tween.node]);
+                for (var i = 0; i < tween.data.chainedTweens.length; i++) {
+                    tween.data.chainedTweens[i].start(tween.data.startTime + tween.data.duration);
+                }
+                return false;
+            }
+        }
         return true;
     };
 
@@ -783,7 +703,8 @@
     if (typeof module === 'object' && typeof module.exports === 'object') module.exports.Tween = Tween;
     if (global.j2d === undefined) global.j2d.transitions.Tween = Tween;
     return Tween;
-}));
+}))
+;
 
 
 

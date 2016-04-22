@@ -6,6 +6,8 @@
  * @version 0.2.0-dev
  */
 
+// TODO:: move(+v.x, +v.y)
+
 (function (root, factory) {
     if (typeof define === 'function' && define.amd) {
         define('nodes/AnimatedNode', [

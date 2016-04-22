@@ -14,7 +14,8 @@ define('Application', [
         'io/MediaManager',
         'utils/Vector2d',
         'nodes/RectNode',
-        'nodes/CameraNode'
+        'nodes/CameraNode',
+        'transitions/Tween'
     ],
     /**
      * @param {Function|jQuery} $
@@ -24,8 +25,9 @@ define('Application', [
      * @param {Function|Vector2d} Vector2d
      * @param {Function|RectNode} RectNode
      * @param {Function|CameraNode} Camera
+     * @param {Function|Tween} Tween
      */
-    function ($, J2D, IO, MediaManager, Vector2d, RectNode, Camera) {
+    function ($, J2D, IO, MediaManager, Vector2d, RectNode, Camera, Tween) {
         "use strict";
 
         $(global.document).ready(function () {
@@ -61,18 +63,25 @@ define('Application', [
 
             /* Nodes */
             /** @type {BaseNode|AnimatedNode|RectNode} */
-            var rectangle1 = (new RectNode({color: 'red'}))
+            var rectangle1 = (new RectNode({color: 'yellow'}))
                 .setSize(new Vector2d(20, 20))
                 .setPosition(new Vector2d(20, 20));
 
             var rectangle2 = (new RectNode({color: 'green'}))
                 .setSize(new Vector2d(20, 20))
                 .setPosition(new Vector2d(20, 40));
+
+            var rectangle3 = (new RectNode({color: 'red'}))
+                .setSize(new Vector2d(20, 20))
+                .setPosition(new Vector2d(60, 40));
+
+
             /** @type {BaseNode|CameraNode} */
             var camera_1st = (new Camera()).setSize(new Vector2d(400, 300));
 
             scene.add(rectangle1);
             scene.add(rectangle2);
+            scene.add(rectangle3);
             scene.registerCamera(camera_1st);
 
             var width = 400,
@@ -84,11 +93,23 @@ define('Application', [
 
                 this.update = function (timestamp, data) {
                     if (j2d.io.checkPressedKeyMap('ACTION')) {
-                        rectangle1.setPosition(new Vector2d(20, 20));
-                        rectangle2.setPosition(new Vector2d(20, 40));
+                        new Tween(rectangle1, {
+                            repeat: 5,
+                            yoyo: true
+                        })
+                            .to({
+                                position: {
+                                    x: '120'
+                                }
+                            })
+                            .start();
 
-                        rectangle1.moveTo(new Vector2d(200, 20), 4000);
-                        rectangle2.moveTo(new Vector2d(100, 40), 4000);
+                        //rectangle1.setPosition(new Vector2d(20, 20));
+                        //rectangle2.setPosition(new Vector2d(20, 40));
+
+                        //rectangle1.moveTo(new Vector2d(200, 20), 4000);
+                        //rectangle2.moveTo(new Vector2d(100, 40), 4000);
+
                     }
 
                     // if (j2d.io.checkPressedKeyMap('MOVE_UP')) rectangle.moveTo(new Vector2d(100, 100));
