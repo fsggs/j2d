@@ -99,10 +99,10 @@ define('Application', [
                         })
                             .to({
                                 position: {
-                                    x: '120'
+                                    x: '60'
                                 }
                             })
-                            .start();
+                            .start(2000);
 
                         //rectangle1.setPosition(new Vector2d(20, 20));
                         //rectangle2.setPosition(new Vector2d(20, 40));

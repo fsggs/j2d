@@ -16,7 +16,7 @@ if (typeof define !== 'function' || !define.amd) {
         io: {},
         media: {},
         nodes: {},
-        transitions: {},
+        transitions: {utils: {}},
         utils: {}
     };
 }

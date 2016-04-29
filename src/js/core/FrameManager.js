@@ -43,9 +43,13 @@
                 (function (callback) {
                     if (!options.breakAnimationFrame) {
                         if (timestamp >= Number.MAX_SAFE_INTEGER - 1) timestamp = 0;
-                        if (timestamp === 0) timestamp = Date.now();
-
-                        global.setTimeout(callback.bind(this, Date.now() - timestamp), 1000.0 / options.frameLimit);
+                        if (timestamp === 0) timestamp = global.performance === undefined
+                            ? Date.now()
+                            : global.performance.now();
+                        global.setTimeout(callback.bind(this, global.performance === undefined
+                            ? Date.now() - timestamp
+                            : global.performance.now() - timestamp
+                        ), 1000.0 / options.frameLimit);
                     } else {
                         options.breakAnimationFrame = false
                     }
@@ -156,10 +160,10 @@
                         if (engine.update !== undefined && 'function' === typeof engine.update) {
                             if (data.asyncUpdate) {
                                 setTimeout(engine.update.bind(this, timestamp, data), 0);
-                                setTimeout(Tween.update, 0);
+                                setTimeout(Tween.update.bind(this, timestamp), 0);
                             } else {
                                 engine.update(timestamp, data);
-                                Tween.update();
+                                Tween.update(timestamp);
                             }
                         }
 
