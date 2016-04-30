@@ -21,6 +21,11 @@
      * LengthException
      * Create custom exception with message
      *
+     * @class LengthException
+     * @exports module:exceptions/LengthException
+     *
+     * @constructor
+     * @extends exceptions/Exception
      * @param {string} message
      * @property {string} message
      */

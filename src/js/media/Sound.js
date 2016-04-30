@@ -37,10 +37,11 @@
     /**
      * @class Sound
      * @exports module:media/Sound
-     * 
+     *
+     * @constructor
+     * @extends media/Audio
      * @param {Audio.defaults|Object} [data]
      * @param {MediaManager} [manager]
-     * @constructor
      */
     var Sound = function (data, manager) {
         var sound = this;

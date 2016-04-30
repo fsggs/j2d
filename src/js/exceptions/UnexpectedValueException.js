@@ -21,6 +21,11 @@
      * UnexpectedValueException
      * Create custom exception with message
      *
+     * @class UnexpectedValueException
+     * @exports module:exceptions/UnexpectedValueException
+     *
+     * @constructor
+     * @extends exceptions/Exception
      * @param {string} message
      * @property {string} message
      */

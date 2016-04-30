@@ -5,6 +5,40 @@
 
 ## API Reference
 
+<a name="exceptions/BadFunctionCallException"></a>
+
+## exceptions/BadFunctionCallException ⇐ <code>exceptions/Exception</code>
+BadFunctionCallException
+
+**Kind**: global class  
+**Extends:** <code>exceptions/Exception</code>  
+**Properties**
+
+| Name | Type |
+| --- | --- |
+| message | <code>string</code> | 
+
+
+* [exceptions/BadFunctionCallException](#exceptions/BadFunctionCallException) ⇐ <code>exceptions/Exception</code>
+    * [new BadFunctionCallException(message)](#new_exceptions/BadFunctionCallException_new)
+    * [.toString()](#exceptions/BadFunctionCallException+toString) ⇒ <code>string</code>
+
+<a name="new_exceptions/BadFunctionCallException_new"></a>
+
+### new BadFunctionCallException(message)
+BadFunctionCallExceptionCreate custom exception with message
+
+
+| Param | Type |
+| --- | --- |
+| message | <code>string</code> | 
+
+<a name="exceptions/BadFunctionCallException+toString"></a>
+
+### exceptions/BadFunctionCallException.toString() ⇒ <code>string</code>
+Convert exception to String
+
+**Kind**: instance method of <code>[exceptions/BadFunctionCallException](#exceptions/BadFunctionCallException)</code>  
 
 ## License
 

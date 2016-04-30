@@ -5,22 +5,9 @@
 
 ## API Reference
 
-<a name="media/Sound"></a>
+<a name="module_Interpolation"></a>
 
-## media/Sound ⇐ <code>media/Audio</code>
-Sound
-
-**Kind**: global class  
-**Extends:** <code>media/Audio</code>  
-<a name="new_media/Sound_new"></a>
-
-### new Sound([data], [manager])
-
-| Param | Type |
-| --- | --- |
-| [data] | <code>Audio.defaults</code> &#124; <code>Object</code> | 
-| [manager] | <code>MediaManager</code> | 
-
+## Interpolation : <code>Object</code>
 
 ## License
 

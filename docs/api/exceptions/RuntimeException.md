@@ -5,6 +5,40 @@
 
 ## API Reference
 
+<a name="exceptions/RuntimeException"></a>
+
+## exceptions/RuntimeException ⇐ <code>exceptions/Exception</code>
+RuntimeException
+
+**Kind**: global class  
+**Extends:** <code>exceptions/Exception</code>  
+**Properties**
+
+| Name | Type |
+| --- | --- |
+| message | <code>string</code> | 
+
+
+* [exceptions/RuntimeException](#exceptions/RuntimeException) ⇐ <code>exceptions/Exception</code>
+    * [new RuntimeException(message)](#new_exceptions/RuntimeException_new)
+    * [.toString()](#exceptions/RuntimeException+toString) ⇒ <code>string</code>
+
+<a name="new_exceptions/RuntimeException_new"></a>
+
+### new RuntimeException(message)
+RuntimeExceptionCreate custom exception with message
+
+
+| Param | Type |
+| --- | --- |
+| message | <code>string</code> | 
+
+<a name="exceptions/RuntimeException+toString"></a>
+
+### exceptions/RuntimeException.toString() ⇒ <code>string</code>
+Convert exception to String
+
+**Kind**: instance method of <code>[exceptions/RuntimeException](#exceptions/RuntimeException)</code>  
 
 ## License
 

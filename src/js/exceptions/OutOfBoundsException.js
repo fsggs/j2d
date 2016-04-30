@@ -21,6 +21,11 @@
      * OutOfBoundsException
      * Create custom exception with message
      *
+     * @class OutOfBoundsException
+     * @exports module:exceptions/OutOfBoundsException
+     *
+     * @constructor
+     * @extends exceptions/Exception
      * @param {string} message
      * @property {string} message
      */

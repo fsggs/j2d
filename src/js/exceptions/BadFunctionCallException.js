@@ -21,6 +21,11 @@
      * BadFunctionCallException
      * Create custom exception with message
      *
+     * @class BadFunctionCallException
+     * @exports module:exceptions/BadFunctionCallException
+     * 
+     * @constructor
+     * @extends exceptions/Exception
      * @param {string} message
      * @property {string} message
      */

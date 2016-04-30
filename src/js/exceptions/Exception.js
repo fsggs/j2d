@@ -21,6 +21,11 @@
      * Default Exception
      * Create custom exception with message
      *
+     * @class Exception
+     * @exports module:exceptions/Exception
+     *
+     * @constructor
+     * @extends Error
      * @param {string} message
      * @property {string} message
      */

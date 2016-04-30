@@ -24,13 +24,14 @@
     /**
      * @class RectNode
      * @exports module:nodes/RectNode
-     * 
-     * @param {BaseNode.defaults|AnimatedNode.defaults|RectNode.defaults|Object} [data]
+     *
      * @constructor
+     * @extends nodes/AnimatedNode
+     * @param {BaseNode.defaults|AnimatedNode.defaults|RectNode.defaults|Object} [data]
      * @property {BaseNode.defaults|AnimatedNode.defaults|RectNode.defaults} data
      */
     var RectNode = function (data) {
-        BaseNode.call(this, $.extend(true, {}, RectNode.defaults, data));
+        AnimatedNode.call(this, $.extend(true, {}, RectNode.defaults, data));
     };
 
     RectNode.prototype = Object.create(AnimatedNode.prototype);

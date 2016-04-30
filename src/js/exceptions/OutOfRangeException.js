@@ -21,6 +21,11 @@
      * OutOfRangeException
      * Create custom exception with message
      *
+     * @class OutOfRangeException
+     * @exports module:exceptions/OutOfRangeException
+     *
+     * @constructor
+     * @extends exceptions/Exception
      * @param {string} message
      * @property {string} message
      */

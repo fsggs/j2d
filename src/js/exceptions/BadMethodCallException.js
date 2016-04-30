@@ -20,7 +20,12 @@
     /**
      * BadMethodCallException
      * Create custom exception with message
+     * 
+     * @class BadMethodCallException
+     * @exports module:exceptions/BadMethodCallException
      *
+     * @constructor
+     * @extends exceptions/Exception
      * @param {string} message
      * @property {string} message
      */

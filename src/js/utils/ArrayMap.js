@@ -21,8 +21,9 @@
      * @class ArrayMap
      * @exports module:utils/ArrayMap
      *
-     * @param args
      * @constructor
+     * @extends Array
+     * @param args
      */
     var ArrayMap = function (args) {
         Array.call(this, args);

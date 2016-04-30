@@ -9,6 +9,10 @@
 /*
  * TODO:: Events System
  */
+
+/**
+ * @module "jquery.j2d"
+ */
 (function (root, factory) {
     if (typeof define === 'function' && define.amd) {
         define('jquery.j2d', ['jquery', 'core/SceneManager', 'utils/DeviceUtil', 'utils/UUID'], factory);
@@ -27,7 +31,9 @@
 
     /**
      * @class J2D
-     * @exports module:jquery.j2d
+     * @exports module:"jquery.j2d"
+     * @alias module:"jquery.j2d"
+     * 
      * @param {Element|jQuery} element
      * @param {J2D.defaults} data
      *

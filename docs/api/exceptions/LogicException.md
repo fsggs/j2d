@@ -5,6 +5,40 @@
 
 ## API Reference
 
+<a name="exceptions/LogicException"></a>
+
+## exceptions/LogicException ⇐ <code>exceptions/Exception</code>
+LogicException
+
+**Kind**: global class  
+**Extends:** <code>exceptions/Exception</code>  
+**Properties**
+
+| Name | Type |
+| --- | --- |
+| message | <code>string</code> | 
+
+
+* [exceptions/LogicException](#exceptions/LogicException) ⇐ <code>exceptions/Exception</code>
+    * [new LogicException(message)](#new_exceptions/LogicException_new)
+    * [.toString()](#exceptions/LogicException+toString) ⇒ <code>string</code>
+
+<a name="new_exceptions/LogicException_new"></a>
+
+### new LogicException(message)
+LogicExceptionCreate custom exception with message
+
+
+| Param | Type |
+| --- | --- |
+| message | <code>string</code> | 
+
+<a name="exceptions/LogicException+toString"></a>
+
+### exceptions/LogicException.toString() ⇒ <code>string</code>
+Convert exception to String
+
+**Kind**: instance method of <code>[exceptions/LogicException](#exceptions/LogicException)</code>  
 
 ## License
 

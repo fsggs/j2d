@@ -5,6 +5,40 @@
 
 ## API Reference
 
+<a name="exceptions/UnexpectedValueException"></a>
+
+## exceptions/UnexpectedValueException ⇐ <code>exceptions/Exception</code>
+UnexpectedValueException
+
+**Kind**: global class  
+**Extends:** <code>exceptions/Exception</code>  
+**Properties**
+
+| Name | Type |
+| --- | --- |
+| message | <code>string</code> | 
+
+
+* [exceptions/UnexpectedValueException](#exceptions/UnexpectedValueException) ⇐ <code>exceptions/Exception</code>
+    * [new UnexpectedValueException(message)](#new_exceptions/UnexpectedValueException_new)
+    * [.toString()](#exceptions/UnexpectedValueException+toString) ⇒ <code>string</code>
+
+<a name="new_exceptions/UnexpectedValueException_new"></a>
+
+### new UnexpectedValueException(message)
+UnexpectedValueExceptionCreate custom exception with message
+
+
+| Param | Type |
+| --- | --- |
+| message | <code>string</code> | 
+
+<a name="exceptions/UnexpectedValueException+toString"></a>
+
+### exceptions/UnexpectedValueException.toString() ⇒ <code>string</code>
+Convert exception to String
+
+**Kind**: instance method of <code>[exceptions/UnexpectedValueException](#exceptions/UnexpectedValueException)</code>  
 
 ## License
 

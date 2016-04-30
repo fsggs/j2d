@@ -21,6 +21,11 @@
      * RuntimeException
      * Create custom exception with message
      *
+     * @class RuntimeException
+     * @exports module:exceptions/RuntimeException
+     *
+     * @constructor
+     * @extends exceptions/Exception
      * @param {string} message
      * @property {string} message
      */

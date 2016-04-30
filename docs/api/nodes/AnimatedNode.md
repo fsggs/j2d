@@ -7,10 +7,11 @@
 
 <a name="nodes/AnimatedNode"></a>
 
-## *nodes/AnimatedNode*
+## *nodes/AnimatedNode ⇐ <code>nodes/BaseNode</code>*
 AnimatedNode
 
 **Kind**: global abstract class  
+**Extends:** <code>nodes/BaseNode</code>  
 **Properties**
 
 | Name | Type |
@@ -18,7 +19,7 @@ AnimatedNode
 | data | <code>BaseNode.defaults</code> &#124; <code>AnimatedNode.defaults</code> | 
 
 
-* *[nodes/AnimatedNode](#nodes/AnimatedNode)*
+* *[nodes/AnimatedNode](#nodes/AnimatedNode) ⇐ <code>nodes/BaseNode</code>*
     * *[new AnimatedNode([data])](#new_nodes/AnimatedNode_new)*
     * *[.moveTo(position, [duration], [durationAsSpeed])](#nodes/AnimatedNode+moveTo)*
     * *[.resizeTo(size, [duration], [durationAsSpeed])](#nodes/AnimatedNode+resizeTo)*

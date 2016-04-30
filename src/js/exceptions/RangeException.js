@@ -21,6 +21,11 @@
      * RangeException
      * Create custom exception with message
      *
+     * @class RangeException
+     * @exports module:exceptions/RangeException
+     *
+     * @constructor
+     * @extends exceptions/Exception
      * @param {string} message
      * @property {string} message
      */

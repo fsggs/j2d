@@ -40,6 +40,7 @@
      * 
      * @abstract
      * @constructor
+     * @extends nodes/BaseNode
      * @param {BaseNode.defaults|AnimatedNode.defaults|Object} [data]
      * @property {BaseNode.defaults|AnimatedNode.defaults} data
      */

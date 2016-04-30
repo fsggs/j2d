@@ -20,13 +20,14 @@
     /**
      * @class CameraNode
      * @exports module:nodes/CameraNode
-     * 
-     * @param {BaseNode.defaults|AnimatedNode.defaults|CameraNode.defaults|Object} [data]
+     *
      * @constructor
+     * @extends nodes/AnimatedNode
+     * @param {BaseNode.defaults|AnimatedNode.defaults|CameraNode.defaults|Object} [data]
      * @property {BaseNode.defaults|AnimatedNode.defaults|CameraNode.defaults} data
      */
     var CameraNode = function (data) {
-        BaseNode.call(this, $.extend(true, {}, CameraNode.defaults, data));
+        AnimatedNode.call(this, $.extend(true, {}, CameraNode.defaults, data));
     };
 
     CameraNode.prototype = Object.create(AnimatedNode.prototype);

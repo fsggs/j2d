@@ -5,21 +5,26 @@
 
 ## API Reference
 
-<a name="media/Sound"></a>
+<a name="transitions/Tween"></a>
 
-## media/Sound ⇐ <code>media/Audio</code>
-Sound
+## transitions/Tween
+Tween
 
 **Kind**: global class  
-**Extends:** <code>media/Audio</code>  
-<a name="new_media/Sound_new"></a>
+**Properties**
 
-### new Sound([data], [manager])
+| Name | Type |
+| --- | --- |
+| data | <code>Tween.defaults</code> | 
+
+<a name="new_transitions/Tween_new"></a>
+
+### new Tween(tweenNode, [data])
 
 | Param | Type |
 | --- | --- |
-| [data] | <code>Audio.defaults</code> &#124; <code>Object</code> | 
-| [manager] | <code>MediaManager</code> | 
+| tweenNode | <code>BaseNode</code> &#124; <code>Object</code> | 
+| [data] | <code>Tween.defaults</code> &#124; <code>Object</code> | 
 
 
 ## License

@@ -5,6 +5,40 @@
 
 ## API Reference
 
+<a name="exceptions/LengthException"></a>
+
+## exceptions/LengthException ⇐ <code>exceptions/Exception</code>
+LengthException
+
+**Kind**: global class  
+**Extends:** <code>exceptions/Exception</code>  
+**Properties**
+
+| Name | Type |
+| --- | --- |
+| message | <code>string</code> | 
+
+
+* [exceptions/LengthException](#exceptions/LengthException) ⇐ <code>exceptions/Exception</code>
+    * [new LengthException(message)](#new_exceptions/LengthException_new)
+    * [.toString()](#exceptions/LengthException+toString) ⇒ <code>string</code>
+
+<a name="new_exceptions/LengthException_new"></a>
+
+### new LengthException(message)
+LengthExceptionCreate custom exception with message
+
+
+| Param | Type |
+| --- | --- |
+| message | <code>string</code> | 
+
+<a name="exceptions/LengthException+toString"></a>
+
+### exceptions/LengthException.toString() ⇒ <code>string</code>
+Convert exception to String
+
+**Kind**: instance method of <code>[exceptions/LengthException](#exceptions/LengthException)</code>  
 
 ## License
 

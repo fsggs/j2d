@@ -21,6 +21,11 @@
      * InvalidArgumentException
      * Create custom exception with message
      *
+     * @class InvalidArgumentException
+     * @exports module:exceptions/InvalidArgumentException
+     *
+     * @constructor
+     * @extends exceptions/Exception
      * @param {string} message
      * @property {string} message
      */

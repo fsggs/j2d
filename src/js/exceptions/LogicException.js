@@ -21,6 +21,11 @@
      * LogicException
      * Create custom exception with message
      *
+     * @class LogicException
+     * @exports module:exceptions/LogicException
+     *
+     * @constructor
+     * @extends exceptions/Exception
      * @param {string} message
      * @property {string} message
      */

@@ -25,9 +25,10 @@
     /**
      * @class CollectionNode
      * @exports module:nodes/CollectionNode
-     * 
-     * @param {BaseNode.defaults|AnimatedNode.defaults|CollectionNode.defaults|Object} [data]
+     *
      * @constructor
+     * @extends nodes/AnimatedNode
+     * @param {BaseNode.defaults|AnimatedNode.defaults|CollectionNode.defaults|Object} [data]
      * @property {BaseNode.defaults|AnimatedNode.defaults|CollectionNode.defaults} data
      */
     var CollectionNode = function (data) {

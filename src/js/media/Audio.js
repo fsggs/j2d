@@ -24,10 +24,10 @@
     /**
      * @class Audio
      * @exports module:media/Audio
-     * 
+     *
+     * @constructor
      * @param {Audio.defaults|Object} [data]
      * @param {MediaManager} [manager]
-     * @constructor
      */
     var Audio = function (data, manager) {
         var audio = this;
