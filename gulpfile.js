@@ -26,12 +26,13 @@ var paths = {
         'src/js/**/*.js'
     ],
     css: ['src/css/**/*.css'],
-    images: ['src/img/**/*'],
+    images: ['src/img/logo.png'],
 
     example: [
         'tests/2dist/index.html',
         'tests/2dist/application.js',
-        'tests/2dist/style.css'
+        'tests/2dist/style.css',
+        'src/img/favicon.ico'
     ],
     vendor: ['libs/require.min.js', 'vendor/jquery/dist/jquery.min.js']
 };
