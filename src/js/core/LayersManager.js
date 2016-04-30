@@ -23,6 +23,9 @@
     "use strict";
 
     /**
+     * @class LayersManager
+     * @exports module:core/LayersManager
+     * 
      * @constructor
      */
     var LayersManager = function () {

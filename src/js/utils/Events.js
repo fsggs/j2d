@@ -18,6 +18,9 @@
     "use strict";
 
     /**
+     * @class Events
+     * @exports module:utils/Events
+     * 
      * @constructor
      */
     var Events = function () {

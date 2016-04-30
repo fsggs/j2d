@@ -19,6 +19,12 @@
 
     var InterpolationEnum;
 
+    /**
+     * @class Interpolation
+     * @exports module:transitions/utils/Interpolation
+     * 
+     * @type {{Linear: Interpolation.Linear, Bezier: Interpolation.Bezier, CatmullRom: Interpolation.CatmullRom}}
+     */
     var Interpolation = {
         /**
          * @return {number}

@@ -41,6 +41,9 @@
     };
 
     /**
+     * @class ViewportManager
+     * @exports module:core/ViewportManager
+     * 
      * @constructor
      *
      * @property {ArrayMap.<CameraNode>|CameraNode[]} cameras

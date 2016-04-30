@@ -35,6 +35,9 @@
     }
 
     /**
+     * @class Sound
+     * @exports module:media/Sound
+     * 
      * @param {Audio.defaults|Object} [data]
      * @param {MediaManager} [manager]
      * @constructor

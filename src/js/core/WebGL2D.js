@@ -244,7 +244,13 @@
          }
          */
     };
-
+    
+    /**
+     * @class WebGL2D
+     * @exports module:core/WebGL2D
+     *
+     * @type {global.WebGL2D}
+     */
     var WebGL2D = global.WebGL2D = function WebGL2D(canvas, options) {
         this.canvas = canvas;
         this.options = options || {};

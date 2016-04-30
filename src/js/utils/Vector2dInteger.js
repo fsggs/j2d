@@ -18,6 +18,10 @@
     "use strict";
 
     /**
+     * @class Vector2dInteger
+     * @exports module:utils/Vector2dInteger
+     *
+     * @constructor
      * @param {number} x
      * @param {number} y
      */

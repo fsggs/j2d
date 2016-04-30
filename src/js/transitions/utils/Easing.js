@@ -19,6 +19,12 @@
 
     var EasingEnum;
 
+    /**
+     * @class Easing
+     * @exports module:transitions/utils/Easing
+     *
+     * @type {{Linear: {None: Easing.Linear.None}, Quadratic: {In: Easing.Quadratic.In, Out: Easing.Quadratic.Out, InOut: Easing.Quadratic.InOut}, Cubic: {In: Easing.Cubic.In, Out: Easing.Cubic.Out, InOut: Easing.Cubic.InOut}, Quartic: {In: Easing.Quartic.In, Out: Easing.Quartic.Out, InOut: Easing.Quartic.InOut}, Quintic: {In: Easing.Quintic.In, Out: Easing.Quintic.Out, InOut: Easing.Quintic.InOut}, Sinusoidal: {In: Easing.Sinusoidal.In, Out: Easing.Sinusoidal.Out, InOut: Easing.Sinusoidal.InOut}, Exponential: {In: Easing.Exponential.In, Out: Easing.Exponential.Out, InOut: Easing.Exponential.InOut}, Circular: {In: Easing.Circular.In, Out: Easing.Circular.Out, InOut: Easing.Circular.InOut}, Elastic: {In: Easing.Elastic.In, Out: Easing.Elastic.Out, InOut: Easing.Elastic.InOut}, Back: {In: Easing.Back.In, Out: Easing.Back.Out, InOut: Easing.Back.InOut}, Bounce: {In: Easing.Bounce.In, Out: Easing.Bounce.Out, InOut: Easing.Bounce.InOut}}}
+     */
     var Easing = {
         Linear: {
             /**

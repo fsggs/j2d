@@ -38,6 +38,9 @@
     var tweens = [];
 
     /**
+     * @class Tween
+     * @exports module:transitions/Tween
+     * 
      * @constructor
      * @param {BaseNode|{data: object}} tweenNode
      * @param {Tween.defaults|Object} [data]

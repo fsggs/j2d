@@ -18,6 +18,9 @@
     "use strict";
 
     /**
+     * @class BaseNode
+     * @exports module:nodes/BaseNode
+     * 
      * @abstract
      * @constructor
      * @param {BaseNode.defaults|Object} [data]

@@ -35,6 +35,9 @@
     "use strict";
 
     /**
+     * @class AnimatedNode
+     * @exports module:nodes/AnimatedNode
+     * 
      * @abstract
      * @constructor
      * @param {BaseNode.defaults|AnimatedNode.defaults|Object} [data]

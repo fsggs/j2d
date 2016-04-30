@@ -23,6 +23,9 @@
     "use strict";
 
     /**
+     * @class CollectionNode
+     * @exports module:nodes/CollectionNode
+     * 
      * @param {BaseNode.defaults|AnimatedNode.defaults|CollectionNode.defaults|Object} [data]
      * @constructor
      * @property {BaseNode.defaults|AnimatedNode.defaults|CollectionNode.defaults} data

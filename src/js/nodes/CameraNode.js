@@ -18,6 +18,9 @@
     "use strict";
 
     /**
+     * @class CameraNode
+     * @exports module:nodes/CameraNode
+     * 
      * @param {BaseNode.defaults|AnimatedNode.defaults|CameraNode.defaults|Object} [data]
      * @constructor
      * @property {BaseNode.defaults|AnimatedNode.defaults|CameraNode.defaults} data

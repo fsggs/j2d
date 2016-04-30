@@ -19,6 +19,11 @@
 
     /**
      * Class utility for get system browser window size
+     * 
+     * @class DeviceUtil
+     * @exports module:utils/DeviceUtil
+     * 
+     * @constructor
      */
     var DeviceUtil = function () {
         this.width = parseInt($(document).width()) < parseInt(screen.width) ? parseInt($(document).width()) : parseInt(screen.width);

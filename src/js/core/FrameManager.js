@@ -67,6 +67,9 @@
 
 
         /**
+         * @class FrameManager
+         * @exports module:core/FrameManager
+         * 
          * @constructor
          */
         var FrameManager = function () {

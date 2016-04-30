@@ -40,6 +40,9 @@
     "use strict";
 
     /**
+     * @class SceneManager
+     * @exports module:core/SceneManager
+     * 
      * @param {J2D} j2d
      * @constructor
      *

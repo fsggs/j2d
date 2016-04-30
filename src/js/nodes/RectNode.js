@@ -22,6 +22,9 @@
     "use strict";
 
     /**
+     * @class RectNode
+     * @exports module:nodes/RectNode
+     * 
      * @param {BaseNode.defaults|AnimatedNode.defaults|RectNode.defaults|Object} [data]
      * @constructor
      * @property {BaseNode.defaults|AnimatedNode.defaults|RectNode.defaults} data

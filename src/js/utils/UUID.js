@@ -19,6 +19,11 @@
 
     /**
      * Class for generate uuid
+     * 
+     * @class UUID
+     * @exports module:utils/UUID
+     * 
+     * @constructor
      */
     var UUID = function () {
 

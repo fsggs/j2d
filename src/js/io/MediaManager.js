@@ -66,6 +66,9 @@
     /* MediaManager */
 
     /**
+     * @class MediaManager
+     * @exports module:io/MediaManager
+     *
      * @param {J2D} j2d
      * @param {MediaManager.defaults|Object|undefined} [data]
      * @constructor

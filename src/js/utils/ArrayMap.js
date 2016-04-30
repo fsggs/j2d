@@ -17,6 +17,13 @@
 }(typeof window !== 'undefined' ? window : global, function () {
     "use strict";
 
+    /**
+     * @class ArrayMap
+     * @exports module:utils/ArrayMap
+     *
+     * @param args
+     * @constructor
+     */
     var ArrayMap = function (args) {
         Array.call(this, args);
     };

@@ -17,6 +17,13 @@
 }(typeof window !== 'undefined' ? window : global, function ($, ArrayMap) {
     "use strict";
 
+
+    /**
+     * @class Video
+     * @exports module:media/Video
+     *
+     * @constructor
+     */
     var Video = function () {
 
     };

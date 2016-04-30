@@ -9,7 +9,6 @@
 /*
  * TODO:: Events System
  */
-
 (function (root, factory) {
     if (typeof define === 'function' && define.amd) {
         define('jquery.j2d', ['jquery', 'core/SceneManager', 'utils/DeviceUtil', 'utils/UUID'], factory);
@@ -27,6 +26,8 @@
     "use strict";
 
     /**
+     * @class J2D
+     * @exports module:jquery.j2d
      * @param {Element|jQuery} element
      * @param {J2D.defaults} data
      *

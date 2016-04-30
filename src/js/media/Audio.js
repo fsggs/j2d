@@ -22,6 +22,9 @@
     var AudioNode = global.Audio;
 
     /**
+     * @class Audio
+     * @exports module:media/Audio
+     * 
      * @param {Audio.defaults|Object} [data]
      * @param {MediaManager} [manager]
      * @constructor

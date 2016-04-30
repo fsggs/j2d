@@ -18,7 +18,10 @@
     "use strict";
 
     /**
-     *
+     * @class MathUtil
+     * @exports module:utils/MathUtil
+     * 
+     * @constructor
      */
     var MathUtil = function () {
     };

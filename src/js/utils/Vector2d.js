@@ -18,6 +18,9 @@
     "use strict";
 
     /**
+     * @class Vector2d
+     * @exports module:utils/Vector2d
+     * 
      * @constructor
      * @param {number} x
      * @param {number} y

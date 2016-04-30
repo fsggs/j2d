@@ -18,6 +18,9 @@
     "use strict";
 
     /**
+     * @class InputManager
+     * @exports module:io/InputManager
+     * 
      * @param {J2D} j2d
      * @constructor
      */
@@ -457,7 +460,7 @@
     /**
      * @param {InputManager} manager
      * @param {Array.<number>|number[]} keyList
-     * @returns {{keyList:, time:number}|boolean}
+     * @returns {{keyList: Array.<number>|number[]|number, time: number}|boolean}
      */
     var getPressData = function (manager, keyList) {
         if (!manager.data.enableAdditionalData) return true;
