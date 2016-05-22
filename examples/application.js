@@ -93,10 +93,7 @@ define('Application', [
 
                 this.update = function (timestamp, data) {
                     if (j2d.io.checkPressedKeyMap('ACTION')) {
-                        new Tween(rectangle1, {
-                            repeat: 5,
-                            yoyo: true
-                        })
+                        new Tween(rectangle1)
                             .to({
                                 position: {
                                     x: '60'

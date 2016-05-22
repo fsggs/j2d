@@ -40,7 +40,7 @@
     /**
      * @class Tween
      * @exports module:transitions/Tween
-     * 
+     *
      * @constructor
      * @param {BaseNode|{data: object}} tweenNode
      * @param {Tween.defaults|Object} [data]
@@ -66,18 +66,31 @@
         isAnimated: false,
         isStarted: false,
         startTime: null,
+
         delayTime: 0,
+        repeatCount: 0,
+        yoyoCount: 0,
+
+        delayAllTime: 0,
+        repeatAllCount: 0,
+        yoyoAllCount: 0,
 
         defaultDuration: 1000
     };
 
     Tween.stateDefaults = {
-        count: 0,
+        startData: null,
+        endData: null,
+
         duration: 1000,
         easing: 'linear',
         interpolation: 'linear'
     };
 
+    /**
+     * @param {Tween.defaults|Object} data
+     * @returns {{count: number, duration: number, easing: string, interpolation: string}}
+     */
     var tweenStateData = function (data) {
         return (data !== undefined && typeof data === 'object')
             ? $.extend(true, {}, Tween.stateDefaults, data)
@@ -85,6 +98,11 @@
     };
 
     /* Methods */
+    /**
+     * @param properties
+     * @param {Tween.defaults|Object} data
+     * @returns {Tween}
+     */
     Tween.prototype.to = function (properties, data) {
         var tween = this;
 
@@ -96,6 +114,23 @@
         return tween;
     };
 
+    /**
+     * @param {number} time
+     * @returns {Tween}
+     */
+    Tween.prototype.update = function (time) {
+        var tween = this;
+
+        console.log(this.data);
+
+        //debugger;
+        return tween;
+    };
+
+    /**
+     * @param {number} time
+     * @returns {Tween}
+     */
     Tween.prototype.start = function (time) {
         var tween = this;
         if (time === undefined) time = global.performance.now();
@@ -103,9 +138,15 @@
         tween.data.isStarted = true; // TODO:: is need?
         tween.data.startTime = time + tween.data.delayTime;
 
+        var startState = tween.data.tweenStateStack[tween.data.currentStateAnimation][1]
+            || $.extend(true, {}, Tween.stateDefaults, this.node.data);
+
         return Tween.add(tween);
     };
 
+    /**
+     * @returns {Tween}
+     */
     Tween.prototype.stop = function () {
         var tween = this;
         if (!tween.data.isAnimated) return this;
@@ -117,6 +158,9 @@
         return Tween.remove(tween);
     };
 
+    /**
+     * @returns {Tween}
+     */
     Tween.prototype.stopChainedTweens = function () {
         var tween = this;
         for (i = 0; i < tween.data.chainedTweensStack.length; i++) {
@@ -126,39 +170,57 @@
         return tween;
     };
 
-    Tween.prototype.update = function (time) {
-        var tween = this;
-
-        return tween;
-    };
-
 
     /* Extended animation methods */
+    /**
+     * @param {number} data
+     * @returns {Tween}
+     */
     Tween.prototype.delay = function (data) {
         this.to('delay', data);
         return this;
     };
 
+    /**
+     * @param {number} data
+     * @returns {Tween}
+     */
     Tween.prototype.delayAll = function (data) {
         this.to('delayAll', data);
         return this;
     };
 
+    /**
+     * @param {number} data
+     * @returns {Tween}
+     */
     Tween.prototype.repeat = function (data) {
         this.to('repeat', data);
         return this;
     };
 
+    /**
+     * @param {number} data
+     * @returns {Tween}
+     */
     Tween.prototype.repeatAll = function (data) {
         this.to('repeatAll', data);
         return this;
     };
 
+    /**
+     * @param {number} data
+     * @returns {Tween}
+     */
     Tween.prototype.yoyo = function (data) {
         this.to('yoyo', data);
         return this;
     };
 
+    /**
+     * @param {number} data
+     * @returns {Tween}
+     */
     Tween.prototype.yoyoAll = function (data) {
         this.to('yoyoAll', data);
         return this;
@@ -166,47 +228,90 @@
 
 
     /* Events wrappers */
+    /**
+     * @param {string} event
+     * @param {function} callback
+     * @returns {boolean}
+     */
     Tween.prototype.on = function (event, callback) {
         return this.events.on(event, callback);
     };
 
+    /**
+     * @param {string} event
+     * @param {function} callback
+     * @returns {boolean}
+     */
     Tween.prototype.off = function (event, callback) {
         return this.events.off(event, callback);
     };
 
+    /**
+     * @param {string} event
+     * @param {function} callback
+     * @returns {boolean}
+     */
     Tween.prototype.once = function (event, callback) {
         return this.events.once(event, callback);
     };
 
+    /**
+     * @param {string} event
+     * @returns {boolean}
+     */
     Tween.prototype.flush = function (event) {
         return this.events.flush(event);
     };
 
+    /**
+     * @param {string} event
+     * @param {Array.<*>} data
+     * @returns {boolean}
+     */
     Tween.prototype.trigger = function (event, data) {
         return this.events.trigger(event, data);
     };
 
 
     /* Static Methods */
+    /**
+     * @param {number} index
+     * @returns {Array.<Tween>|Tween}
+     */
     Tween.get = function (index) {
         return (index === undefined) ? tweens : tweens[index];
     };
 
+    /**
+     * @param {Tween} tween
+     * @returns {Tween}
+     */
     Tween.add = function (tween) {
         tweens.push(tween);
         return tween;
     };
 
+    /**
+     * @param {Tween} tween
+     * @returns {Tween}
+     */
     Tween.remove = function (tween) {
         var i = tweens.indexOf(tween);
         if (i !== -1) tweens.splice(i, 1);
         return tween;
     };
 
+    /**
+     * @returns {void}
+     */
     Tween.flush = function () {
         tweens = [];
     };
 
+    /**
+     * @param {number} time
+     * @returns {boolean}
+     */
     Tween.update = function (time) {
         if (tweens.length === 0) return false;
 
@@ -219,6 +324,7 @@
                 tweens.splice(i, 1);
             }
         }
+        return true;
     };
 
     if (typeof module === 'object' && typeof module.exports === 'object') module.exports.Tween = Tween;
