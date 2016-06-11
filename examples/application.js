@@ -75,6 +75,7 @@ define('Application', [
                 .setSize(new Vector2d(20, 20))
                 .setPosition(new Vector2d(60, 40));
 
+            global.r1= rectangle1;
 
             /** @type {BaseNode|CameraNode} */
             var camera_1st = (new Camera()).setSize(new Vector2d(400, 300));
@@ -87,27 +88,45 @@ define('Application', [
             var width = 400,
                 height = 300;
 
+            $(window).on('click', function (e) {
+                e.preventDefault();
+                e.stopPropagation();
+                new Tween(rectangle1)
+                    .to({
+                        position: {
+                            x: '60'
+                        }
+                    })
+                    .to({
+                        position: {
+                            y: '60'
+                        }
+                    })
+                    .start();
+                console.log(rectangle1);
+            });
+
             var GameState = function () {
                 var t, x, y;
                 var ts = true;
 
                 this.update = function (timestamp, data) {
-                    if (j2d.io.checkPressedKeyMap('ACTION')) {
-                        new Tween(rectangle1)
-                            .to({
-                                position: {
-                                    x: '60'
-                                }
-                            })
-                            .start(2000);
-
-                        //rectangle1.setPosition(new Vector2d(20, 20));
-                        //rectangle2.setPosition(new Vector2d(20, 40));
-
-                        //rectangle1.moveTo(new Vector2d(200, 20), 4000);
-                        //rectangle2.moveTo(new Vector2d(100, 40), 4000);
-
-                    }
+                    // if (j2d.io.checkPressedKeyMap('ACTION')) {
+                    //     new Tween(rectangle1)
+                    //         .to({
+                    //             position: {
+                    //                 x: '60'
+                    //             }
+                    //         })
+                    //         .start(timestamp);
+                    //
+                    //     //rectangle1.setPosition(new Vector2d(20, 20));
+                    //     //rectangle2.setPosition(new Vector2d(20, 40));
+                    //
+                    //     //rectangle1.moveTo(new Vector2d(200, 20), 4000);
+                    //     //rectangle2.moveTo(new Vector2d(100, 40), 4000);
+                    //
+                    // }
 
                     // if (j2d.io.checkPressedKeyMap('MOVE_UP')) rectangle.moveTo(new Vector2d(100, 100));
                     // if (j2d.io.checkPressedKeyMap('MOVE_DOWN')) rectangle.moveTo(new Vector2d(0, 2));

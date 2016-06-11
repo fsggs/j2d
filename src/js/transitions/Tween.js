@@ -52,6 +52,8 @@
         tween.node = tweenNode;
         tween.events = new Events();
 
+        tween.state = {};
+
         // TODO:: Exceptions
         // if (!(node instanceof BaseNode) || typeof node.data !== 'object') {
         //     throw new InvalidArgumentException('Unknown tween node');
@@ -68,21 +70,14 @@
         startTime: null,
 
         delayTime: 0,
-        repeatCount: 0,
-        yoyoCount: 0,
-
-        delayAllTime: 0,
-        repeatAllCount: 0,
-        yoyoAllCount: 0,
 
         defaultDuration: 1000
     };
 
     Tween.stateDefaults = {
-        startData: null,
-        endData: null,
-
+        data: null,
         duration: 1000,
+        delay: 0,
         easing: 'linear',
         interpolation: 'linear'
     };
@@ -99,32 +94,158 @@
 
     /* Methods */
     /**
-     * @param properties
+     * @param {Object} properties
      * @param {Tween.defaults|Object} data
      * @returns {Tween}
      */
     Tween.prototype.to = function (properties, data) {
         var tween = this;
 
-        var stateData = tweenStateData(data);
-        if (data !== undefined && typeof data === 'number') stateData.duration = data;
+        if (!tween.data.isStarted) {
 
-        tween.data.tweenStateStack.push([properties, stateData]);
+            if (typeof data === 'number') data = {data: data};
+            var stateData = (typeof data !== 'number') ? tweenStateData(data) : data;
+            if (data !== undefined && typeof data === 'number') stateData.duration = data;
 
-        return tween;
+            tween.data.tweenStateStack.push([properties, stateData]);
+
+            return tween;
+        }
+
+        // TODO:: Exceptions
+        // throw new RuntimeException('You can not add a state after the start of the tween.');
     };
 
     /**
      * @param {number} time
-     * @returns {Tween}
+     * @returns {boolean}
      */
     Tween.prototype.update = function (time) {
         var tween = this;
 
-        console.log(this.data);
+        var nextState = tween.data.tweenStateStack[tween.data.currentStateAnimation + 1];
 
-        //debugger;
-        return tween;
+        if (time < tween.data.startTime || nextState === undefined) return true;
+
+        if (!tween.data.isStarted) {
+            tween.events.trigger('start', [tween.node]);
+            tween.data.isStarted = true;
+        }
+
+        var currentState = tween.data.tweenStateStack[tween.data.currentStateAnimation];
+
+
+        var elapsed = (time - tween.data.startTime) / nextState[1].duration;
+        elapsed = elapsed > 1 ? 1 : elapsed;
+
+        tween.node.import(
+            Tween.util.animateTween(currentState[0], nextState[0], Easing.get(nextState[1].easing)(elapsed))
+        );
+
+        tween.events.trigger('update', [tween.node]);
+
+        if (elapsed === 1) {
+            tween.events.trigger('complete', [tween.node]);
+
+            for (var i = 0; i < tween.data.chainedTweensStack.length; i++) {
+                tween.data.chainedTweensStack[i].start(tween.data.startTime); //TODO: add tweenStackTime
+            }
+            return false;
+        }
+        return true;
+    };
+
+    /**
+     * @param {Array.<Object, Tween.stateDefaults>} startState
+     * @param {Array.<Array<Object, Tween.stateDefaults>>} tweenStateStack
+     */
+    var calculateStackState = function (startState, tweenStateStack) {
+        var result = [startState];
+        var index = 1;
+
+        var parsedTweenStateStack = [startState];
+        var nextStateDelay = 0;
+        var nextAllStateDelay = 0;
+
+        tweenStateStack.forEach(function (value) {
+            if (typeof value[0] === 'object' && !(value[0] instanceof Array)) {
+                if (nextStateDelay !== 0) {
+                    value[1].delay = nextStateDelay;
+                    nextStateDelay = 0;
+                } else if (nextAllStateDelay !== 0) {
+                    value[1].delay = nextAllStateDelay;
+                }
+                parsedTweenStateStack.push([value[0], value[1]]);
+                index++;
+            } else if (typeof value[0] === 'string') {
+                var i = 0;
+                switch (value[0]) {
+                    case 'delay':
+                        nextStateDelay = value[1].data;
+                        break;
+                    case 'delayAll':
+                        nextAllStateDelay = value[1].data;
+                        break;
+                    case 'repeat':
+                        for (i = 0; i < value[1].data; i++) {
+                            parsedTweenStateStack.push(parsedTweenStateStack[index]);
+                            index++;
+                        }
+                        break;
+                    case 'repeatAll':
+                        for (i = 0; i < value[1].data; i++) {
+                            parsedTweenStateStack.concat(parsedTweenStateStack);
+                            index++;
+                        }
+                        break;
+                    case 'yoyo':
+                    case 'reverse':
+                        for (i = 0; i < value[1].data; i++) {
+                            if (parsedTweenStateStack[index - 1] !== undefined) {
+                                parsedTweenStateStack.push([
+                                    Tween.util.reverseProperties(parsedTweenStateStack[index - 1][0]),
+                                    parsedTweenStateStack[index - 1][1]
+                                ]);
+                                index++;
+                            }
+                        }
+                        break;
+                    case 'yoyoAll':
+                    case 'reverseAll':
+                        for (i = 0; i < value[1].data; i++) {
+                            var stateStack = parsedTweenStateStack.slice(0);
+
+                            var stackLength = stateStack.length;
+                            for (var j = 0; j < stackLength; j++) {
+                                var sIndex = stackLength - j - 1;
+                                if (stateStack[sIndex] !== undefined) {
+                                    parsedTweenStateStack.push([
+                                        Tween.util.reverseProperties(stateStack[sIndex][0]),
+                                        stateStack[sIndex][1]
+                                    ]);
+                                    index++;
+                                }
+                            }
+                        }
+                        break;
+                }
+            }
+        });
+
+        // parsedTweenStateStack.forEach(function (value) {
+        //     console.info(value[0].position.x);
+        // });
+
+        index = 0;
+        parsedTweenStateStack.shift();
+        parsedTweenStateStack.forEach(function (value) {
+            if (typeof value[0] === 'object' && !(value[0] instanceof Array)) {
+                result.push([Tween.util.calculateProperties(result[index][0], value[0]), value[1]]);
+                index++;
+            }
+        });
+
+        return result;
     };
 
     /**
@@ -135,11 +256,14 @@
         var tween = this;
         if (time === undefined) time = global.performance.now();
         tween.data.isAnimated = true;
-        tween.data.isStarted = true; // TODO:: is need?
-        tween.data.startTime = time + tween.data.delayTime;
 
-        var startState = tween.data.tweenStateStack[tween.data.currentStateAnimation][1]
-            || $.extend(true, {}, Tween.stateDefaults, this.node.data);
+        if (!tween.data.isStarted) {
+            tween.data.isStarted = true;
+            tween.state = [Tween.util.cleanProperties(tween.node.data), Tween.stateDefaults];
+            tween.data.tweenStateStack = calculateStackState(tween.state, tween.data.tweenStateStack);
+        }
+
+        tween.data.startTime = time + tween.data.delayTime;
 
         return Tween.add(tween);
     };
@@ -163,7 +287,7 @@
      */
     Tween.prototype.stopChainedTweens = function () {
         var tween = this;
-        for (i = 0; i < tween.data.chainedTweensStack.length; i++) {
+        for (var i = 0; i < tween.data.chainedTweensStack.length; i++) {
             tween.data.chainedTweensStack[i].stop();
         }
 
@@ -173,56 +297,62 @@
 
     /* Extended animation methods */
     /**
-     * @param {number} data
+     * @param {number} delay
      * @returns {Tween}
      */
-    Tween.prototype.delay = function (data) {
-        this.to('delay', data);
+    Tween.prototype.delay = function (delay) {
+        if (delay === undefined) delay = 1000;
+        this.to('delay', delay);
         return this;
     };
 
     /**
-     * @param {number} data
+     * @param {number} delay
      * @returns {Tween}
      */
-    Tween.prototype.delayAll = function (data) {
-        this.to('delayAll', data);
+    Tween.prototype.delayAll = function (delay) {
+        if (delay === undefined) delay = 1000;
+        this.to('delayAll', delay);
         return this;
     };
 
     /**
-     * @param {number} data
+     * @param {number} [count]
      * @returns {Tween}
      */
-    Tween.prototype.repeat = function (data) {
-        this.to('repeat', data);
+    Tween.prototype.repeat = function (count) {
+        if (count === undefined) count = 1;
+        this.to('repeat', count);
         return this;
     };
 
     /**
-     * @param {number} data
+     * @param {number} [count]
      * @returns {Tween}
      */
-    Tween.prototype.repeatAll = function (data) {
-        this.to('repeatAll', data);
+    Tween.prototype.repeatAll = function (count) {
+        if (count === undefined) count = 1;
+        this.to('repeatAll', count);
         return this;
     };
 
     /**
-     * @param {number} data
+     * @param {number} [count]
      * @returns {Tween}
      */
-    Tween.prototype.yoyo = function (data) {
-        this.to('yoyo', data);
+    Tween.prototype.yoyo = function (count) {
+        if (count === undefined) count = 1;
+        this.to('yoyo', count);
         return this;
     };
 
     /**
-     * @param {number} data
+     * @param {number} [count]
      * @returns {Tween}
      */
-    Tween.prototype.yoyoAll = function (data) {
-        this.to('yoyoAll', data);
+    Tween.prototype.yoyoAll = function (count) {
+        if (count === undefined) count = 1;
+        this.to('yoyoAll', count);
         return this;
     };
 
@@ -325,6 +455,97 @@
             }
         }
         return true;
+    };
+
+    Tween.util = {
+        animateTween: function (currentState, nextState, value) {
+            var result = {};
+            var property;
+            var temp;
+
+            for (property in nextState) {
+                if (nextState.hasOwnProperty(property) && currentState.hasOwnProperty(property)) {
+                    temp = null;
+                    if (typeof nextState[property] === 'number') {
+                        temp = currentState[property] + parseFloat(nextState[property]) * value;
+                    } else if (typeof nextState[property] === 'object') {
+                        temp = this.animateTween(currentState[property], nextState[property], value);
+                    }
+                    if (temp !== null) result[property] = temp;
+                }
+            }
+
+            return Object.keys(result).length > 0 ? result : null;
+        },
+
+        cleanProperties: function (properties) {
+            var result = {};
+            var property;
+            var temp;
+
+            for (property in properties) {
+                if (properties.hasOwnProperty(property) && property !== 'id') {
+                    temp = null;
+                    if ((typeof properties[property] === 'string' && !isNaN(properties[property]))
+                        || typeof properties[property] === 'number'
+                    ) {
+                        temp = properties[property];
+                    } else if (typeof properties[property] === 'object') {
+                        temp = this.cleanProperties(properties[property]);
+                    }
+                    if (temp !== null) result[property] = temp;
+                }
+            }
+
+            return Object.keys(result).length > 0 ? result : null;
+        },
+
+        reverseProperties: function (properties) {
+            var result = {};
+            var property;
+            var temp;
+
+            for (property in properties) {
+                if (properties.hasOwnProperty(property) && property !== 'id') {
+                    temp = null;
+                    if (typeof properties[property] === 'string' && !isNaN(properties[property])) {
+                        temp = Number(parseFloat(properties[property]) * -1).toString();
+                    } else if (typeof properties[property] === 'number') {
+                        temp = properties[property];
+                    } else if (typeof properties[property] === 'object') {
+                        temp = this.reverseProperties(properties[property]);
+                    }
+                    if (temp !== null) result[property] = temp;
+                }
+            }
+
+            return Object.keys(result).length > 0 ? result : null;
+        },
+
+        calculateProperties: function (startProperties, endProperties) {
+            var result = {};
+            var property;
+            var temp;
+
+            for (property in endProperties) {
+                console.log();
+                if (endProperties.hasOwnProperty(property) && startProperties.hasOwnProperty(property) && property !== 'id') {
+                    temp = null;
+
+                    if (typeof endProperties[property] === 'string' && !isNaN(endProperties[property]) && typeof startProperties[property] === 'number') {
+                        temp = startProperties[property] + parseFloat(endProperties[property]);
+                    } else if (typeof endProperties[property] === 'number' && typeof startProperties[property] === 'string' && !isNaN(startProperties[property])) {
+                        temp = endProperties[property] - parseFloat(startProperties[property]);
+                    } else if (typeof endProperties[property] === 'number' && typeof startProperties[property] === 'number') {
+                        temp = endProperties[property];
+                    } else if (typeof endProperties[property] === 'object') {
+                        temp = this.calculateProperties.call(this, startProperties[property], endProperties[property]);
+                    }
+                    if (temp !== null) result[property] = temp;
+                }
+            }
+            return Object.keys(result).length > 0 ? result : null;
+        }
     };
 
     if (typeof module === 'object' && typeof module.exports === 'object') module.exports.Tween = Tween;

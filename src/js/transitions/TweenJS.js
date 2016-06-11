@@ -116,7 +116,7 @@
 
     Tween.prototype.stopChainedTweens = function () {
         var tween = this;
-        for (i = 0; i < tween.data.chainedTweens.length; i++) {
+        for (var i = 0; i < tween.data.chainedTweens.length; i++) {
             tween.data.chainedTweens[i].stop();
         }
     };
