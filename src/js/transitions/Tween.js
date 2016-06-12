@@ -63,6 +63,7 @@
     Tween.defaults = {
         currentStateAnimation: 0,
         tweenStateStack: [],
+        tweenStateTimings: [],
         chainedTweensStack: [],
 
         isAnimated: false,
@@ -74,6 +75,7 @@
         defaultDuration: 1000
     };
 
+    //TODO:: rename data to value
     Tween.stateDefaults = {
         data: null,
         duration: 1000,
@@ -134,8 +136,9 @@
 
         var currentState = tween.data.tweenStateStack[tween.data.currentStateAnimation];
 
+        var previousStatesTime = tween.getStateTimeDuration(tween.data.currentStateAnimation, true);
 
-        var elapsed = (time - tween.data.startTime) / nextState[1].duration;
+        var elapsed = (time - (tween.data.startTime + previousStatesTime)) / nextState[1].duration;
         elapsed = elapsed > 1 ? 1 : elapsed;
 
         tween.node.import(
@@ -145,17 +148,56 @@
         tween.events.trigger('update', [tween.node]);
 
         if (elapsed === 1) {
-            tween.events.trigger('complete', [tween.node]);
+            if (tween.data.currentStateAnimation < tween.data.tweenStateStack.length) {
+                tween.data.currentStateAnimation++;
+            } else {
+                tween.events.trigger('complete', [tween.node]);
 
-            for (var i = 0; i < tween.data.chainedTweensStack.length; i++) {
-                tween.data.chainedTweensStack[i].start(tween.data.startTime); //TODO: add tweenStackTime
+                for (var i = 0; i < tween.data.chainedTweensStack.length; i++) {
+                    tween.data.chainedTweensStack[i].start(tween.data.startTime); //TODO: add tweenStackTime
+                }
+                return false;
             }
-            return false;
         }
         return true;
     };
 
+
+    var calculateStackStateTimings = function (tweenStateStack) {
+        var result = [];
+
+        tweenStateStack.forEach(function (value) {
+            result.push(value[1].duration);
+        });
+
+        return result;
+    };
+
     /**
+     * @param {number} [position]
+     * @param {boolean} [withPrevious]
+     *
+     * @returns {number}
+     */
+    Tween.prototype.getStateTimeDuration = function (position, withPrevious) {
+        if (position === undefined || position === null) position = this.data.currentStateAnimation;
+        if (withPrevious === undefined) withPrevious = false;
+
+        if (this.data.tweenStateTimings[position] === undefined) return 0;
+
+        if (withPrevious) {
+            var result = 0;
+            for (var i = 1; i <= position; i++) {
+                result += this.data.tweenStateTimings[i];
+            }
+            return result;
+        } else {
+            return this.data.tweenStateTimings[position];
+        }
+    };
+
+    /**
+     * TODO:: add delay parse to others states
      * @param {Array.<Object, Tween.stateDefaults>} startState
      * @param {Array.<Array<Object, Tween.stateDefaults>>} tweenStateStack
      */
@@ -240,7 +282,7 @@
         parsedTweenStateStack.shift();
         parsedTweenStateStack.forEach(function (value) {
             if (typeof value[0] === 'object' && !(value[0] instanceof Array)) {
-                result.push([Tween.util.calculateProperties(result[index][0], value[0]), value[1]]);
+                result.push([Tween.util.calculateProperties(result[index][0], $.extend(true, {}, result[index][0], value[0])), value[1]]);
                 index++;
             }
         });
@@ -261,6 +303,7 @@
             tween.data.isStarted = true;
             tween.state = [Tween.util.cleanProperties(tween.node.data), Tween.stateDefaults];
             tween.data.tweenStateStack = calculateStackState(tween.state, tween.data.tweenStateStack);
+            tween.data.tweenStateTimings = calculateStackStateTimings(tween.data.tweenStateStack);
         }
 
         tween.data.startTime = time + tween.data.delayTime;
@@ -466,8 +509,13 @@
             for (property in nextState) {
                 if (nextState.hasOwnProperty(property) && currentState.hasOwnProperty(property)) {
                     temp = null;
+
                     if (typeof nextState[property] === 'number') {
-                        temp = currentState[property] + parseFloat(nextState[property]) * value;
+                        if (currentState[property] === nextState[property]) {
+                            temp = currentState[property];
+                        } else {
+                            temp = currentState[property] + (nextState[property] - currentState[property]) * value;
+                        }
                     } else if (typeof nextState[property] === 'object') {
                         temp = this.animateTween(currentState[property], nextState[property], value);
                     }
@@ -528,7 +576,6 @@
             var temp;
 
             for (property in endProperties) {
-                console.log();
                 if (endProperties.hasOwnProperty(property) && startProperties.hasOwnProperty(property) && property !== 'id') {
                     temp = null;
 
@@ -539,8 +586,9 @@
                     } else if (typeof endProperties[property] === 'number' && typeof startProperties[property] === 'number') {
                         temp = endProperties[property];
                     } else if (typeof endProperties[property] === 'object') {
-                        temp = this.calculateProperties.call(this, startProperties[property], endProperties[property]);
+                        temp = this.calculateProperties(startProperties[property], endProperties[property]);
                     }
+
                     if (temp !== null) result[property] = temp;
                 }
             }

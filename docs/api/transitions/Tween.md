@@ -25,13 +25,12 @@ Tween
     * _instance_
         * [.delay(delay)](#transitions/Tween+delay) ⇒ <code>Tween</code>
         * [.delayAll(delay)](#transitions/Tween+delayAll) ⇒ <code>Tween</code>
-    * _static_
-        * [.flush()](#transitions/Tween.flush) ⇒ <code>void</code>
-    * _instance_
         * [.flush(event)](#transitions/Tween+flush) ⇒ <code>boolean</code>
     * _static_
+        * [.flush()](#transitions/Tween.flush) ⇒ <code>void</code>
         * [.get(index)](#transitions/Tween.get) ⇒ <code>Array.&lt;Tween&gt;</code> &#124; <code>Tween</code>
     * _instance_
+        * [.getStateTimeDuration([position], [withPrevious])](#transitions/Tween+getStateTimeDuration) ⇒ <code>number</code>
         * [.off(event, callback)](#transitions/Tween+off) ⇒ <code>boolean</code>
         * [.on(event, callback)](#transitions/Tween+on) ⇒ <code>boolean</code>
         * [.once(event, callback)](#transitions/Tween+once) ⇒ <code>boolean</code>
@@ -88,10 +87,6 @@ Tween
 | --- | --- |
 | delay | <code>number</code> | 
 
-<a name="transitions/Tween.flush"></a>
-
-### transitions/Tween.flush() ⇒ <code>void</code>
-**Kind**: static method of <code>[transitions/Tween](#transitions/Tween)</code>  
 <a name="transitions/Tween+flush"></a>
 
 ### transitions/Tween.flush(event) ⇒ <code>boolean</code>
@@ -101,6 +96,10 @@ Tween
 | --- | --- |
 | event | <code>string</code> | 
 
+<a name="transitions/Tween.flush"></a>
+
+### transitions/Tween.flush() ⇒ <code>void</code>
+**Kind**: static method of <code>[transitions/Tween](#transitions/Tween)</code>  
 <a name="transitions/Tween.get"></a>
 
 ### transitions/Tween.get(index) ⇒ <code>Array.&lt;Tween&gt;</code> &#124; <code>Tween</code>
@@ -109,6 +108,16 @@ Tween
 | Param | Type |
 | --- | --- |
 | index | <code>number</code> | 
+
+<a name="transitions/Tween+getStateTimeDuration"></a>
+
+### transitions/Tween.getStateTimeDuration([position], [withPrevious]) ⇒ <code>number</code>
+**Kind**: instance method of <code>[transitions/Tween](#transitions/Tween)</code>  
+
+| Param | Type |
+| --- | --- |
+| [position] | <code>number</code> | 
+| [withPrevious] | <code>boolean</code> | 
 
 <a name="transitions/Tween+off"></a>
 

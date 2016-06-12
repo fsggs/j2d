@@ -75,7 +75,7 @@ define('Application', [
                 .setSize(new Vector2d(20, 20))
                 .setPosition(new Vector2d(60, 40));
 
-            global.r1= rectangle1;
+            global.r1 = rectangle1;
 
             /** @type {BaseNode|CameraNode} */
             var camera_1st = (new Camera()).setSize(new Vector2d(400, 300));
@@ -87,38 +87,38 @@ define('Application', [
 
             var width = 400,
                 height = 300;
-
-            $(window).on('click', function (e) {
-                e.preventDefault();
-                e.stopPropagation();
-                new Tween(rectangle1)
-                    .to({
-                        position: {
-                            x: '60'
-                        }
-                    })
-                    .to({
-                        position: {
-                            y: '60'
-                        }
-                    })
-                    .start();
-                console.log(rectangle1);
-            });
+            var time = 0;
 
             var GameState = function () {
                 var t, x, y;
                 var ts = true;
 
                 this.update = function (timestamp, data) {
-                    // if (j2d.io.checkPressedKeyMap('ACTION')) {
-                    //     new Tween(rectangle1)
-                    //         .to({
-                    //             position: {
-                    //                 x: '60'
-                    //             }
-                    //         })
-                    //         .start(timestamp);
+                    time = timestamp;
+                    if (j2d.io.checkPressedKeyMap('ACTION')) {
+                        new Tween(rectangle1)
+                            .to({
+                                position: {
+                                    x: '60'
+                                }
+                            })
+                            .to({
+                                position: {
+                                    y: '40'
+                                }
+                            })
+                            .to({
+                                position: {
+                                    x: '-60'
+                                }
+                            })
+                            .to({
+                                position: {
+                                    y: '-40'
+                                }
+                            })
+                            .start(timestamp);
+                    }
                     //
                     //     //rectangle1.setPosition(new Vector2d(20, 20));
                     //     //rectangle2.setPosition(new Vector2d(20, 40));
