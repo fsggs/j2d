@@ -39,6 +39,8 @@ Tween
     * _instance_
         * [.repeat([count])](#transitions/Tween+repeat) ⇒ <code>Tween</code>
         * [.repeatAll([count])](#transitions/Tween+repeatAll) ⇒ <code>Tween</code>
+        * [.reverse([count])](#transitions/Tween+reverse) ⇒ <code>Tween</code>
+        * [.reverseAll([count])](#transitions/Tween+reverseAll) ⇒ <code>Tween</code>
         * [.start(time)](#transitions/Tween+start) ⇒ <code>Tween</code>
         * [.stop()](#transitions/Tween+stop) ⇒ <code>Tween</code>
         * [.stopChainedTweens()](#transitions/Tween+stopChainedTweens) ⇒ <code>Tween</code>
@@ -170,6 +172,24 @@ Tween
 <a name="transitions/Tween+repeatAll"></a>
 
 ### transitions/Tween.repeatAll([count]) ⇒ <code>Tween</code>
+**Kind**: instance method of <code>[transitions/Tween](#transitions/Tween)</code>  
+
+| Param | Type |
+| --- | --- |
+| [count] | <code>number</code> | 
+
+<a name="transitions/Tween+reverse"></a>
+
+### transitions/Tween.reverse([count]) ⇒ <code>Tween</code>
+**Kind**: instance method of <code>[transitions/Tween](#transitions/Tween)</code>  
+
+| Param | Type |
+| --- | --- |
+| [count] | <code>number</code> | 
+
+<a name="transitions/Tween+reverseAll"></a>
+
+### transitions/Tween.reverseAll([count]) ⇒ <code>Tween</code>
 **Kind**: instance method of <code>[transitions/Tween](#transitions/Tween)</code>  
 
 | Param | Type |

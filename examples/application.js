@@ -112,11 +112,7 @@ define('Application', [
                                     x: '-60'
                                 }
                             })
-                            .to({
-                                position: {
-                                    y: '-40'
-                                }
-                            })
+                            .reverseAll()
                             .start(timestamp);
                     }
                     //

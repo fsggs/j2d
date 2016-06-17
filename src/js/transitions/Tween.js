@@ -6,6 +6,14 @@
  * @version 0.2.0-dev
  */
 
+/*
+ *  TODO:: delayTime fo individual states
+ *  TODO:: rename data to value in stateDefaults
+ *  TODO:: fix reverseAll state delay bug
+ *
+ *  TODO:: exceptions
+ */
+
 (function (root, factory) {
     if (typeof define === 'function' && define.amd) {
         define('transitions/Tween', [
@@ -75,7 +83,6 @@
         defaultDuration: 1000
     };
 
-    //TODO:: rename data to value
     Tween.stateDefaults = {
         data: null,
         duration: 1000,
@@ -154,7 +161,9 @@
                 tween.events.trigger('complete', [tween.node]);
 
                 for (var i = 0; i < tween.data.chainedTweensStack.length; i++) {
-                    tween.data.chainedTweensStack[i].start(tween.data.startTime); //TODO: add tweenStackTime
+                    tween.data.chainedTweensStack[i].start(
+                        tween.data.startTime + tween.getStateTimeDuration(tween.data.currentStateAnimation - 1, true)
+                    );
                 }
                 return false;
             }
@@ -197,7 +206,6 @@
     };
 
     /**
-     * TODO:: add delay parse to others states
      * @param {Array.<Object, Tween.stateDefaults>} startState
      * @param {Array.<Array<Object, Tween.stateDefaults>>} tweenStateStack
      */
@@ -393,9 +401,29 @@
      * @param {number} [count]
      * @returns {Tween}
      */
+    Tween.prototype.reverse = function (count) {
+        if (count === undefined) count = 1;
+        this.to('reverse', count);
+        return this;
+    };
+
+    /**
+     * @param {number} [count]
+     * @returns {Tween}
+     */
     Tween.prototype.yoyoAll = function (count) {
         if (count === undefined) count = 1;
         this.to('yoyoAll', count);
+        return this;
+    };
+
+    /**
+     * @param {number} [count]
+     * @returns {Tween}
+     */
+    Tween.prototype.reverseAll = function (count) {
+        if (count === undefined) count = 1;
+        this.to('reverseAll', count);
         return this;
     };
 
