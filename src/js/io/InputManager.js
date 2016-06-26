@@ -23,6 +23,8 @@
      * 
      * @param {J2D} j2d
      * @constructor
+     *
+     * @type {InputManager.key} key
      */
     var InputManager = function (j2d) {
         this.j2d = j2d;
@@ -582,7 +584,12 @@
     };
     /** -Cursor **/
 
-    /** static keys arrayList **/
+    /**
+     * Static keys arrayList
+     *
+     * @readonly
+     * @enum {number}
+     */
     InputManager.key = {
         KEY_MOUSE_LEFT: 1,
         KEY_MOUSE_MIDDLE: 2,

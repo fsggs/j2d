@@ -15,25 +15,38 @@
  */
 (function (root, factory) {
     if (typeof define === 'function' && define.amd) {
-        define('jquery.j2d', ['jquery', 'core/SceneManager', 'utils/DeviceUtil', 'utils/UUID'], factory);
+        define('jquery.j2d', [
+            'jquery',
+            'core/SceneManager',
+            'utils/DeviceUtil',
+            'utils/UUID',
+            'utils/SystemConsole'
+        ], factory);
     } else if (typeof module === 'object' && typeof module.exports === 'object') {
         module.exports = factory(
             require('jquery'),
             require('core/SceneManager'),
             require('utils/DeviceUtil'),
-            require('utils/UUID')
+            require('utils/UUID'),
+            require('utils/SystemConsole')
         );
     } else {
-        factory(root.jQuery, root.j2d.core.SceneManager, root.j2d.utils.DeviceUtil, root.j2d.utils.UUID);
+        factory(
+            root.jQuery,
+            root.j2d.core.SceneManager,
+            root.j2d.utils.DeviceUtil,
+            root.j2d.utils.UUID,
+            root.j2d.utils.SystemConsole
+        );
     }
-}(typeof window !== 'undefined' ? window : global, function ($, SceneManager, DeviceUtil, UUID) {
+}(typeof window !== 'undefined' ? window : global, function ($, SceneManager, DeviceUtil, UUID, Log) {
     "use strict";
 
     /**
      * @class J2D
      * @exports module:"jquery.j2d"
      * @alias module:"jquery.j2d"
-     * 
+     *
      * @param {Element|jQuery} element
      * @param {J2D.defaults} data
      *
@@ -58,6 +71,9 @@
 
         /** @type SceneManager */
         this.scene = new SceneManager(this);
+
+        /** @type SystemConsole */
+        this.Log = new Log();
 
         Object.defineProperty(this, 'WebGL', {
             get: function () {
@@ -108,6 +124,8 @@
             }
         });
     };
+
+    J2D.VERSION = '0.2.0-dev';
 
     J2D.defaults = {
         /** @type string|null */
@@ -172,9 +190,9 @@
         return this.scene.viewportManager;
     };
 
-    /** @returns {StatesManager} */
-    J2D.prototype.getStatesManager = function () {
-        return this.scene.statesManager;
+    /** @returns {GameStatesManager} */
+    J2D.prototype.getGameStatesManager = function () {
+        return this.scene.gameStatesManager;
     };
 
     J2D.prototype.on = function () {
@@ -184,6 +202,10 @@
     J2D.prototype.off = function () {
     };
     J2D.prototype.trigger = function () {
+    };
+
+    J2D.prototype.log = function (message, level) {
+        this.Log.log(message, level);
     };
 
     /** Utils **/
@@ -212,6 +234,7 @@
         if (window.j2dPlugin !== undefined) return null;
         window.j2dPlugin = {pluginInit: true};
 
+        (new Log()).logSystem('J2D v.' + J2D.VERSION, 'https://github.com/fsggs/jquery.j2d');
         /**
          * @param {J2D.defaults} [options]
          * @returns {J2D|J2D[]|Array.<J2D>}

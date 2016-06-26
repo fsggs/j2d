@@ -13,13 +13,14 @@
     * [J2D](#exp_module_jquery.j2d--J2D) ⏏
         * [new J2D(element, data)](#new_module_jquery.j2d--J2D_new)
         * _instance_
+            * [.Log](#module_jquery.j2d--J2D+Log) : <code>SystemConsole</code>
             * [.data](#module_jquery.j2d--J2D+data) : <code>J2D.defaults</code>
             * [.device](#module_jquery.j2d--J2D+device) : <code>DeviceUtil</code>
             * [.element](#module_jquery.j2d--J2D+element) : <code>Element</code> &#124; <code>jQuery</code>
             * [.getFrameManager()](#module_jquery.j2d--J2D+getFrameManager) ⇒ <code>FrameManager</code>
+            * [.getGameStatesManager()](#module_jquery.j2d--J2D+getGameStatesManager) ⇒ <code>GameStatesManager</code>
             * [.getLayersManager()](#module_jquery.j2d--J2D+getLayersManager) ⇒ <code>LayersManager</code>
             * [.getSceneManager()](#module_jquery.j2d--J2D+getSceneManager) ⇒ <code>SceneManager</code>
-            * [.getStatesManager()](#module_jquery.j2d--J2D+getStatesManager) ⇒ <code>StatesManager</code>
             * [.getViewportManager()](#module_jquery.j2d--J2D+getViewportManager) ⇒ <code>ViewportManager</code>
             * [.scene](#module_jquery.j2d--J2D+scene) : <code>SceneManager</code>
             * [.start()](#module_jquery.j2d--J2D+start)
@@ -52,6 +53,10 @@ J2D
 | element | <code>Element</code> &#124; <code>jQuery</code> | 
 | data | <code>J2D.defaults</code> | 
 
+<a name="module_jquery.j2d--J2D+Log"></a>
+
+#### j2D.Log : <code>SystemConsole</code>
+**Kind**: instance property of <code>[J2D](#exp_module_jquery.j2d--J2D)</code>  
 <a name="module_jquery.j2d--J2D+data"></a>
 
 #### j2D.data : <code>J2D.defaults</code>
@@ -68,6 +73,10 @@ J2D
 
 #### j2D.getFrameManager() ⇒ <code>FrameManager</code>
 **Kind**: instance method of <code>[J2D](#exp_module_jquery.j2d--J2D)</code>  
+<a name="module_jquery.j2d--J2D+getGameStatesManager"></a>
+
+#### j2D.getGameStatesManager() ⇒ <code>GameStatesManager</code>
+**Kind**: instance method of <code>[J2D](#exp_module_jquery.j2d--J2D)</code>  
 <a name="module_jquery.j2d--J2D+getLayersManager"></a>
 
 #### j2D.getLayersManager() ⇒ <code>LayersManager</code>
@@ -75,10 +84,6 @@ J2D
 <a name="module_jquery.j2d--J2D+getSceneManager"></a>
 
 #### j2D.getSceneManager() ⇒ <code>SceneManager</code>
-**Kind**: instance method of <code>[J2D](#exp_module_jquery.j2d--J2D)</code>  
-<a name="module_jquery.j2d--J2D+getStatesManager"></a>
-
-#### j2D.getStatesManager() ⇒ <code>StatesManager</code>
 **Kind**: instance method of <code>[J2D](#exp_module_jquery.j2d--J2D)</code>  
 <a name="module_jquery.j2d--J2D+getViewportManager"></a>
 

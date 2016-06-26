@@ -33,13 +33,14 @@ SceneManager
     * [.fillBackground()](#core/SceneManager+fillBackground) ⇒ <code>SceneManager</code>
     * [.frameManager](#core/SceneManager+frameManager) : <code>FrameManager</code>
     * [.fullScreen([fullscreen])](#core/SceneManager+fullScreen) ⇒ <code>SceneManager</code>
+    * [.gameStatesManager](#core/SceneManager+gameStatesManager) : <code>GameStatesManager</code>
     * [.getSceneLayer()](#core/SceneManager+getSceneLayer) ⇒ <code>CollectionNode</code> &#124; <code>null</code>
     * [.init(options)](#core/SceneManager+init) ⇒ <code>SceneManager</code>
     * [.initCanvas()](#core/SceneManager+initCanvas) ⇒ <code>SceneManager</code>
     * [.initLayers()](#core/SceneManager+initLayers) ⇒ <code>SceneManager</code>
     * [.j2d](#core/SceneManager+j2d) : <code>J2D</code>
     * [.layersManager](#core/SceneManager+layersManager) : <code>LayersManager</code>
-    * [.patchGameStateRender(constructor)](#core/SceneManager+patchGameStateRender) ⇒ <code>function</code>
+    * [.patchGameStateRender(state)](#core/SceneManager+patchGameStateRender) ⇒ <code>function</code>
     * [.registerCamera(node)](#core/SceneManager+registerCamera) ⇒ <code>SceneManager</code>
     * [.remove([node], [key])](#core/SceneManager+remove) ⇒ <code>SceneManager</code>
     * [.render(data)](#core/SceneManager+render) ⇒ <code>SceneManager</code>
@@ -47,7 +48,6 @@ SceneManager
     * [.resizeToFullPage([fullscreen])](#core/SceneManager+resizeToFullPage) ⇒ <code>SceneManager</code>
     * [.setGameCallback(gameState)](#core/SceneManager+setGameCallback) ⇒ <code>SceneManager</code>
     * [.start()](#core/SceneManager+start) ⇒ <code>SceneManager</code>
-    * [.statesManager](#core/SceneManager+statesManager) : <code>StatesManager</code>
     * [.stop()](#core/SceneManager+stop) ⇒ <code>SceneManager</code>
     * [.toggleFullScreen(j2d, data)](#core/SceneManager+toggleFullScreen) ⇒ <code>SceneManager</code>
     * [.updateViewport([node])](#core/SceneManager+updateViewport) ⇒ <code>SceneManager</code>
@@ -116,6 +116,10 @@ SceneManager
 | --- | --- |
 | [fullscreen] | <code>boolean</code> | 
 
+<a name="core/SceneManager+gameStatesManager"></a>
+
+### core/SceneManager.gameStatesManager : <code>GameStatesManager</code>
+**Kind**: instance property of <code>[core/SceneManager](#core/SceneManager)</code>  
 <a name="core/SceneManager+getSceneLayer"></a>
 
 ### core/SceneManager.getSceneLayer() ⇒ <code>CollectionNode</code> &#124; <code>null</code>
@@ -147,12 +151,12 @@ SceneManager
 **Kind**: instance property of <code>[core/SceneManager](#core/SceneManager)</code>  
 <a name="core/SceneManager+patchGameStateRender"></a>
 
-### core/SceneManager.patchGameStateRender(constructor) ⇒ <code>function</code>
+### core/SceneManager.patchGameStateRender(state) ⇒ <code>function</code>
 **Kind**: instance method of <code>[core/SceneManager](#core/SceneManager)</code>  
 
 | Param | Type |
 | --- | --- |
-| constructor | <code>function</code> | 
+| state | <code>BaseGameState</code> | 
 
 <a name="core/SceneManager+registerCamera"></a>
 
@@ -216,10 +220,6 @@ TODO:: refactor this
 
 ### core/SceneManager.start() ⇒ <code>SceneManager</code>
 **Kind**: instance method of <code>[core/SceneManager](#core/SceneManager)</code>  
-<a name="core/SceneManager+statesManager"></a>
-
-### core/SceneManager.statesManager : <code>StatesManager</code>
-**Kind**: instance property of <code>[core/SceneManager](#core/SceneManager)</code>  
 <a name="core/SceneManager+stop"></a>
 
 ### core/SceneManager.stop() ⇒ <code>SceneManager</code>

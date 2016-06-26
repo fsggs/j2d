@@ -14,7 +14,7 @@
             'core/FrameManager',
             'core/ViewportManager',
             'core/LayersManager',
-            'states/StatesManager'
+            'states/GameStatesManager'
         ], factory);
     } else if (typeof module === 'object' && typeof module.exports === 'object') {
         module.exports = factory(
@@ -23,7 +23,7 @@
             require('core/FrameManager'),
             require('core/ViewportManager'),
             require('core/LayersManager'),
-            require('states/StatesManager')
+            require('states/GameStatesManager')
         );
     } else {
         factory(
@@ -32,10 +32,10 @@
             root.j2d.core.FrameManager,
             root.j2d.core.ViewportManager,
             root.j2d.core.LayersManager,
-            root.j2d.states.StatesManager
+            root.j2d.states.GameStatesManager
         );
     }
-}(typeof window !== 'undefined' ? window : global, function ($, WebGL2D, FrameManager, ViewportManager, LayersManager, StatesManager) {
+}(typeof window !== 'undefined' ? window : global, function ($, WebGL2D, FrameManager, ViewportManager, LayersManager, GameStatesManager) {
     "use strict";
 
     /**
@@ -57,6 +57,7 @@
         var sceneManager = this;
 
         this.setGameCallback = this.setGameCallback.bind(this);
+        this.start = this.start.bind(this);
 
         /** @type J2D */
         this.j2d = j2d;
@@ -76,8 +77,8 @@
         /** @type {ViewportManager} */
         this.viewportManager = new ViewportManager();
 
-        /** @type {StatesManager} */
-        this.statesManager = new StatesManager({}, this.setGameCallback);
+        /** @type {GameStatesManager} */
+        this.gameStatesManager = new GameStatesManager({}, this.setGameCallback);
 
         this.initLayers();
 
@@ -155,14 +156,16 @@
     };
 
     /**
-     * @param {Function} constructor
+     * @param {BaseGameState} state
      * @returns {Function}
      */
-    SceneManager.prototype.patchGameStateRender = function (constructor) {
+    SceneManager.prototype.patchGameStateRender = function (state) {
         var sceneManager = this;
+        var constructor = state.constructor;
         if (typeof constructor === 'function' && constructor.prototype.render === undefined) {
             constructor.prototype.render = function (timestamp, data) {
                 sceneManager.clear().fillBackground().render(data);
+                return true;
             };
         }
         return constructor;
@@ -296,27 +299,32 @@
      * @returns {SceneManager}
      */
     SceneManager.prototype.setGameCallback = function (gameState) {
-        this.data.gameState = gameState || 'initJ2D';
-        this.frameManager.stop(this.j2d.data.id);
+        var sceneManager = this;
+        sceneManager.data.gameState = gameState || 'initJ2D';
+        sceneManager.frameManager.stop(sceneManager.j2d.data.id);
 
-        var gameConstructor = this.patchGameStateRender(
-            this.statesManager.getState(gameState).constructor
+        var gameConstructor = sceneManager.patchGameStateRender(
+            sceneManager.gameStatesManager.getState(gameState)
         );
-        
-        var newGameState = new gameConstructor();
-        newGameState.init(function() {
-            newGameState.load(function() {
-                this.frameManager.start(this.j2d.data.id, newGameState, {
-                    j2d: this.j2d,
-                    frameLimit: this.data.frameLimit
+
+        var newGameState = new gameConstructor(sceneManager.gameStatesManager, {});
+        newGameState.init({
+            callback: function () {
+                newGameState.load({
+                    callback: function () {
+                        sceneManager.frameManager.start(sceneManager.j2d.data.id, newGameState, {
+                            j2d: sceneManager.j2d,
+                            frameLimit: sceneManager.data.frameLimit
+                        });
+
+                        sceneManager.j2d.trigger('changedGameState');
+
+                        // TODO:: async unload?
+                        sceneManager.gameStatesManager.getPreviousState().unload();
+                    }
                 });
-
-                this.j2d.trigger('changedGameState');
-
-                // TODO:: async unload?
-                this.statesManager.getPreviousState().unload();
-            }.bind(this));
-        }.bind(this));
+            }
+        });
 
         return this;
     };
@@ -335,28 +343,35 @@
      * @returns {SceneManager}
      */
     SceneManager.prototype.start = function () {
-        if (this.j2d.data.io) {
-            this.j2d.data.io.init();
+        var sceneManager = this;
+        if (sceneManager.j2d.data.io) {
+            sceneManager.j2d.data.io.init();
         }
-        this.j2d.trigger('beforeStart');
+        sceneManager.j2d.trigger('beforeStart');
 
-        this.frameManager.stop(this.j2d.data.id);
+        sceneManager.frameManager.stop(sceneManager.j2d.data.id);
 
-        var gameConstructor = this.patchGameStateRender(
-            this.statesManager.getCurrent().constructor
+        var gameConstructor = sceneManager.patchGameStateRender(
+            sceneManager.gameStatesManager.getCurrent()
         );
 
-        var newGameState = new gameConstructor();
-        newGameState.init();
-        newGameState.load();
+        var newGameState = new gameConstructor(sceneManager.gameStatesManager, {});
+        newGameState.init({
+            callback: function () {
+                newGameState.load({
+                    callback: function () {
+                        sceneManager.frameManager.start(sceneManager.j2d.data.id, newGameState, {
+                            j2d: sceneManager.j2d,
+                            frameLimit: sceneManager.data.frameLimit
+                        });
 
-        this.frameManager.start(this.j2d.data.id, newGameState, {
-            j2d: this.j2d,
-            frameLimit: this.data.frameLimit
+                        sceneManager.j2d.trigger('afterStart');
+                    }
+                });
+            }
         });
 
-        this.j2d.trigger('afterStart');
-        return this;
+        return sceneManager;
     };
 
     /**

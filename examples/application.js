@@ -16,7 +16,7 @@ define('Application', [
         'nodes/RectNode',
         'nodes/CameraNode',
         'transitions/Tween',
-        'states/BaseState'
+        'states/BaseGameState'
     ],
     /**
      * @param {Function|jQuery} $
@@ -27,9 +27,9 @@ define('Application', [
      * @param {Function|RectNode} RectNode
      * @param {Function|CameraNode} Camera
      * @param {Function|Tween} Tween,
-     * @param {Function|BaseState} BaseState
+     * @param {Function|BaseGameState} BaseGameState
      */
-    function ($, J2D, IO, MediaManager, Vector2d, RectNode, Camera, Tween, BaseState) {
+    function ($, J2D, IO, MediaManager, Vector2d, RectNode, Camera, Tween, BaseGameState) {
         "use strict";
 
         $(global.document).ready(function () {
@@ -62,7 +62,7 @@ define('Application', [
 
             /* Managers */
             var scene = j2d.getSceneManager();
-            var gsm = j2d.getStatesManager();
+            var gsm = j2d.getGameStatesManager();
 
             var width = 400,
                 height = 300;
@@ -70,14 +70,14 @@ define('Application', [
 
             /**
              * @constructor
-             * @extends BaseState
+             * @extends BaseGameState
              */
-            var GameState = function () {
-                BaseState.call(this);
+            var GameState = function (gsm, data) {
+                BaseGameState.call(this, gsm, data);
                 // var t, x, y;
                 // var ts = true;
 
-                this.init = function (callback) {
+                this.init = function (data) {
                     /* Nodes */
                     /** @type {BaseNode|AnimatedNode|RectNode} */
                     this.rectangle1 = (new RectNode({color: 'yellow'}))
@@ -97,18 +97,16 @@ define('Application', [
                     /** @type {BaseNode|CameraNode} */
                     this.camera_1st = (new Camera()).setSize(new Vector2d(400, 300));
 
-                    if (callback !== undefined) callback();
-                    return true;
+                    return BaseGameState.prototype.init.call(this, data);
                 };
 
-                this.load = function (callback) {
+                this.load = function (data) {
                     scene.add(this.rectangle1);
                     scene.add(this.rectangle2);
                     scene.add(this.rectangle3);
                     scene.registerCamera(this.camera_1st);
 
-                    if (callback !== undefined) callback();
-                    return true;
+                    return BaseGameState.prototype.load.call(this, data);
                 };
 
                 this.update = function (timestamp, data) {
@@ -185,7 +183,7 @@ define('Application', [
                 };
             };
 
-            GameState.prototype = Object.create(BaseState.prototype);
+            GameState.prototype = Object.create(BaseGameState.prototype);
             GameState.prototype.constructor = GameState;
 
             // Fix for Camera
@@ -202,7 +200,6 @@ define('Application', [
 
 
             gsm.add(new GameState(), 'myGame');
-            gsm.setState('myGame');
         });
 
     });

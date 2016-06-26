@@ -8,7 +8,7 @@
 
 (function (root, factory) {
     if (typeof define === 'function' && define.amd) {
-        define('states/BaseState', ['jquery', 'utils/ArrayMap', 'utils/Events', 'utils/UUID'], factory);
+        define('states/BaseGameState', ['jquery', 'utils/ArrayMap', 'utils/Events', 'utils/UUID'], factory);
     } else if (typeof module === 'object' && typeof module.exports === 'object') {
         module.exports = factory(require('jquery'), require('utils/ArrayMap'), require('utils/Events'), require('utils/UUID'));
     } else {
@@ -20,14 +20,15 @@
     /**
      * Base class of state
      *
-     * @class BaseState
+     * @class BaseGameState
      * @abstract
      * @constructor
      *
-     * @param {BaseState.defaults|Object} [data]
-     * @property {BaseState.defaults|Object} data
+     * @param {GameStatesManager} gsm
+     * @param {BaseGameState.defaults|Object} [data]
+     * @property {BaseGameState.defaults|Object} data
      */
-    var BaseState = function (data) {
+    var BaseGameState = function (gsm, data) {
         var state = this;
         if (data === undefined) data = {};
         if (data === undefined) data = {};
@@ -35,17 +36,18 @@
         if (data.id === undefined || data.id === null) {
             data.id = UUID.generate();
         }
-        state.data = $.extend(true, {}, BaseState.defaults, data);
+        state.data = $.extend(true, {}, BaseGameState.defaults, data);
 
+        state.gsm = gsm;
         state.events = new Events();
     };
 
-    BaseState.defaults = {
+    BaseGameState.defaults = {
         id: 'BaseState',
         currentState: 0
     };
 
-    BaseState.STATE = {
+    BaseGameState.STATE = {
         STATE_NOT_LOADED: 0,
         STATE_INIT: 1,
         STATE_LOAD: 2,
@@ -54,22 +56,24 @@
         STATE_UNLOAD: 5
     };
 
-    BaseState.prototype.init = function (callback) {
-        if (callback !== undefined) callback();
+    BaseGameState.prototype.init = function (data) {
+        if (typeof data === 'object' && data.callback !== undefined) {
+            data.callback();
+        }
         return true;
     };
-    BaseState.prototype.load = function (callback) {
-        if (callback !== undefined) callback();
+    BaseGameState.prototype.load = function (data) {
+        if (typeof data === 'object' && data.callback !== undefined) data.callback();
         return true;
     };
-    BaseState.prototype.update = function (timestamp, data) {
+    BaseGameState.prototype.update = function (timestamp, data) {
         return true;
     };
-    BaseState.prototype.render = function (timestamp, data) {
+    BaseGameState.prototype.render = function (timestamp, data) {
         return true;
     };
-    BaseState.prototype.unload = function (callback) {
-        if (callback !== undefined) callback();
+    BaseGameState.prototype.unload = function (data) {
+        if (typeof data === 'object' && data.callback !== undefined) data.callback();
         return true;
     };
 
@@ -80,7 +84,7 @@
      * @param {function} callback
      * @returns {boolean}
      */
-    BaseState.prototype.on = function (event, callback) {
+    BaseGameState.prototype.on = function (event, callback) {
         return this.events.on(event, callback);
     };
 
@@ -89,7 +93,7 @@
      * @param {function} callback
      * @returns {boolean}
      */
-    BaseState.prototype.off = function (event, callback) {
+    BaseGameState.prototype.off = function (event, callback) {
         return this.events.off(event, callback);
     };
 
@@ -98,7 +102,7 @@
      * @param {function} callback
      * @returns {boolean}
      */
-    BaseState.prototype.once = function (event, callback) {
+    BaseGameState.prototype.once = function (event, callback) {
         return this.events.once(event, callback);
     };
 
@@ -106,7 +110,7 @@
      * @param {string} event
      * @returns {boolean}
      */
-    BaseState.prototype.flush = function (event) {
+    BaseGameState.prototype.flush = function (event) {
         return this.events.flush(event);
     };
 
@@ -115,11 +119,11 @@
      * @param {Array.<*>} data
      * @returns {boolean}
      */
-    BaseState.prototype.trigger = function (event, data) {
+    BaseGameState.prototype.trigger = function (event, data) {
         return this.events.trigger(event, data);
     };
 
-    if (typeof module === 'object' && typeof module.exports === 'object') module.exports.BaseState = BaseState;
-    if (global.j2d === undefined) global.j2d.states.BaseState = BaseState;
-    return BaseState;
+    if (typeof module === 'object' && typeof module.exports === 'object') module.exports.BaseGameState = BaseGameState;
+    if (global.j2d === undefined) global.j2d.states.BaseGameState = BaseGameState;
+    return BaseGameState;
 }));
