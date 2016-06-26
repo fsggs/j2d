@@ -19,6 +19,7 @@
             * [.getFrameManager()](#module_jquery.j2d--J2D+getFrameManager) ⇒ <code>FrameManager</code>
             * [.getLayersManager()](#module_jquery.j2d--J2D+getLayersManager) ⇒ <code>LayersManager</code>
             * [.getSceneManager()](#module_jquery.j2d--J2D+getSceneManager) ⇒ <code>SceneManager</code>
+            * [.getStatesManager()](#module_jquery.j2d--J2D+getStatesManager) ⇒ <code>StatesManager</code>
             * [.getViewportManager()](#module_jquery.j2d--J2D+getViewportManager) ⇒ <code>ViewportManager</code>
             * [.scene](#module_jquery.j2d--J2D+scene) : <code>SceneManager</code>
             * [.start()](#module_jquery.j2d--J2D+start)
@@ -74,6 +75,10 @@ J2D
 <a name="module_jquery.j2d--J2D+getSceneManager"></a>
 
 #### j2D.getSceneManager() ⇒ <code>SceneManager</code>
+**Kind**: instance method of <code>[J2D](#exp_module_jquery.j2d--J2D)</code>  
+<a name="module_jquery.j2d--J2D+getStatesManager"></a>
+
+#### j2D.getStatesManager() ⇒ <code>StatesManager</code>
 **Kind**: instance method of <code>[J2D](#exp_module_jquery.j2d--J2D)</code>  
 <a name="module_jquery.j2d--J2D+getViewportManager"></a>
 

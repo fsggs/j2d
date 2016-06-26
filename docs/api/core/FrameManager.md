@@ -58,7 +58,7 @@ FrameManager
 | Param | Type |
 | --- | --- |
 | name | <code>string</code> | 
-| engine | <code>function</code> &#124; <code>callback</code> | 
+| engine | <code>BaseState</code> | 
 | [params] | <code>Object</code> | 
 
 <a name="core/FrameManager+stop"></a>

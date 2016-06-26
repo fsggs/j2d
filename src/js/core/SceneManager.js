@@ -6,10 +6,6 @@
  * @version 0.2.0-dev
  */
 
-/*
- * TODO:: GameStateManager to Scene
- */
-
 (function (root, factory) {
     if (typeof define === 'function' && define.amd) {
         define('core/SceneManager', [
@@ -17,7 +13,8 @@
             'core/WebGL2D',
             'core/FrameManager',
             'core/ViewportManager',
-            'core/LayersManager'
+            'core/LayersManager',
+            'states/StatesManager'
         ], factory);
     } else if (typeof module === 'object' && typeof module.exports === 'object') {
         module.exports = factory(
@@ -25,7 +22,8 @@
             require('core/WebGL2D'),
             require('core/FrameManager'),
             require('core/ViewportManager'),
-            require('core/LayersManager')
+            require('core/LayersManager'),
+            require('states/StatesManager')
         );
     } else {
         factory(
@@ -33,16 +31,17 @@
             root.WebGL2D,
             root.j2d.core.FrameManager,
             root.j2d.core.ViewportManager,
-            root.j2d.core.LayersManager
+            root.j2d.core.LayersManager,
+            root.j2d.states.StatesManager
         );
     }
-}(typeof window !== 'undefined' ? window : global, function ($, WebGL2D, FrameManager, ViewportManager, LayersManager) {
+}(typeof window !== 'undefined' ? window : global, function ($, WebGL2D, FrameManager, ViewportManager, LayersManager, StatesManager) {
     "use strict";
 
     /**
      * @class SceneManager
      * @exports module:core/SceneManager
-     * 
+     *
      * @param {J2D} j2d
      * @constructor
      *
@@ -56,6 +55,8 @@
      */
     var SceneManager = function (j2d) {
         var sceneManager = this;
+
+        this.setGameCallback = this.setGameCallback.bind(this);
 
         /** @type J2D */
         this.j2d = j2d;
@@ -74,6 +75,9 @@
 
         /** @type {ViewportManager} */
         this.viewportManager = new ViewportManager();
+
+        /** @type {StatesManager} */
+        this.statesManager = new StatesManager({}, this.setGameCallback);
 
         this.initLayers();
 
@@ -147,25 +151,21 @@
 
         enableFullScreen: false,
 
-        viewport: {x: 0, y: 0},
-
-        /** @type Function */
-        gameState: function () {
-            this.id = 'DefaultGameState';
-        }
+        viewport: {x: 0, y: 0}
     };
 
     /**
-     * @returns {SceneManager}
+     * @param {Function} constructor
+     * @returns {Function}
      */
-    SceneManager.prototype.fixGameStateRender = function () {
+    SceneManager.prototype.patchGameStateRender = function (constructor) {
         var sceneManager = this;
-        if (typeof this.data.gameState === 'function' && this.data.gameState.prototype.render === undefined) {
-            this.data.gameState.prototype.render = function (timestamp, data) {
+        if (typeof constructor === 'function' && constructor.prototype.render === undefined) {
+            constructor.prototype.render = function (timestamp, data) {
                 sceneManager.clear().fillBackground().render(data);
             };
         }
-        return this;
+        return constructor;
     };
 
     /**
@@ -291,22 +291,33 @@
     };
 
     /**
-     * @param {Function|callback} gameState
+     * TODO:: refactor this
+     * @param {string} gameState
      * @returns {SceneManager}
      */
-    SceneManager.prototype.setGameState = function (gameState) {
-        this.data.gameState = gameState || function () {
-                console.warn('Error in game state function!');
-            };
+    SceneManager.prototype.setGameCallback = function (gameState) {
+        this.data.gameState = gameState || 'initJ2D';
         this.frameManager.stop(this.j2d.data.id);
 
-        this.fixGameStateRender();
-        this.frameManager.start(this.j2d.data.id, new this.data.gameState(), {
-            j2d: this.j2d,
-            frameLimit: this.data.frameLimit
-        });
+        var gameConstructor = this.patchGameStateRender(
+            this.statesManager.getState(gameState).constructor
+        );
+        
+        var newGameState = new gameConstructor();
+        newGameState.init(function() {
+            newGameState.load(function() {
+                this.frameManager.start(this.j2d.data.id, newGameState, {
+                    j2d: this.j2d,
+                    frameLimit: this.data.frameLimit
+                });
 
-        this.j2d.trigger('changedGameState');
+                this.j2d.trigger('changedGameState');
+
+                // TODO:: async unload?
+                this.statesManager.getPreviousState().unload();
+            }.bind(this));
+        }.bind(this));
+
         return this;
     };
 
@@ -331,8 +342,15 @@
 
         this.frameManager.stop(this.j2d.data.id);
 
-        this.fixGameStateRender();
-        this.frameManager.start(this.j2d.data.id, new this.data.gameState(), {
+        var gameConstructor = this.patchGameStateRender(
+            this.statesManager.getCurrent().constructor
+        );
+
+        var newGameState = new gameConstructor();
+        newGameState.init();
+        newGameState.load();
+
+        this.frameManager.start(this.j2d.data.id, newGameState, {
             j2d: this.j2d,
             frameLimit: this.data.frameLimit
         });

@@ -172,6 +172,11 @@
         return this.scene.viewportManager;
     };
 
+    /** @returns {StatesManager} */
+    J2D.prototype.getStatesManager = function () {
+        return this.scene.statesManager;
+    };
+
     J2D.prototype.on = function () {
     };
     J2D.prototype.once = function () {

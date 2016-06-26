@@ -44,7 +44,7 @@ Tween
         * [.start(time)](#transitions/Tween+start) ⇒ <code>Tween</code>
         * [.stop()](#transitions/Tween+stop) ⇒ <code>Tween</code>
         * [.stopChainedTweens()](#transitions/Tween+stopChainedTweens) ⇒ <code>Tween</code>
-        * [.to(properties, data)](#transitions/Tween+to) ⇒ <code>Tween</code>
+        * [.to(properties, [data])](#transitions/Tween+to) ⇒ <code>Tween</code>
         * [.trigger(event, data)](#transitions/Tween+trigger) ⇒ <code>boolean</code>
         * [.update(time)](#transitions/Tween+update) ⇒ <code>boolean</code>
     * _static_
@@ -215,13 +215,13 @@ Tween
 **Kind**: instance method of <code>[transitions/Tween](#transitions/Tween)</code>  
 <a name="transitions/Tween+to"></a>
 
-### transitions/Tween.to(properties, data) ⇒ <code>Tween</code>
+### transitions/Tween.to(properties, [data]) ⇒ <code>Tween</code>
 **Kind**: instance method of <code>[transitions/Tween](#transitions/Tween)</code>  
 
 | Param | Type |
 | --- | --- |
 | properties | <code>Object</code> | 
-| data | <code>Tween.defaults</code> &#124; <code>Object</code> | 
+| [data] | <code>Tween.defaults</code> &#124; <code>Object</code> | 
 
 <a name="transitions/Tween+trigger"></a>
 

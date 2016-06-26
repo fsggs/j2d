@@ -69,7 +69,7 @@
         /**
          * @class FrameManager
          * @exports module:core/FrameManager
-         * 
+         *
          * @constructor
          */
         var FrameManager = function () {
@@ -77,7 +77,7 @@
 
         /**
          * @param {string} name
-         * @param {Function|callback} engine
+         * @param {BaseState} engine
          * @param {Object} [params]
          * @returns {FrameManager}
          */
@@ -162,7 +162,7 @@
                     if (!data.j2d.data.pause) {
                         if (engine.update !== undefined && 'function' === typeof engine.update) {
                             if (data.asyncUpdate) {
-                                setTimeout(engine.update.bind(this, timestamp, data), 0);
+                                setTimeout(engine.update.bind(engine, timestamp, data), 0);
                                 setTimeout(Tween.update.bind(this, timestamp), 0);
                             } else {
                                 engine.update(timestamp, data);
@@ -175,7 +175,7 @@
 
                             if (engine.render !== undefined && 'function' === typeof engine.render) {
                                 if (data.asyncRender) {
-                                    setTimeout(engine.render.bind(this, timestamp, data), 0);
+                                    setTimeout(engine.render.bind(engine, timestamp, data), 0);
                                 } else {
                                     engine.render(timestamp, data);
                                 }

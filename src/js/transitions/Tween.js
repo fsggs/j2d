@@ -104,7 +104,7 @@
     /* Methods */
     /**
      * @param {Object} properties
-     * @param {Tween.defaults|Object} data
+     * @param {Tween.defaults|Object} [data]
      * @returns {Tween}
      */
     Tween.prototype.to = function (properties, data) {

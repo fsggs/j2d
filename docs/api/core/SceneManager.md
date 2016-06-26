@@ -31,7 +31,6 @@ SceneManager
     * [.clear([pos], [size])](#core/SceneManager+clear) ⇒ <code>SceneManager</code>
     * [.context](#core/SceneManager+context) : <code>CanvasRenderingContext2D</code>
     * [.fillBackground()](#core/SceneManager+fillBackground) ⇒ <code>SceneManager</code>
-    * [.fixGameStateRender()](#core/SceneManager+fixGameStateRender) ⇒ <code>SceneManager</code>
     * [.frameManager](#core/SceneManager+frameManager) : <code>FrameManager</code>
     * [.fullScreen([fullscreen])](#core/SceneManager+fullScreen) ⇒ <code>SceneManager</code>
     * [.getSceneLayer()](#core/SceneManager+getSceneLayer) ⇒ <code>CollectionNode</code> &#124; <code>null</code>
@@ -40,13 +39,15 @@ SceneManager
     * [.initLayers()](#core/SceneManager+initLayers) ⇒ <code>SceneManager</code>
     * [.j2d](#core/SceneManager+j2d) : <code>J2D</code>
     * [.layersManager](#core/SceneManager+layersManager) : <code>LayersManager</code>
+    * [.patchGameStateRender(constructor)](#core/SceneManager+patchGameStateRender) ⇒ <code>function</code>
     * [.registerCamera(node)](#core/SceneManager+registerCamera) ⇒ <code>SceneManager</code>
     * [.remove([node], [key])](#core/SceneManager+remove) ⇒ <code>SceneManager</code>
     * [.render(data)](#core/SceneManager+render) ⇒ <code>SceneManager</code>
     * [.resize(width, height)](#core/SceneManager+resize) ⇒ <code>SceneManager</code>
     * [.resizeToFullPage([fullscreen])](#core/SceneManager+resizeToFullPage) ⇒ <code>SceneManager</code>
-    * [.setGameState(gameState)](#core/SceneManager+setGameState) ⇒ <code>SceneManager</code>
+    * [.setGameCallback(gameState)](#core/SceneManager+setGameCallback) ⇒ <code>SceneManager</code>
     * [.start()](#core/SceneManager+start) ⇒ <code>SceneManager</code>
+    * [.statesManager](#core/SceneManager+statesManager) : <code>StatesManager</code>
     * [.stop()](#core/SceneManager+stop) ⇒ <code>SceneManager</code>
     * [.toggleFullScreen(j2d, data)](#core/SceneManager+toggleFullScreen) ⇒ <code>SceneManager</code>
     * [.updateViewport([node])](#core/SceneManager+updateViewport) ⇒ <code>SceneManager</code>
@@ -102,10 +103,6 @@ SceneManager
 
 ### core/SceneManager.fillBackground() ⇒ <code>SceneManager</code>
 **Kind**: instance method of <code>[core/SceneManager](#core/SceneManager)</code>  
-<a name="core/SceneManager+fixGameStateRender"></a>
-
-### core/SceneManager.fixGameStateRender() ⇒ <code>SceneManager</code>
-**Kind**: instance method of <code>[core/SceneManager](#core/SceneManager)</code>  
 <a name="core/SceneManager+frameManager"></a>
 
 ### core/SceneManager.frameManager : <code>FrameManager</code>
@@ -148,6 +145,15 @@ SceneManager
 
 ### core/SceneManager.layersManager : <code>LayersManager</code>
 **Kind**: instance property of <code>[core/SceneManager](#core/SceneManager)</code>  
+<a name="core/SceneManager+patchGameStateRender"></a>
+
+### core/SceneManager.patchGameStateRender(constructor) ⇒ <code>function</code>
+**Kind**: instance method of <code>[core/SceneManager](#core/SceneManager)</code>  
+
+| Param | Type |
+| --- | --- |
+| constructor | <code>function</code> | 
+
 <a name="core/SceneManager+registerCamera"></a>
 
 ### core/SceneManager.registerCamera(node) ⇒ <code>SceneManager</code>
@@ -195,19 +201,25 @@ SceneManager
 | --- | --- |
 | [fullscreen] | <code>boolean</code> | 
 
-<a name="core/SceneManager+setGameState"></a>
+<a name="core/SceneManager+setGameCallback"></a>
 
-### core/SceneManager.setGameState(gameState) ⇒ <code>SceneManager</code>
+### core/SceneManager.setGameCallback(gameState) ⇒ <code>SceneManager</code>
+TODO:: refactor this
+
 **Kind**: instance method of <code>[core/SceneManager](#core/SceneManager)</code>  
 
 | Param | Type |
 | --- | --- |
-| gameState | <code>function</code> &#124; <code>callback</code> | 
+| gameState | <code>string</code> | 
 
 <a name="core/SceneManager+start"></a>
 
 ### core/SceneManager.start() ⇒ <code>SceneManager</code>
 **Kind**: instance method of <code>[core/SceneManager](#core/SceneManager)</code>  
+<a name="core/SceneManager+statesManager"></a>
+
+### core/SceneManager.statesManager : <code>StatesManager</code>
+**Kind**: instance property of <code>[core/SceneManager](#core/SceneManager)</code>  
 <a name="core/SceneManager+stop"></a>
 
 ### core/SceneManager.stop() ⇒ <code>SceneManager</code>

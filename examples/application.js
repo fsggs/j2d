@@ -15,7 +15,8 @@ define('Application', [
         'utils/Vector2d',
         'nodes/RectNode',
         'nodes/CameraNode',
-        'transitions/Tween'
+        'transitions/Tween',
+        'states/BaseState'
     ],
     /**
      * @param {Function|jQuery} $
@@ -25,9 +26,10 @@ define('Application', [
      * @param {Function|Vector2d} Vector2d
      * @param {Function|RectNode} RectNode
      * @param {Function|CameraNode} Camera
-     * @param {Function|Tween} Tween
+     * @param {Function|Tween} Tween,
+     * @param {Function|BaseState} BaseState
      */
-    function ($, J2D, IO, MediaManager, Vector2d, RectNode, Camera, Tween) {
+    function ($, J2D, IO, MediaManager, Vector2d, RectNode, Camera, Tween, BaseState) {
         "use strict";
 
         $(global.document).ready(function () {
@@ -60,43 +62,59 @@ define('Application', [
 
             /* Managers */
             var scene = j2d.getSceneManager();
-
-            /* Nodes */
-            /** @type {BaseNode|AnimatedNode|RectNode} */
-            var rectangle1 = (new RectNode({color: 'yellow'}))
-                .setSize(new Vector2d(20, 20))
-                .setPosition(new Vector2d(20, 20));
-
-            var rectangle2 = (new RectNode({color: 'green'}))
-                .setSize(new Vector2d(20, 20))
-                .setPosition(new Vector2d(20, 40));
-
-            var rectangle3 = (new RectNode({color: 'red'}))
-                .setSize(new Vector2d(20, 20))
-                .setPosition(new Vector2d(60, 40));
-
-            global.r1 = rectangle1;
-
-            /** @type {BaseNode|CameraNode} */
-            var camera_1st = (new Camera()).setSize(new Vector2d(400, 300));
-
-            scene.add(rectangle1);
-            scene.add(rectangle2);
-            scene.add(rectangle3);
-            scene.registerCamera(camera_1st);
+            var gsm = j2d.getStatesManager();
 
             var width = 400,
                 height = 300;
             var time = 0;
 
+            /**
+             * @constructor
+             * @extends BaseState
+             */
             var GameState = function () {
-                var t, x, y;
-                var ts = true;
+                BaseState.call(this);
+                // var t, x, y;
+                // var ts = true;
+
+                this.init = function (callback) {
+                    /* Nodes */
+                    /** @type {BaseNode|AnimatedNode|RectNode} */
+                    this.rectangle1 = (new RectNode({color: 'yellow'}))
+                        .setSize(new Vector2d(20, 20))
+                        .setPosition(new Vector2d(20, 20));
+
+                    this.rectangle2 = (new RectNode({color: 'green'}))
+                        .setSize(new Vector2d(20, 20))
+                        .setPosition(new Vector2d(20, 40));
+
+                    this.rectangle3 = (new RectNode({color: 'red'}))
+                        .setSize(new Vector2d(20, 20))
+                        .setPosition(new Vector2d(60, 40));
+
+                    global.r1 = this.rectangle1;
+
+                    /** @type {BaseNode|CameraNode} */
+                    this.camera_1st = (new Camera()).setSize(new Vector2d(400, 300));
+
+                    if (callback !== undefined) callback();
+                    return true;
+                };
+
+                this.load = function (callback) {
+                    scene.add(this.rectangle1);
+                    scene.add(this.rectangle2);
+                    scene.add(this.rectangle3);
+                    scene.registerCamera(this.camera_1st);
+
+                    if (callback !== undefined) callback();
+                    return true;
+                };
 
                 this.update = function (timestamp, data) {
                     time = timestamp;
                     if (j2d.io.checkPressedKeyMap('ACTION')) {
-                        new Tween(rectangle1)
+                        new Tween(this.rectangle1)
                             .to({
                                 position: {
                                     x: '60'
@@ -130,36 +148,45 @@ define('Application', [
                     // if (j2d.io.checkPressedKeyMap('MOVE_RIGHT')) rectangle.moveTo(new Vector2d(2, 0));
 
                     //TODO:: fix camera original screen size in /core
-                    camera_1st.setSize(new Vector2d(width, height));
-                    scene.updateViewport(camera_1st);
+                    this.camera_1st.setSize(new Vector2d(width, height));
+                    scene.updateViewport(this.camera_1st);
+
+                    return true;
                 };
 
-                this.update2 = function (timestamp, data) {
-                    t = timestamp * 0.0018;
-                    x = Math.sin(t) * 100 + 150;
-                    y = Math.cos(t * 0.9) * 100 + 150;
-                    t = null;
-
-                    camera_1st.angle = camera_1st.angle + (ts ? 1 : -1);
-                    camera_1st.setSize(new Vector2d(width + camera_1st.angle, height + camera_1st.angle));
-                    camera_1st.scale = camera_1st.angle / 50;
-
-                    if (camera_1st.angle >= 360 - 1) ts = false;
-                    if (camera_1st.angle == 0) ts = true;
-
-                    //rectangle.angle = rectangle.angle - 2;
-                    rectangle1.setPosition(new Vector2d(x, y)).setColor(!ts ? 'yellow' : 'grey');
-                    scene.updateViewport(camera_1st);
-
-                    //scene.updateViewport();
-                };
+                // this.update2 = function (timestamp, data) {
+                //     t = timestamp * 0.0018;
+                //     x = Math.sin(t) * 100 + 150;
+                //     y = Math.cos(t * 0.9) * 100 + 150;
+                //     t = null;
+                //
+                //     camera_1st.angle = camera_1st.angle + (ts ? 1 : -1);
+                //     camera_1st.setSize(new Vector2d(width + camera_1st.angle, height + camera_1st.angle));
+                //     camera_1st.scale = camera_1st.angle / 50;
+                //
+                //     if (camera_1st.angle >= 360 - 1) ts = false;
+                //     if (camera_1st.angle == 0) ts = true;
+                //
+                //     //rectangle.angle = rectangle.angle - 2;
+                //     rectangle1.setPosition(new Vector2d(x, y)).setColor(!ts ? 'yellow' : 'grey');
+                //     scene.updateViewport(camera_1st);
+                //
+                //     //scene.updateViewport();
+                //
+                //     return true;
+                // };
 
                 this.render = function (timestamp, data) {
                     scene.clear();
                     scene.fillBackground();
                     scene.render(data);
+
+                    return true;
                 };
             };
+
+            GameState.prototype = Object.create(BaseState.prototype);
+            GameState.prototype.constructor = GameState;
 
             // Fix for Camera
             $(window).on('resize', function () {
@@ -171,7 +198,11 @@ define('Application', [
                 width: width,
                 height: height,
                 backgroundColor: 'black'
-            }).setGameState(GameState).start();
+            }).start(); // .setGameState(GameState) <-|.
+
+
+            gsm.add(new GameState(), 'myGame');
+            gsm.setState('myGame');
         });
 
     });
