@@ -1,5 +1,5 @@
 /**
- * J2D (jQuery Canvas Graphic Engine plugin)
+ * j2D (JavaScript 2D Engine)
  *
  * @authors DeVinterX, Skaner(j2Ds)
  * @license BSD
@@ -8,13 +8,13 @@
 
 (function (root, factory) {
     if (typeof define === 'function' && define.amd) {
-        define('nodes/CameraNode', ['jquery', 'nodes/BaseNode', 'nodes/AnimatedNode'], factory);
+        define('nodes/CameraNode', ['utils/ObjectUtil', 'nodes/BaseNode', 'nodes/AnimatedNode'], factory);
     } else if (typeof module === 'object' && typeof module.exports === 'object') {
-        module.exports = factory(require('jquery'), require('nodes/BaseNode'), require('nodes/AnimatedNode'));
+        module.exports = factory(require('utils/ObjectUtil'), require('nodes/BaseNode'), require('nodes/AnimatedNode'));
     } else {
-        factory(root.jQuery, root.j2d.nodes.BaseNode, root.j2d.nodes.AnimatedNode);
+        factory(root.j2d.utils.ObjectUtil, root.j2d.nodes.BaseNode, root.j2d.nodes.AnimatedNode);
     }
-}(typeof window !== 'undefined' ? window : global, function ($, BaseNode, AnimatedNode) {
+}(typeof window !== 'undefined' ? window : global, function (ObjectUtil, BaseNode, AnimatedNode) {
     "use strict";
 
     /**
@@ -27,7 +27,7 @@
      * @property {BaseNode.defaults|AnimatedNode.defaults|CameraNode.defaults} data
      */
     var CameraNode = function (data) {
-        AnimatedNode.call(this, $.extend(true, {}, CameraNode.defaults, data));
+        AnimatedNode.call(this, ObjectUtil.extend(true, {}, CameraNode.defaults, data));
     };
 
     CameraNode.prototype = Object.create(AnimatedNode.prototype);
@@ -67,6 +67,6 @@
     };
 
     if (typeof module === 'object' && typeof module.exports === 'object') module.exports.CameraNode = CameraNode;
-    if (global.j2d === undefined) global.j2d.nodes.CameraNode = CameraNode;
+    if (global.j2d !== undefined) global.j2d.nodes.CameraNode = CameraNode;
     return CameraNode;
 }));

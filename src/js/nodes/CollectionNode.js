@@ -1,5 +1,5 @@
 /**
- * J2D (jQuery Canvas Graphic Engine plugin)
+ * j2D (JavaScript 2D Engine)
  *
  * @authors DeVinterX, Skaner(j2Ds)
  * @license BSD
@@ -8,18 +8,18 @@
 
 (function (root, factory) {
     if (typeof define === 'function' && define.amd) {
-        define('nodes/CollectionNode', ['jquery', 'nodes/BaseNode', 'nodes/AnimatedNode', 'utils/ArrayMap'], factory);
+        define('nodes/CollectionNode', ['utils/ObjectUtil', 'nodes/BaseNode', 'nodes/AnimatedNode', 'utils/ArrayMap'], factory);
     } else if (typeof module === 'object' && typeof module.exports === 'object') {
         module.exports = factory(
-            require('jquery'),
+            require('utils/ObjectUtil'),
             require('nodes/BaseNode'),
             require('nodes/AnimatedNode'),
             require('utils/ArrayMap')
         );
     } else {
-        factory(root.jQuery, root.j2d.nodes.BaseNode, root.j2d.nodes.AnimatedNode, root.j2d.utils.ArrayMap);
+        factory(root.j2d.utils.ObjectUtil, root.j2d.nodes.BaseNode, root.j2d.nodes.AnimatedNode, root.j2d.utils.ArrayMap);
     }
-}(typeof window !== 'undefined' ? window : global, function ($, BaseNode, AnimatedNode, ArrayMap) {
+}(typeof window !== 'undefined' ? window : global, function (ObjectUtil, BaseNode, AnimatedNode, ArrayMap) {
     "use strict";
 
     /**
@@ -33,7 +33,7 @@
      */
     var CollectionNode = function (data) {
         var collectionNode = this;
-        AnimatedNode.call(this, $.extend(true, {}, CollectionNode.defaults, data));
+        AnimatedNode.call(this, ObjectUtil.extend(true, {}, CollectionNode.defaults, data));
 
         if (this.data.collection === null) {
             this.data.collection = new ArrayMap();
@@ -141,6 +141,6 @@
     };
 
     if (typeof module === 'object' && typeof module.exports === 'object') module.exports.CollectionNode = CollectionNode;
-    if (global.j2d === undefined) global.j2d.nodes.CollectionNode = CollectionNode;
+    if (global.j2d !== undefined) global.j2d.nodes.CollectionNode = CollectionNode;
     return CollectionNode;
 }));

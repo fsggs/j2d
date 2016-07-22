@@ -1,5 +1,5 @@
 /**
- * J2D (jQuery Canvas Graphic Engine plugin)
+ * j2D (JavaScript 2D Engine)
  *
  * @authors DeVinterX, Skaner(j2Ds)
  * @license BSD
@@ -116,6 +116,6 @@
     };
 
     if (typeof module === 'object' && typeof module.exports === 'object') module.exports.Events = Events;
-    if (global.j2d === undefined) global.j2d.utils.Events = Events;
+    if (global.j2d !== undefined) global.j2d.utils.Events = Events;
     return Events;
 }));

@@ -1,5 +1,5 @@
 /**
- * J2D (jQuery Canvas Graphic Engine plugin)
+ * j2D (JavaScript 2D Engine)
  *
  * @authors DeVinterX, Skaner(j2Ds)
  * @license BSD
@@ -45,6 +45,6 @@
     RuntimeException.prototype.constructor = RuntimeException;
 
     if (typeof module === 'object' && typeof module.exports === 'object') module.exports.RuntimeException = RuntimeException;
-    if (global.j2d === undefined) global.j2d.exceptions.RuntimeException = RuntimeException;
+    if (global.j2d !== undefined) global.j2d.exceptions.RuntimeException = RuntimeException;
     return RuntimeException;
 }));

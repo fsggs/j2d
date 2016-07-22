@@ -1,5 +1,5 @@
 /**
- * J2D (jQuery Canvas Graphic Engine plugin)
+ * j2D (JavaScript 2D Engine)
  *
  * @authors DeVinterX, Skaner(j2Ds)
  * @license BSD
@@ -14,6 +14,7 @@ if (typeof define !== 'function' || !define.amd) {
         core: {},
         exceptions: {},
         io: {},
+        loaders: {},
         media: {},
         nodes: {},
         states: {},

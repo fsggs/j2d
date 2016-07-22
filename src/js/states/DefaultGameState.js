@@ -1,5 +1,5 @@
 /**
- * J2D (jQuery Canvas Graphic Engine plugin)
+ * j2D (JavaScript 2D Engine)
  *
  * @authors DeVinterX, Skaner(j2Ds)
  * @license BSD
@@ -30,7 +30,7 @@
      */
     var DefaultGameState = function (gsm, data) {
         if (data === undefined) data = {};
-        data.id = 'initJ2D';
+        data.id = 'init_j2d';
         BaseGameState.call(this, gsm, data);
     };
 
@@ -57,6 +57,6 @@
     // };
 
     if (typeof module === 'object' && typeof module.exports === 'object') module.exports.DefaultGameState = DefaultGameState;
-    if (global.j2d === undefined) global.j2d.states.DefaultGameState = DefaultGameState;
+    if (global.j2d !== undefined) global.j2d.states.DefaultGameState = DefaultGameState;
     return DefaultGameState;
 }));

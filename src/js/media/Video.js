@@ -1,5 +1,5 @@
 /**
- * J2D (jQuery Canvas Graphic Engine plugin)
+ * j2D (JavaScript 2D Engine)
  *
  * @authors DeVinterX
  * @license BSD
@@ -8,13 +8,13 @@
 
 (function (root, factory) {
     if (typeof define === 'function' && define.amd) {
-        define('media/Video', ['jquery', 'utils/ArrayMap'], factory);
+        define('media/Video', ['utils/ArrayMap'], factory);
     } else if (typeof module === 'object' && typeof module.exports === 'object') {
-        module.exports = factory(require('jquery'), require('utils/ArrayMap'));
+        module.exports = factory(require('utils/ArrayMap'));
     } else {
-        factory(root.jQuery, root.ArrayMap);
+        factory(root.ArrayMap);
     }
-}(typeof window !== 'undefined' ? window : global, function ($, ArrayMap) {
+}(typeof window !== 'undefined' ? window : global, function (ArrayMap) {
     "use strict";
 
 
@@ -29,6 +29,6 @@
     };
 
     if (typeof module === 'object' && typeof module.exports === 'object') module.exports.Video = Video;
-    if (global.j2d === undefined) global.j2d.media.Video = Video;
+    if (global.j2d !== undefined) global.j2d.media.Video = Video;
     return Video;
 }));

@@ -1,5 +1,5 @@
 /**
- * J2D (jQuery Canvas Graphic Engine plugin)
+ * j2D (JavaScript 2D Engine)
  *
  * @authors DeVinterX, Skaner(j2Ds)
  * @license BSD
@@ -11,14 +11,15 @@
  */
 
 /**
- * @module "jquery.j2d"
+ * @module "j2d"
  */
 (function (root, factory) {
     if (typeof define === 'function' && define.amd) {
-        define('jquery.j2d', [
+        define('j2d', [
             'jquery',
             'core/SceneManager',
             'utils/DeviceUtil',
+            'utils/ObjectUtil',
             'utils/UUID',
             'utils/SystemConsole'
         ], factory);
@@ -27,6 +28,7 @@
             require('jquery'),
             require('core/SceneManager'),
             require('utils/DeviceUtil'),
+            require('utils/ObjectUtil'),
             require('utils/UUID'),
             require('utils/SystemConsole')
         );
@@ -35,20 +37,21 @@
             root.jQuery,
             root.j2d.core.SceneManager,
             root.j2d.utils.DeviceUtil,
+            root.j2d.utils.ObjectUtil,
             root.j2d.utils.UUID,
             root.j2d.utils.SystemConsole
         );
     }
-}(typeof window !== 'undefined' ? window : global, function ($, SceneManager, DeviceUtil, UUID, Log) {
+}(typeof window !== 'undefined' ? window : global, function ($, SceneManager, DeviceUtil, ObjectUtil, UUID, Log) {
     "use strict";
 
     /**
-     * @class J2D
-     * @exports module:"jquery.j2d"
-     * @alias module:"jquery.j2d"
+     * @class EngineJ2D
+     * @exports module:"j2d"
+     * @alias module:"j2d"
      *
      * @param {Element|jQuery} element
-     * @param {J2D.defaults} data
+     * @param {EngineJ2D.defaults} data
      *
      * @constructor
      * @property {boolean} WebGL // TODO:: To scene
@@ -57,13 +60,13 @@
      * @property {MediaManager|null} media
      * @property {boolean} isPlay
      */
-    var J2D = function J2D(element, data) {
+    var EngineJ2D = function (element, data) {
         var j2d = this;
 
         /** @type {Element|jQuery} */
         this.element = element;
 
-        /** @type J2D.defaults */
+        /** @type EngineJ2D.defaults */
         this.data = data;
 
         /** @type DeviceUtil */
@@ -125,9 +128,9 @@
         });
     };
 
-    J2D.VERSION = '0.2.0-dev';
+    EngineJ2D.VERSION = '0.2.0-dev';
 
-    J2D.defaults = {
+    EngineJ2D.defaults = {
         /** @type string|null */
         id: null,
         io: null,
@@ -143,18 +146,18 @@
     };
 
     /** +GameEngine **/
-    J2D.prototype.start = function () {
+    EngineJ2D.prototype.start = function () {
         this.scene.start();
         this.trigger('start');
     };
 
-    J2D.prototype.stop = function () {
+    EngineJ2D.prototype.stop = function () {
         this.scene.stop();
         this.trigger('stop');
     };
 
     // TODO:: add MediaManager
-    J2D.prototype.pause = function () {
+    EngineJ2D.prototype.pause = function () {
         if (this.data.io) this.data.io.flush();
         this.data.pause = true;
         this.element.addClass('pause');
@@ -162,7 +165,7 @@
     };
 
     // TODO:: add MediaManager
-    J2D.prototype.resume = function () {
+    EngineJ2D.prototype.resume = function () {
         this.element.removeClass('pause').focus();
         this.data.pause = false;
         if (this.data.io) this.data.io.flush();
@@ -171,45 +174,45 @@
     /** -GameEngine **/
 
     /** @returns {SceneManager} */
-    J2D.prototype.getSceneManager = function () {
+    EngineJ2D.prototype.getSceneManager = function () {
         return this.scene;
     };
 
     /** @returns {LayersManager} */
-    J2D.prototype.getLayersManager = function () {
+    EngineJ2D.prototype.getLayersManager = function () {
         return this.scene.layersManager;
     };
 
     /** @returns {FrameManager} */
-    J2D.prototype.getFrameManager = function () {
+    EngineJ2D.prototype.getFrameManager = function () {
         return this.scene.frameManager;
     };
 
     /** @returns {ViewportManager} */
-    J2D.prototype.getViewportManager = function () {
+    EngineJ2D.prototype.getViewportManager = function () {
         return this.scene.viewportManager;
     };
 
     /** @returns {GameStatesManager} */
-    J2D.prototype.getGameStatesManager = function () {
+    EngineJ2D.prototype.getGameStatesManager = function () {
         return this.scene.gameStatesManager;
     };
 
-    J2D.prototype.on = function () {
+    EngineJ2D.prototype.on = function () {
     };
-    J2D.prototype.once = function () {
+    EngineJ2D.prototype.once = function () {
     };
-    J2D.prototype.off = function () {
+    EngineJ2D.prototype.off = function () {
     };
-    J2D.prototype.trigger = function () {
+    EngineJ2D.prototype.trigger = function () {
     };
 
-    J2D.prototype.log = function (message, level) {
+    EngineJ2D.prototype.log = function (message, level) {
         this.Log.log(message, level);
     };
 
     /** Utils **/
-    J2D.util = {
+    EngineJ2D.util = {
         /**
          * @param {CanvasRenderingContext2D} context
          */
@@ -226,22 +229,22 @@
             context['msImageSmoothingEnabled'] = false;
         }
     };
-    J2D.prototype.util = J2D.util;
+    EngineJ2D.prototype.util = EngineJ2D.util;
 
     /* ------------------------------ Plugin ------------------------------ */
 
-    (J2D.initPlugin = function () {
+    (EngineJ2D.initPlugin = function () {
         if (window.j2dPlugin !== undefined) return null;
         window.j2dPlugin = {pluginInit: true};
 
-        (new Log()).logSystem('J2D v.' + J2D.VERSION, 'https://github.com/fsggs/jquery.j2d');
+        (new Log()).logSystem('j2D v.' + EngineJ2D.VERSION, 'https://github.com/fsggs/j2d');
         /**
-         * @param {J2D.defaults} [options]
-         * @returns {J2D|J2D[]|Array.<J2D>}
+         * @param {EngineJ2D.defaults} [options]
+         * @returns {EngineJ2D|EngineJ2D[]|Array.<EngineJ2D>}
          */
         $.fn.j2d = function (options) {
             this.filter('div.canvas:not([guid])').each(function () {
-                var options = $.extend(true, {}, J2D.defaults, options);
+                var options = ObjectUtil.extend(true, {}, EngineJ2D.defaults, options);
 
                 options.id = UUID.generate();
 
@@ -254,7 +257,7 @@
                 if (typeof tabIndex === 'undefined' || tabIndex === false) {
                     $(this).attr('tabindex', '-1');
                 }
-                $(this).data('j2d', new J2D($(this), options)).addClass('j2d');
+                $(this).data('j2d', new EngineJ2D($(this), options)).addClass('j2d');
                 $(this).click().focus();
             });
 
@@ -266,11 +269,14 @@
             return (1 === $array.length) ? $(this).data('j2d') : $array;
         };
 
+        var firefox = global.navigator.userAgent.match(/Firefox\/([0-9]+)\./);
+        var version = firefox ? parseInt(firefox[2], 10) : false;
+
         var isFullScreen = function () {
             //noinspection JSUnresolvedVariable
             return !!(document.webkitFullscreenElement
                 || document.webkitCurrentFullScreenElement
-                || document.mozFullScreenElement
+                || (version && version < 47) ? document.mozFullScreenElement : document.fullscreenElement
                 || document.msFullscreenElement
             );
         };
@@ -328,7 +334,7 @@
         });
     })();
 
-    if (typeof module === 'object' && typeof module.exports === 'object') module.exports.J2D = J2D;
-    if (global.j2d === undefined) global.j2d.J2D = J2D;
-    return J2D;
+    if (typeof module === 'object' && typeof module.exports === 'object') module.exports.EngineJ2D = EngineJ2D;
+    if (global.j2d !== undefined) global.j2d.EngineJ2D = EngineJ2D;
+    return EngineJ2D;
 }));

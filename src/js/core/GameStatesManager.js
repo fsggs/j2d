@@ -1,5 +1,5 @@
 /**
- * J2D (jQuery Canvas Graphic Engine plugin)
+ * j2D (JavaScript 2D Engine)
  *
  * @authors DeVinterX, Skaner(j2Ds)
  * @license BSD
@@ -8,28 +8,28 @@
 
 (function (root, factory) {
     if (typeof define === 'function' && define.amd) {
-        define('states/GameStatesManager', [
-            'jquery',
+        define('core/GameStatesManager', [
+            'utils/ObjectUtil',
             'utils/ArrayMap',
             'states/DefaultGameState',
             'states/BaseGameState'
         ], factory);
     } else if (typeof module === 'object' && typeof module.exports === 'object') {
         module.exports = factory(
-            require('jquery'),
+            require('utils/ObjectUtil'),
             require('utils/ArrayMap'),
             require('states/DefaultGameState'),
             require('states/BaseGameState')
         );
     } else {
         factory(
-            root.jQuery,
+            root.j2d.utils.ObjectUtil,
             root.j2d.utils.ArrayMap,
             root.j2d.states.DefaultGameState,
             root.j2d.states.BaseGameState
         );
     }
-}(typeof window !== 'undefined' ? window : global, function ($, ArrayMap, DefaultGameState, BaseGameState) {
+}(typeof window !== 'undefined' ? window : global, function (ObjectUtil, ArrayMap, DefaultGameState, BaseGameState) {
     "use strict";
 
     /**
@@ -46,7 +46,7 @@
      */
     var GameStatesManager = function (data, sceneCallback) {
         var stateManager = this;
-        stateManager.data = $.extend(true, {}, GameStatesManager.defaults, data);
+        stateManager.data = ObjectUtil.extend(true, {}, GameStatesManager.defaults, data);
         stateManager.add(new DefaultGameState());
         stateManager.sceneCallback = sceneCallback;
 
@@ -56,7 +56,6 @@
             },
             set: function (value) {
                 stateManager.data.currentState = value;
-
             }
         });
     };
@@ -154,6 +153,6 @@
     };
 
     if (typeof module === 'object' && typeof module.exports === 'object') module.exports.GameStatesManager = GameStatesManager;
-    if (global.j2d === undefined) global.j2d.states.GameStatesManager = GameStatesManager;
+    if (global.j2d !== undefined) global.j2d.states.GameStatesManager = GameStatesManager;
     return GameStatesManager;
 }));

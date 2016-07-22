@@ -82,7 +82,7 @@ gulp.task('js-scripts', [], function () {
             }
         }))
         .pipe(sourcemaps.init())
-        .pipe(concat('jquery.j2d.js'))
+        .pipe(concat('j2d.js'))
         .pipe(uglify())
         .pipe(header(fs.readFileSync('src/header.js', 'utf8')))
         .pipe(sourcemaps.write('./'))

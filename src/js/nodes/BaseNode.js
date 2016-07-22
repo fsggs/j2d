@@ -1,5 +1,5 @@
 /**
- * J2D (jQuery Canvas Graphic Engine plugin)
+ * j2D (JavaScript 2D Engine)
  *
  * @authors DeVinterX, Skaner(j2Ds)
  * @license BSD
@@ -8,13 +8,13 @@
 
 (function (root, factory) {
     if (typeof define === 'function' && define.amd) {
-        define('nodes/BaseNode', ['jquery', 'utils/Vector2d', 'utils/UUID'], factory);
+        define('nodes/BaseNode', ['utils/ObjectUtil', 'utils/Vector2d', 'utils/UUID'], factory);
     } else if (typeof module === 'object' && typeof module.exports === 'object') {
-        module.exports = factory(require('jquery'), require('utils/Vector2d'), require('utils/UUID'));
+        module.exports = factory(require('utils/ObjectUtil'), require('utils/Vector2d'), require('utils/UUID'));
     } else {
-        factory(root.jQuery, root.j2d.utils.Vector2d, root.j2d.utils.UUID);
+        factory(root.j2d.utils.ObjectUtil, root.j2d.utils.Vector2d, root.j2d.utils.UUID);
     }
-}(typeof window !== 'undefined' ? window : global, function ($, Vector2d, UUID) {
+}(typeof window !== 'undefined' ? window : global, function (ObjectUtil, Vector2d, UUID) {
     "use strict";
 
     /**
@@ -28,7 +28,7 @@
      */
     var BaseNode = function (data) {
         var baseNode = this;
-        this.data = $.extend(true, {}, BaseNode.defaults, data);
+        this.data = ObjectUtil.extend(true, {}, BaseNode.defaults, data);
 
         if (this.data.id === null) {
             this.data.id = UUID.generate();
@@ -111,7 +111,7 @@
      * @param {BaseNode.defaults|Object} data
      */
     BaseNode.prototype.import = function (data) {
-        this.data = $.extend(true, {}, this.data, data);
+        this.data = ObjectUtil.extend(true, {}, this.data, data);
     };
 
     /**
@@ -219,6 +219,6 @@
     };
 
     if (typeof module === 'object' && typeof module.exports === 'object') module.exports.BaseNode = BaseNode;
-    if (global.j2d === undefined) global.j2d.nodes.BaseNode = BaseNode;
+    if (global.j2d !== undefined) global.j2d.nodes.BaseNode = BaseNode;
     return BaseNode;
 }));

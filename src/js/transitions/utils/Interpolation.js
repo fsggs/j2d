@@ -1,5 +1,5 @@
 /**
- * J2D (jQuery Canvas Graphic Engine plugin)
+ * j2D (JavaScript 2D Engine)
  *
  * @authors DeVinterX
  * @license BSD
@@ -143,6 +143,6 @@
     };
 
     if (typeof module === 'object' && typeof module.exports === 'object') module.exports.Interpolation = Interpolation;
-    if (global.j2d === undefined) global.j2d.transitions.utils.Interpolation = Interpolation;
+    if (global.j2d !== undefined) global.j2d.transitions.utils.Interpolation = Interpolation;
     return Interpolation;
 }));

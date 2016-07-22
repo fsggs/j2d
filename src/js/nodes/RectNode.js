@@ -1,5 +1,5 @@
 /**
- * J2D (jQuery Canvas Graphic Engine plugin)
+ * j2D (JavaScript 2D Engine)
  *
  * @authors DeVinterX, Skaner(j2Ds)
  * @license BSD
@@ -8,17 +8,17 @@
 
 (function (root, factory) {
     if (typeof define === 'function' && define.amd) {
-        define('nodes/RectNode', ['jquery', 'nodes/BaseNode', 'nodes/AnimatedNode', 'utils/MathUtil'], factory);
+        define('nodes/RectNode', ['utils/ObjectUtil', 'nodes/BaseNode', 'nodes/AnimatedNode', 'utils/MathUtil'], factory);
     } else if (typeof module === 'object' && typeof module.exports === 'object') {
         module.exports = factory(
-            require('jquery'),
+            require('utils/ObjectUtil'),
             require('nodes/BaseNode'),
             require('nodes/AnimatedNode'),
             require('utils/MathUtil'));
     } else {
-        factory(root.jQuery, root.j2d.nodes.BaseNode, root.j2d.nodes.AnimatedNode, root.j2d.utils.MathUtil);
+        factory(root.j2d.utils.ObjectUtil, root.j2d.nodes.BaseNode, root.j2d.nodes.AnimatedNode, root.j2d.utils.MathUtil);
     }
-}(typeof window !== 'undefined' ? window : global, function ($, BaseNode, AnimatedNode, MathUtil) {
+}(typeof window !== 'undefined' ? window : global, function (ObjectUtil, BaseNode, AnimatedNode, MathUtil) {
     "use strict";
 
     /**
@@ -31,7 +31,7 @@
      * @property {BaseNode.defaults|AnimatedNode.defaults|RectNode.defaults} data
      */
     var RectNode = function (data) {
-        AnimatedNode.call(this, $.extend(true, {}, RectNode.defaults, data));
+        AnimatedNode.call(this, ObjectUtil.extend(true, {}, RectNode.defaults, data));
     };
 
     RectNode.prototype = Object.create(AnimatedNode.prototype);
@@ -126,6 +126,6 @@
     };
 
     if (typeof module === 'object' && typeof module.exports === 'object') module.exports.RectNode = RectNode;
-    if (global.j2d === undefined) global.j2d.nodes.RectNode = RectNode;
+    if (global.j2d !== undefined) global.j2d.nodes.RectNode = RectNode;
     return RectNode;
 }));

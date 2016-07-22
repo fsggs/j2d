@@ -1,5 +1,5 @@
 /**
- * J2D (jQuery Canvas Graphic Engine plugin)
+ * j2D (JavaScript 2D Engine)
  *
  * @authors DeVinterX, Skaner(j2Ds)
  * @license BSD
@@ -45,6 +45,6 @@
     InvalidArgumentException.prototype.constructor = InvalidArgumentException;
 
     if (typeof module === 'object' && typeof module.exports === 'object') module.exports.InvalidArgumentException = InvalidArgumentException;
-    if (global.j2d === undefined) global.j2d.exceptions.InvalidArgumentException = InvalidArgumentException;
+    if (global.j2d !== undefined) global.j2d.exceptions.InvalidArgumentException = InvalidArgumentException;
     return InvalidArgumentException;
 }));

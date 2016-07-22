@@ -1,5 +1,5 @@
 /**
- * J2D (jQuery Canvas Graphic Engine plugin)
+ * j2D (JavaScript 2D Engine)
  *
  * @authors DeVinterX, Skaner(j2Ds)
  * @license BSD
@@ -12,15 +12,16 @@ requirejs.config({
     baseUrl: "js/",
     paths: {
         'jquery': '../vendor/jquery.min',
-        'jquery.j2d': 'jquery.j2d.min'
+        'j2d': 'j2d.min'
     },
     bundles: {
-        'jquery.j2d.min': [
+        'j2d.min': [
             // jQuery plugin
-            'jquery.j2d',
+            'j2d',
 
             // Core
             'core/FrameManager',
+            'core/GameStatesManager',
             'core/LayersManager',
             'core/SceneManager',
             'core/ViewportManager',
@@ -43,6 +44,9 @@ requirejs.config({
             'io/InputManager',
             'io/MediaManager',
 
+            //Loaders
+            'loaders/AssetsLoader',
+
             // Media
             'media/Audio',
             'media/Sound',
@@ -50,15 +54,27 @@ requirejs.config({
 
             // Nodes
             'nodes/BaseNode',
+            'nodes/AnimatedNode',
             'nodes/CameraNode',
             'nodes/CollectionNode',
             'nodes/RectNode',
+
+            //States
+            'states/BaseGameState',
+            'states/DefaultGameState',
+
+            //Transitions
+            'transitions/Tween',
+            'transitions/utils/Easing',
+            'transitions/utils/Interpolation',
 
             // Utils
             'utils/ArrayMap',
             'utils/DeviceUtil',
             'utils/Events',
             'utils/MathUtil',
+            'utils/ObjectUtil',
+            'utils/SystemConsole',
             'utils/UUID',
             'utils/Vector2d',
             'utils/Vector2dInteger'
@@ -68,17 +84,19 @@ requirejs.config({
 
 define(function (require) {
     var $ = require('jquery'),
-        J2D = require('jquery.j2d'),
+        EngineJ2D = require('j2d'),
         Vector2d = require('utils/Vector2d'),
         RectNode = require('nodes/RectNode'),
+        BaseGameState = require('states/BaseGameState'),
         Camera = require('nodes/CameraNode');
 
     $(window.document).ready(function () {
-        var j2d = global.j2d = $('#j2d').j2d();
+        var j2d = global.j2d_engine = $('#j2d_engine').j2d();
         j2d.smoothing = false;
 
         /* Managers */
         var scene = j2d.getSceneManager();
+        var gsm = j2d.getGameStatesManager();
 
         /* Nodes */
         /** @type {BaseNode|RectNode} */
@@ -122,6 +140,9 @@ define(function (require) {
             };
         };
 
+        GameState.prototype = Object.create(BaseGameState.prototype);
+        GameState.prototype.constructor = GameState;
+
         // Fix for Camera
         $(window).on('resize', function () {
             width = j2d.element.width();
@@ -132,6 +153,8 @@ define(function (require) {
             width: width,
             height: height,
             backgroundColor: 'black'
-        }).setGameState(GameState).start();
+        }).start();
+
+        gsm.add(new GameState(), 'myGame');
     });
 });

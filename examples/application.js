@@ -9,7 +9,7 @@ requirejs.config({
 
 define('Application', [
         'jquery',
-        'jquery.j2d',
+        'j2d',
         'io/InputManager',
         'io/MediaManager',
         'utils/Vector2d',
@@ -20,7 +20,7 @@ define('Application', [
     ],
     /**
      * @param {Function|jQuery} $
-     * @param {Function|J2D} J2D
+     * @param {Function|EngineJ2D} EngineJ2D
      * @param {Function|InputManager} IO
      * @param {Function|MediaManager} MediaManager
      * @param {Function|Vector2d} Vector2d
@@ -29,12 +29,12 @@ define('Application', [
      * @param {Function|Tween} Tween,
      * @param {Function|BaseGameState} BaseGameState
      */
-    function ($, J2D, IO, MediaManager, Vector2d, RectNode, Camera, Tween, BaseGameState) {
+    function ($, EngineJ2D, IO, MediaManager, Vector2d, RectNode, Camera, Tween, BaseGameState) {
         "use strict";
 
         $(global.document).ready(function () {
-            /** @type J2D */
-            var j2d = global.j2d = $('#j2d').j2d();
+            /** @type EngineJ2D */
+            var j2d = global.j2d_engine = $('#j2d_engine').j2d();
             j2d.smoothing = false;
             //j2d.WebGL = true;
 
@@ -78,6 +78,11 @@ define('Application', [
                 // var ts = true;
 
                 this.init = function (data) {
+                    // this.loader = new AssetLoader({
+                    //     'image': ['assets/image.png', Texture],
+                    //     'sound': ['assets/sound.ogg', Sound]
+                    // });
+
                     /* Nodes */
                     /** @type {BaseNode|AnimatedNode|RectNode} */
                     this.rectangle1 = (new RectNode({color: 'yellow'}))

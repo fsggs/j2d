@@ -1,5 +1,5 @@
 /**
- * J2D (jQuery Canvas Graphic Engine plugin)
+ * j2D (JavaScript 2D Engine)
  *
  * @authors DeVinterX
  * @license BSD
@@ -397,6 +397,6 @@
     };
 
     if (typeof module === 'object' && typeof module.exports === 'object') module.exports.Easing = Easing;
-    if (global.j2d === undefined) global.j2d.transitions.utils.Easing = Easing;
+    if (global.j2d !== undefined) global.j2d.transitions.utils.Easing = Easing;
     return Easing;
 }));

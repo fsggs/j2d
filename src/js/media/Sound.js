@@ -1,5 +1,5 @@
 /**
- * J2D (jQuery Canvas Graphic Engine plugin)
+ * j2D (JavaScript 2D Engine)
  *
  * @authors DeVinterX, James Simpson of GoldFire Studios(howler.js)
  * @original_source https://github.com/goldfire/howler.js/blob/master/howler.js
@@ -9,13 +9,13 @@
 
 (function (root, factory) {
     if (typeof define === 'function' && define.amd) {
-        define('media/Sound', ['utils/UUID', 'utils/Events', 'media/Audio'], factory);
+        define('media/Sound', ['utils/ObjectUtil', 'utils/UUID', 'utils/Events', 'media/Audio'], factory);
     } else if (typeof module === 'object' && typeof module.exports === 'object') {
-        module.exports = factory(require('utils/UUID'), require('utils/Events'), require('media/Audio'));
+        module.exports = factory(require('utils/ObjectUtil'), require('utils/UUID'), require('utils/Events'), require('media/Audio'));
     } else {
-        factory(root.UUID, root.Events, root.Audio);
+        factory(root.j2d.utils.ObjectUtil, root.UUID, root.Events, root.Audio);
     }
-}(typeof window !== 'undefined' ? window : global, function (UUID, Events, Audio) {
+}(typeof window !== 'undefined' ? window : global, function (ObjectUtil, UUID, Events, Audio) {
     "use strict";
 
     var cache = {};
@@ -49,7 +49,7 @@
 
         sound.manager = manager;
         sound.events = !!sound.manager ? sound.manager.events : new Events();
-        sound.data = $.extend(true, {}, Sound.defaults, data);
+        sound.data = ObjectUtil.extend(true, {}, Sound.defaults, data);
         sound.audioNode = [];
         audioContext = manager
             ? manager.getAudioContext()
@@ -412,6 +412,6 @@
     };
 
     if (typeof module === 'object' && typeof module.exports === 'object') module.exports.Sound = Sound;
-    if (global.j2d === undefined) global.j2d.media.Sound = Sound;
+    if (global.j2d !== undefined) global.j2d.media.Sound = Sound;
     return Sound;
 }));

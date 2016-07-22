@@ -1,5 +1,5 @@
 /**
- * J2D (jQuery Canvas Graphic Engine plugin)
+ * j2D (JavaScript 2D Engine)
  *
  * @authors DeVinterX, Skaner(j2Ds)
  * @license BSD
@@ -9,25 +9,25 @@
 (function (root, factory) {
     if (typeof define === 'function' && define.amd) {
         define('core/SceneManager', [
-            'jquery',
+            'utils/ObjectUtil',
             'core/WebGL2D',
             'core/FrameManager',
             'core/ViewportManager',
             'core/LayersManager',
-            'states/GameStatesManager'
+            'core/GameStatesManager'
         ], factory);
     } else if (typeof module === 'object' && typeof module.exports === 'object') {
         module.exports = factory(
-            require('jquery'),
+            require('utils/ObjectUtil'),
             require('core/WebGL2D'),
             require('core/FrameManager'),
             require('core/ViewportManager'),
             require('core/LayersManager'),
-            require('states/GameStatesManager')
+            require('core/GameStatesManager')
         );
     } else {
         factory(
-            root.jQuery,
+            root.j2d.utils.ObjectUtil,
             root.WebGL2D,
             root.j2d.core.FrameManager,
             root.j2d.core.ViewportManager,
@@ -35,14 +35,14 @@
             root.j2d.states.GameStatesManager
         );
     }
-}(typeof window !== 'undefined' ? window : global, function ($, WebGL2D, FrameManager, ViewportManager, LayersManager, GameStatesManager) {
+}(typeof window !== 'undefined' ? window : global, function (ObjectUtil, WebGL2D, FrameManager, ViewportManager, LayersManager, GameStatesManager) {
     "use strict";
 
     /**
      * @class SceneManager
      * @exports module:core/SceneManager
      *
-     * @param {J2D} j2d
+     * @param {EngineJ2D} j2d
      * @constructor
      *
      * @property {SceneManager.defaults} data
@@ -59,7 +59,7 @@
         this.setGameCallback = this.setGameCallback.bind(this);
         this.start = this.start.bind(this);
 
-        /** @type J2D */
+        /** @type EngineJ2D */
         this.j2d = j2d;
 
         /** @type {HTMLCanvasElement} */
@@ -176,7 +176,7 @@
      * @returns {SceneManager}
      */
     SceneManager.prototype.init = function (options) {
-        this.data = $.extend(true, {}, SceneManager.defaults, options);
+        this.data = ObjectUtil.extend(true, {}, SceneManager.defaults, options);
 
         this.j2d.trigger('beforeInit');
 
@@ -223,7 +223,7 @@
      * @returns {SceneManager}
      */
     SceneManager.prototype.initCanvas = function () {
-        if ($(this.j2d.element.selector + ' canvas').length === 0) {
+        if (document.querySelectorAll('.j2d[guid="' + this.j2d.data.id + '"] canvas').length === 0) {
             this.canvas = document.createElement('canvas');
 
             this.canvas.width = this.data.width;
@@ -300,7 +300,7 @@
      */
     SceneManager.prototype.setGameCallback = function (gameState) {
         var sceneManager = this;
-        sceneManager.data.gameState = gameState || 'initJ2D';
+        sceneManager.data.gameState = gameState || 'init_j2d';
         sceneManager.frameManager.stop(sceneManager.j2d.data.id);
 
         var gameConstructor = sceneManager.patchGameStateRender(
@@ -417,8 +417,6 @@
      * @returns {SceneManager}
      */
     SceneManager.prototype.resizeToFullPage = function (fullscreen) {
-        $('div.canvas[guid]:not(.active)').toggle(fullscreen);
-
         var j2d = this.j2d;
         var sceneManager = this;
 
@@ -462,7 +460,7 @@
     };
 
     /**
-     * @param {J2D} j2d
+     * @param {EngineJ2D} j2d
      * @param {{fullscreen: boolean}} data
      * @returns {SceneManager}
      */
@@ -569,6 +567,6 @@
     };
 
     if (typeof module === 'object' && typeof module.exports === 'object') module.exports.SceneManager = SceneManager;
-    if (global.j2d === undefined) global.j2d.core.SceneManager = SceneManager;
+    if (global.j2d !== undefined) global.j2d.core.SceneManager = SceneManager;
     return SceneManager;
 }));

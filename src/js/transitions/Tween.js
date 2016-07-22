@@ -1,5 +1,5 @@
 /**
- * J2D (jQuery Canvas Graphic Engine plugin)
+ * j2D (JavaScript 2D Engine)
  *
  * @authors DeVinterX
  * @license BSD
@@ -17,7 +17,7 @@
 (function (root, factory) {
     if (typeof define === 'function' && define.amd) {
         define('transitions/Tween', [
-            'jquery',
+            'utils/ObjectUtil',
             'nodes/BaseNode',
             'utils/Events',
             'transitions/utils/Easing',
@@ -25,7 +25,7 @@
         ], factory);
     } else if (typeof module === 'object' && typeof module.exports === 'object') {
         module.exports = factory(
-            require('jquery'),
+            require('utils/ObjectUtil'),
             require('nodes/BaseNode'),
             require('utils/Events'),
             require('transitions/utils/Easing'),
@@ -33,14 +33,14 @@
         );
     } else {
         factory(
-            root.jQuery,
+            root.j2d.utils.ObjectUtil,
             root.j2d.nodes.BaseNode,
             root.j2d.utils.Events,
             root.j2d.transitions.utils.Easing,
             root.j2d.transitions.utils.Interpolation
         );
     }
-}(typeof window !== 'undefined' ? window : global, function ($, BaseNode, Events, Easing, Interpolation) {
+}(typeof window !== 'undefined' ? window : global, function (ObjectUtil, BaseNode, Events, Easing, Interpolation) {
     "use strict";
 
     var tweens = [];
@@ -56,7 +56,7 @@
      */
     var Tween = function (tweenNode, data) {
         var tween = this;
-        tween.data = $.extend(true, {}, Tween.defaults, data);
+        tween.data = ObjectUtil.extend(true, {}, Tween.defaults, data);
         tween.node = tweenNode;
         tween.events = new Events();
 
@@ -97,7 +97,7 @@
      */
     var tweenStateData = function (data) {
         return (data !== undefined && typeof data === 'object')
-            ? $.extend(true, {}, Tween.stateDefaults, data)
+            ? ObjectUtil.extend(true, {}, Tween.stateDefaults, data)
             : Tween.stateDefaults;
     };
 
@@ -290,7 +290,7 @@
         parsedTweenStateStack.shift();
         parsedTweenStateStack.forEach(function (value) {
             if (typeof value[0] === 'object' && !(value[0] instanceof Array)) {
-                result.push([Tween.util.calculateProperties(result[index][0], $.extend(true, {}, result[index][0], value[0])), value[1]]);
+                result.push([Tween.util.calculateProperties(result[index][0], ObjectUtil.extend(true, {}, result[index][0], value[0])), value[1]]);
                 index++;
             }
         });
@@ -625,6 +625,6 @@
     };
 
     if (typeof module === 'object' && typeof module.exports === 'object') module.exports.Tween = Tween;
-    if (global.j2d === undefined) global.j2d.transitions.Tween = Tween;
+    if (global.j2d !== undefined) global.j2d.transitions.Tween = Tween;
     return Tween;
 }));

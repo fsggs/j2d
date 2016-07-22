@@ -1,5 +1,5 @@
 /**
- * J2D (jQuery Canvas Graphic Engine plugin)
+ * j2D (JavaScript 2D Engine)
  *
  * @authors DeVinterX, Skaner(j2Ds)
  * @license BSD
@@ -21,7 +21,7 @@
      * @class InputManager
      * @exports module:io/InputManager
      * 
-     * @param {J2D} j2d
+     * @param {EngineJ2D} j2d
      * @constructor
      *
      * @type {InputManager.key} key
@@ -714,6 +714,6 @@
     }
 
     if (typeof module === 'object' && typeof module.exports === 'object') module.exports.InputManager = InputManager;
-    if (global.j2d === undefined) global.j2d.io.InputManager = InputManager;
+    if (global.j2d !== undefined) global.j2d.io.InputManager = InputManager;
     return InputManager;
 }));

@@ -1,5 +1,5 @@
-<img src="https://github.com/fsggs/jquery.j2d/blob/0.2.0-dev/src/img/logo.png?raw=true" align="left" width="80"/>
-<h1 align="left">jQuery.j2d <a href="https://www.versioneye.com/user/projects/56afa5f63d82b9003761dfc8">
+<img src="https://github.com/fsggs/j2d/blob/0.2.0-dev/src/img/logo.png?raw=true" align="left" width="80"/>
+<h1 align="left">j2D <a href="https://www.versioneye.com/user/projects/56afa5f63d82b9003761dfc8">
     <img src="https://www.versioneye.com/user/projects/56afa5f63d82b9003761dfc8/badge.svg?style=flat"/></a></h1>
 
 
@@ -38,7 +38,7 @@ SceneManager
     * [.init(options)](#core/SceneManager+init) ⇒ <code>SceneManager</code>
     * [.initCanvas()](#core/SceneManager+initCanvas) ⇒ <code>SceneManager</code>
     * [.initLayers()](#core/SceneManager+initLayers) ⇒ <code>SceneManager</code>
-    * [.j2d](#core/SceneManager+j2d) : <code>J2D</code>
+    * [.j2d](#core/SceneManager+j2d) : <code>EngineJ2D</code>
     * [.layersManager](#core/SceneManager+layersManager) : <code>LayersManager</code>
     * [.patchGameStateRender(state)](#core/SceneManager+patchGameStateRender) ⇒ <code>function</code>
     * [.registerCamera(node)](#core/SceneManager+registerCamera) ⇒ <code>SceneManager</code>
@@ -59,7 +59,7 @@ SceneManager
 
 | Param | Type |
 | --- | --- |
-| j2d | <code>J2D</code> | 
+| j2d | <code>EngineJ2D</code> | 
 
 <a name="core/SceneManager+add"></a>
 
@@ -143,7 +143,7 @@ SceneManager
 **Kind**: instance method of <code>[core/SceneManager](#core/SceneManager)</code>  
 <a name="core/SceneManager+j2d"></a>
 
-### core/SceneManager.j2d : <code>J2D</code>
+### core/SceneManager.j2d : <code>EngineJ2D</code>
 **Kind**: instance property of <code>[core/SceneManager](#core/SceneManager)</code>  
 <a name="core/SceneManager+layersManager"></a>
 
@@ -231,7 +231,7 @@ TODO:: refactor this
 
 | Param | Type |
 | --- | --- |
-| j2d | <code>J2D</code> | 
+| j2d | <code>EngineJ2D</code> | 
 | data | <code>Object</code> | 
 
 <a name="core/SceneManager+updateViewport"></a>
@@ -250,5 +250,5 @@ TODO:: refactor this
 
 ## License
 
-BSD. © 2015 Dimitriy Kalugin, Zlib. © 2015 Нагель Петр
+BSD. © 2015-2016 Dimitriy Kalugin, Zlib. © 2015-2016 Нагель Петр
 

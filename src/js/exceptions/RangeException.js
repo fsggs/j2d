@@ -1,5 +1,5 @@
 /**
- * J2D (jQuery Canvas Graphic Engine plugin)
+ * j2D (JavaScript 2D Engine)
  *
  * @authors DeVinterX, Skaner(j2Ds)
  * @license BSD
@@ -45,6 +45,6 @@
     RangeException.prototype.constructor = RangeException;
 
     if (typeof module === 'object' && typeof module.exports === 'object') module.exports.RangeException = RangeException;
-    if (global.j2d === undefined) global.j2d.exceptions.RangeException = RangeException;
+    if (global.j2d !== undefined) global.j2d.exceptions.RangeException = RangeException;
     return RangeException;
 }));

@@ -1,5 +1,5 @@
 /**
- * J2D (jQuery Canvas Graphic Engine plugin)
+ * j2D (JavaScript 2D Engine)
  *
  * @authors DeVinterX, Skaner(j2Ds)
  * @license BSD
@@ -203,7 +203,7 @@
          * @returns {FrameManager}
          */
         FrameManager.Init = function () {
-            if (global.J2D !== undefined) {
+            if (global.j2d !== undefined) {
                 return global.instanceFrameManager || (global.instanceFrameManager = new FrameManager());
             } else {
                 return instance || (instance = new FrameManager());
@@ -211,7 +211,7 @@
         };
 
         if (typeof module === 'object' && typeof module.exports === 'object') module.exports.FrameManager = FrameManager;
-        if (global.j2d === undefined) global.j2d.core.FrameManager = FrameManager;
+        if (global.j2d !== undefined) global.j2d.core.FrameManager = FrameManager;
         return FrameManager;
     }
 ));

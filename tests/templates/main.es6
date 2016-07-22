@@ -1,6 +1,6 @@
 import $ from 'jquery';
 import {
-    J2D,
+    EngineJ2D,
     IO,
     MediaManager,
     Vector2d,
@@ -8,10 +8,10 @@ import {
     Camera,
     Tween,
     BaseGameState
-} from 'jquery.j2d';
+} from 'j2d'
 
 $(document).ready(() => {
-    /** @type J2D */
+    /** @type EngineJ2D */
     var j2d = global.j2d = $('#j2d').j2d();
     j2d.smoothing = false;
     //j2d.WebGL = true;

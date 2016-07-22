@@ -1,5 +1,5 @@
 /**
- * J2D (jQuery Canvas Graphic Engine plugin)
+ * j2D (JavaScript 2D Engine)
  *
  * @authors DeVinterX, James Simpson of GoldFire Studios(howler.js)
  * @original_source https://github.com/goldfire/howler.js/blob/master/howler.js
@@ -10,7 +10,7 @@
 (function (root, factory) {
     if (typeof define === 'function' && define.amd) {
         define('io/MediaManager', [
-            'jquery',
+            'utils/ObjectUtil',
             'utils/ArrayMap',
             'utils/Events',
             'media/Audio',
@@ -18,7 +18,7 @@
         ], factory);
     } else if (typeof module === 'object' && typeof module.exports === 'object') {
         module.exports = factory(
-            require('jquery'),
+            require('utils/ObjectUtil'),
             require('utils/ArrayMap'),
             require('utils/Events'),
             require('media/Audio'),
@@ -26,14 +26,14 @@
         );
     } else {
         factory(
-            root.jQuery,
+            root.j2d.utils.ObjectUtil,
             root.j2d.utils.ArrayMap,
             root.j2d.utils.Events,
             root.j2d.media.Audio,
             root.j2d.media.Sound
         );
     }
-}(typeof window !== 'undefined' ? window : global, function ($, ArrayMap, Events, Audio, Sound) {
+}(typeof window !== 'undefined' ? window : global, function (ObjectUtil, ArrayMap, Events, Audio, Sound) {
     "use strict";
 
     var AudioNode = global.Audio;
@@ -69,7 +69,7 @@
      * @class MediaManager
      * @exports module:io/MediaManager
      *
-     * @param {J2D} j2d
+     * @param {EngineJ2D} j2d
      * @param {MediaManager.defaults|Object|undefined} [data]
      * @constructor
      */
@@ -77,7 +77,7 @@
         if (data === undefined) data = {};
         var soundManager = this;
         this.j2d = j2d;
-        this.data = $.extend(true, {}, MediaManager.defaults, data);
+        this.data = ObjectUtil.extend(true, {}, MediaManager.defaults, data);
         this.events = new Events();
         this.media = new ArrayMap();
 
@@ -279,6 +279,6 @@
     };
 
     if (typeof module === 'object' && typeof module.exports === 'object') module.exports.MediaManager = MediaManager;
-    if (global.j2d === undefined) global.j2d.io.MediaManager = MediaManager;
+    if (global.j2d !== undefined) global.j2d.io.MediaManager = MediaManager;
     return MediaManager;
 }));

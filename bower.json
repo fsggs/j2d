@@ -1,13 +1,13 @@
 {
-  "name": "jquery.j2d",
+  "name": "j2d",
   "version": "0.2.0-dev",
-  "homepage": "https://github.com/fsggs/jquery.j2d",
+  "homepage": "https://github.com/fsggs/j2d",
   "authors": [
     "DeVinterX",
     "Skaner(j2Ds)"
   ],
-  "description": "jQuery Canvas Graphic Engine plugin.",
-  "main": "dist/js/jquery.j2d.js",
+  "description": "JavaScript 2D Engine.",
+  "main": "dist/js/j2d.js",
   "moduleType": [
     "amd"
   ],
@@ -18,8 +18,7 @@
     "canvas",
     "webgl",
     "jquery",
-    "j2d",
-    "j2Ds"
+    "j2d"
   ],
   "license": [
     "BSD-4-Clause"
@@ -39,6 +38,6 @@
   },
   "repository": {
     "type": "git",
-    "url": "git://github.com/fsggs/jquery.j2d.git"
+    "url": "git://github.com/fsggs/j2d.git"
   }
 }

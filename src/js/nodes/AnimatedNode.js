@@ -1,5 +1,5 @@
 /**
- * J2D (jQuery Canvas Graphic Engine plugin)
+ * j2D (JavaScript 2D Engine)
  *
  * @authors DeVinterX, Skaner(j2Ds)
  * @license BSD
@@ -11,27 +11,27 @@
 (function (root, factory) {
     if (typeof define === 'function' && define.amd) {
         define('nodes/AnimatedNode', [
-            'jquery',
+            'utils/ObjectUtil',
             'nodes/BaseNode',
             'utils/Vector2d',
             'transitions/Tween'
         ], factory);
     } else if (typeof module === 'object' && typeof module.exports === 'object') {
         module.exports = factory(
-            require('jquery'),
+            require('utils/ObjectUtil'),
             require('nodes/BaseNode'),
             require('utils/Vector2d'),
             require('transitions/Tween')
         );
     } else {
         factory(
-            root.jQuery,
+            root.j2d.utils.ObjectUtil,
             root.j2d.nodes.BaseNode,
             root.j2d.utils.Vector2d,
             root.j2d.transitions.Tween
         );
     }
-}(typeof window !== 'undefined' ? window : global, function ($, BaseNode, Vector2d, Tween) {
+}(typeof window !== 'undefined' ? window : global, function (ObjectUtil, BaseNode, Vector2d, Tween) {
     "use strict";
 
     /**
@@ -45,7 +45,7 @@
      * @property {BaseNode.defaults|AnimatedNode.defaults} data
      */
     var AnimatedNode = function (data) {
-        BaseNode.call(this, $.extend(true, {}, AnimatedNode.defaults, data));
+        BaseNode.call(this, ObjectUtil.extend(true, {}, AnimatedNode.defaults, data));
     };
 
     AnimatedNode.prototype = Object.create(BaseNode.prototype);
@@ -148,6 +148,6 @@
     };
 
     if (typeof module === 'object' && typeof module.exports === 'object') module.exports.AnimatedNode = AnimatedNode;
-    if (global.j2d === undefined) global.j2d.nodes.AnimatedNode = AnimatedNode;
+    if (global.j2d !== undefined) global.j2d.nodes.AnimatedNode = AnimatedNode;
     return AnimatedNode;
 }));
