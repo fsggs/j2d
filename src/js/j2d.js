@@ -268,37 +268,17 @@
             (new RegExp('(^| )' + className + '( |$)', 'gi').test(element.className));
     };
 
-    var getSelector = function (element) {
-        var pieces = [];
-
-        for (; element && element.tagName !== undefined; element = element.parentNode) {
-            if (element.className) {
-                var classes = element.className.split(' ');
-                for (var i in classes) {
-                    if (classes.hasOwnProperty(i) && classes[i]) {
-                        pieces.unshift(classes[i]);
-                        pieces.unshift('.');
-                    }
-                }
-            }
-            if (element.id && !/\s/.test(element.id)) {
-                pieces.unshift(element.id);
-                pieces.unshift('#');
-            }
-            pieces.unshift(element.tagName);
-            pieces.unshift(' > ');
-        }
-        return pieces.slice(1).join('');
-    };
-
     /**
+     * @name EngineJ2D
+     * @static
+     *
      * @param {string|jQuery} selected
      * @param {EngineJ2D.defaults|Object} options
      *
      * @returns {EngineJ2D|EngineJ2D[]|Array.<EngineJ2D>}
      */
     EngineJ2D.initEngine = function (selected, options) {
-        var nodes;
+        var nodes = [];
         if (typeof selected === 'string') {
             nodes = global.document.querySelectorAll(selected);
         } else if (typeof selected === 'object' && selected instanceof jQuery) {
@@ -306,7 +286,7 @@
         } else return null;
 
         var inactiveNodes = [];
-        nodes.forEach(function (node) {
+        Array.prototype.forEach.call(nodes, function (node) {
             if (!node.hasAttribute('guid')) inactiveNodes.push(node)
         });
 
@@ -341,11 +321,12 @@
 
         var activeNodes = [];
         nodes = global.document.querySelectorAll('.j2d[guid]');
-        nodes.forEach(function (node) {
+        Array.prototype.forEach.call(nodes, function (node) {
             activeNodes.push(EngineJ2D.stack.get(node.getAttribute('guid')))
         });
         return (1 === activeNodes.length) ? activeNodes[0] : activeNodes;
     };
+    EngineJ2D.prototype.initEngine = EngineJ2D.initEngine;
 
     /* ------------------------------ Plugin ------------------------------ */
 
@@ -354,6 +335,7 @@
         global.j2dPlugin = {pluginInit: true, stack: new ArrayMap()};
 
         (new Log()).logSystem('j2D v.' + EngineJ2D.VERSION, 'https://github.com/fsggs/j2d');
+
         /**
          * @param {EngineJ2D.defaults} [options]
          * @returns {EngineJ2D|EngineJ2D[]|Array.<EngineJ2D>}

@@ -34,8 +34,8 @@ define('Application', [
 
         $(global.document).ready(function () {
             /** @type EngineJ2D */
-            var j2d = global.j2d_engine = $('#j2d_engine').j2d();
-            //var j2d = global.j2d_engine = EngineJ2D.initEngine('#j2d_engine');
+            //var j2d = global.j2d_engine = $('#j2d_engine').j2d();
+            var j2d = global.j2d_engine = EngineJ2D.initEngine('#j2d_engine');
 
             j2d.smoothing = false;
             //j2d.WebGL = true;

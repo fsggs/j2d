@@ -11,6 +11,8 @@
 
 * [j2d](#module_j2d)
     * [EngineJ2D](#exp_module_j2d--EngineJ2D) ⏏
+        * _static_
+            * [.EngineJ2D](#module_j2d--EngineJ2D.EngineJ2D) ⇒ <code>EngineJ2D</code> &#124; <code>Array.&lt;EngineJ2D&gt;</code> &#124; <code>Array.&lt;EngineJ2D&gt;</code>
         * [new EngineJ2D(element, data)](#new_module_j2d--EngineJ2D_new)
         * _instance_
             * [.Log](#module_j2d--EngineJ2D+Log) : <code>SystemConsole</code>
@@ -22,9 +24,6 @@
             * [.getLayersManager()](#module_j2d--EngineJ2D+getLayersManager) ⇒ <code>LayersManager</code>
             * [.getSceneManager()](#module_j2d--EngineJ2D+getSceneManager) ⇒ <code>SceneManager</code>
             * [.getViewportManager()](#module_j2d--EngineJ2D+getViewportManager) ⇒ <code>ViewportManager</code>
-        * _static_
-            * [.initEngine(selected, options)](#module_j2d--EngineJ2D.initEngine) ⇒ <code>EngineJ2D</code> &#124; <code>Array.&lt;EngineJ2D&gt;</code> &#124; <code>Array.&lt;EngineJ2D&gt;</code>
-        * _instance_
             * [.scene](#module_j2d--EngineJ2D+scene) : <code>SceneManager</code>
         * _static_
             * [.stack](#module_j2d--EngineJ2D.stack) : <code>Array.&lt;EngineJ2D&gt;</code> &#124; <code>ArrayMap.&lt;EngineJ2D&gt;</code>
@@ -49,6 +48,16 @@ EngineJ2D
 | io | <code>InputManager</code> &#124; <code>null</code> |  |
 | media | <code>MediaManager</code> &#124; <code>null</code> |  |
 | isPlay | <code>boolean</code> |  |
+
+<a name="module_j2d--EngineJ2D.EngineJ2D"></a>
+
+#### EngineJ2D.EngineJ2D ⇒ <code>EngineJ2D</code> &#124; <code>Array.&lt;EngineJ2D&gt;</code> &#124; <code>Array.&lt;EngineJ2D&gt;</code>
+**Kind**: static property of <code>[EngineJ2D](#exp_module_j2d--EngineJ2D)</code>  
+
+| Param | Type |
+| --- | --- |
+| selected | <code>string</code> &#124; <code>jQuery</code> | 
+| options | <code>EngineJ2D.defaults</code> &#124; <code>Object</code> | 
 
 <a name="new_module_j2d--EngineJ2D_new"></a>
 
@@ -95,16 +104,6 @@ EngineJ2D
 
 #### engineJ2D.getViewportManager() ⇒ <code>ViewportManager</code>
 **Kind**: instance method of <code>[EngineJ2D](#exp_module_j2d--EngineJ2D)</code>  
-<a name="module_j2d--EngineJ2D.initEngine"></a>
-
-#### EngineJ2D.initEngine(selected, options) ⇒ <code>EngineJ2D</code> &#124; <code>Array.&lt;EngineJ2D&gt;</code> &#124; <code>Array.&lt;EngineJ2D&gt;</code>
-**Kind**: static method of <code>[EngineJ2D](#exp_module_j2d--EngineJ2D)</code>  
-
-| Param | Type |
-| --- | --- |
-| selected | <code>string</code> &#124; <code>jQuery</code> | 
-| options | <code>EngineJ2D.defaults</code> &#124; <code>Object</code> | 
-
 <a name="module_j2d--EngineJ2D+scene"></a>
 
 #### engineJ2D.scene : <code>SceneManager</code>
