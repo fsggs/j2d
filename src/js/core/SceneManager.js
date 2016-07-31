@@ -182,9 +182,10 @@
 
         this.data.originalWidth = this.data.width;
         this.data.originalHeight = this.data.height;
-        this.data.originalMargin = this.j2d.element.css('margin');
+        this.data.originalMargin = getComputedStyle(this.j2d.element)['margin'];
 
-        this.j2d.element.width(this.data.width).height(this.data.height);
+        this.j2d.element.style.width = this.data.width + 'px';
+        this.j2d.element.style.height = this.data.height + 'px';
 
         this.initCanvas();
 
@@ -251,7 +252,7 @@
             if (this.data.visible) this.visible = this.data.visible;
             if (this.data.zIndex) this.zIndex = 1000 - this.data.zIndex;
 
-            this.j2d.element.append(this.canvas);
+            this.j2d.element.appendChild(this.canvas);
         }
         return this;
     };
@@ -427,10 +428,9 @@
             sceneManager.resize(j2d.device.width, j2d.device.height);
             sceneManager.data.enableFullscreen = true;
 
-            j2d.element
-                .width(j2d.device.width)
-                .height(j2d.device.height)
-                .css('margin', 0);
+            j2d.element.style.width = j2d.device.width + 'px';
+            j2d.element.style.height = j2d.device.height + 'px';
+            j2d.element.style.margin = 0;
 
             sceneManager.viewportManager.setScreen({
                 x: j2d.device.width,
@@ -443,10 +443,9 @@
             sceneManager.resize(sceneManager.data.originalWidth, sceneManager.data.originalHeight);
             sceneManager.data.enableFullscreen = false;
 
-            j2d.element
-                .width(sceneManager.data.originalWidth)
-                .height(sceneManager.data.originalHeight)
-                .css('margin', sceneManager.data.originalMargin);
+            j2d.element.style.width = sceneManager.data.originalWidth + 'px';
+            j2d.element.style.height = sceneManager.data.originalHeight + 'px';
+            j2d.element.style.margin = sceneManager.data.originalMargin;
 
             sceneManager.viewportManager.setScreen({
                 x: sceneManager.data.originalWidth,

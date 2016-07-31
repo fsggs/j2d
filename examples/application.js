@@ -35,21 +35,23 @@ define('Application', [
         $(global.document).ready(function () {
             /** @type EngineJ2D */
             var j2d = global.j2d_engine = $('#j2d_engine').j2d();
+            //var j2d = global.j2d_engine = EngineJ2D.initEngine('#j2d_engine');
+
             j2d.smoothing = false;
             //j2d.WebGL = true;
 
-            j2d.io = new IO(j2d);
-            j2d.io.toggleCursor(true); // enable cursor
+            //j2d.io = new IO(j2d);
+            //j2d.io.toggleCursor(true); // enable cursor
 
-            j2d.io.setKeys({
-                ACTION: [IO.key.KEY_MOUSE_LEFT, true],
-                ALT_ACTION: [IO.key.KEY_MOUSE_RIGHT, true], // disable context menu
-
-                MOVE_UP: [IO.key.KEY_W, true],
-                MOVE_DOWN: [IO.key.KEY_S, true],
-                MOVE_LEFT: [IO.key.KEY_A, true],
-                MOVE_RIGHT: [IO.key.KEY_D, true]
-            });
+            // j2d.io.setKeys({
+            //     ACTION: [IO.key.KEY_MOUSE_LEFT, true],
+            //     ALT_ACTION: [IO.key.KEY_MOUSE_RIGHT, true], // disable context menu
+            //
+            //     MOVE_UP: [IO.key.KEY_W, true],
+            //     MOVE_DOWN: [IO.key.KEY_S, true],
+            //     MOVE_LEFT: [IO.key.KEY_A, true],
+            //     MOVE_RIGHT: [IO.key.KEY_D, true]
+            // });
 
             j2d.media = new MediaManager(j2d);
 
@@ -116,26 +118,26 @@ define('Application', [
 
                 this.update = function (timestamp, data) {
                     time = timestamp;
-                    if (j2d.io.checkPressedKeyMap('ACTION')) {
-                        new Tween(this.rectangle1)
-                            .to({
-                                position: {
-                                    x: '60'
-                                }
-                            })
-                            .to({
-                                position: {
-                                    y: '40'
-                                }
-                            })
-                            .to({
-                                position: {
-                                    x: '-60'
-                                }
-                            })
-                            .reverseAll()
-                            .start(timestamp);
-                    }
+                    // if (j2d.io.checkPressedKeyMap('ACTION')) {
+                    //     new Tween(this.rectangle1)
+                    //         .to({
+                    //             position: {
+                    //                 x: '60'
+                    //             }
+                    //         })
+                    //         .to({
+                    //             position: {
+                    //                 y: '40'
+                    //             }
+                    //         })
+                    //         .to({
+                    //             position: {
+                    //                 x: '-60'
+                    //             }
+                    //         })
+                    //         .reverseAll()
+                    //         .start(timestamp);
+                    // }
                     //
                     //     //rectangle1.setPosition(new Vector2d(20, 20));
                     //     //rectangle2.setPosition(new Vector2d(20, 40));
@@ -192,9 +194,10 @@ define('Application', [
             GameState.prototype.constructor = GameState;
 
             // Fix for Camera
+            //TODO:: fix camera original screen size in /core
             $(window).on('resize', function () {
-                width = j2d.element.width();
-                height = j2d.element.height();
+                width = parseInt(getComputedStyle(j2d.element)['width']);
+                height = parseInt(getComputedStyle(j2d.element)['height']);
             });
 
             scene.init({

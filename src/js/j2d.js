@@ -21,7 +21,8 @@
             'utils/DeviceUtil',
             'utils/ObjectUtil',
             'utils/UUID',
-            'utils/SystemConsole'
+            'utils/SystemConsole',
+            'utils/ArrayMap'
         ], factory);
     } else if (typeof module === 'object' && typeof module.exports === 'object') {
         module.exports = factory(
@@ -30,7 +31,8 @@
             require('utils/DeviceUtil'),
             require('utils/ObjectUtil'),
             require('utils/UUID'),
-            require('utils/SystemConsole')
+            require('utils/SystemConsole'),
+            require('utils/ArrayMap')
         );
     } else {
         factory(
@@ -39,10 +41,11 @@
             root.j2d.utils.DeviceUtil,
             root.j2d.utils.ObjectUtil,
             root.j2d.utils.UUID,
-            root.j2d.utils.SystemConsole
+            root.j2d.utils.SystemConsole,
+            root.j2d.utils.ArrayMap
         );
     }
-}(typeof window !== 'undefined' ? window : global, function ($, SceneManager, DeviceUtil, ObjectUtil, UUID, Log) {
+}(typeof window !== 'undefined' ? window : global, function ($, SceneManager, DeviceUtil, ObjectUtil, UUID, Log, ArrayMap) {
     "use strict";
 
     /**
@@ -86,8 +89,17 @@
                 j2d.data.webGL = !!value;
                 if (!!value && !j2d.data.webGL) {
                     j2d.element.addClass('WebGL');
+                    if (j2d.element.classList) {
+                        j2d.element.classList.add('WebGL');
+                    } else {
+                        j2d.element.className += ' WebGL';
+                    }
                 } else if (!value && j2d.data.webGL) {
-                    j2d.element.removeClass('WebGL');
+                    if (j2d.element.classList) {
+                        j2d.element.classList.remove('WebGL');
+                    } else {
+                        j2d.element.className = j2d.element.className.replace(new RegExp('(^|\\b)' + 'WebGL'.split(' ').join('|') + '(\\b|$)', 'gi'), ' ');
+                    }
                 }
             }
         });
@@ -160,13 +172,22 @@
     EngineJ2D.prototype.pause = function () {
         if (this.data.io) this.data.io.flush();
         this.data.pause = true;
-        this.element.addClass('pause');
+        if (this.element.classList) {
+            this.element.classList.add('pause');
+        } else {
+            this.element.className += ' pause';
+        }
         this.trigger('pause');
     };
 
     // TODO:: add MediaManager
     EngineJ2D.prototype.resume = function () {
-        this.element.removeClass('pause').focus();
+        if (j2d.element.classList) {
+            j2d.element.classList.remove('pause');
+        } else {
+            j2d.element.className = j2d.element.className.replace(new RegExp('(^|\\b)' + 'pause'.split(' ').join('|') + '(\\b|$)', 'gi'), ' ');
+        }
+        j2d.element.focus();
         this.data.pause = false;
         if (this.data.io) this.data.io.flush();
         this.trigger('resume');
@@ -231,106 +252,195 @@
     };
     EngineJ2D.prototype.util = EngineJ2D.util;
 
+    /**
+     * @type {Array.<EngineJ2D>|ArrayMap.<EngineJ2D>}
+     */
+    EngineJ2D.stack = new ArrayMap();
+
+    /**
+     * @param {Element} element
+     * @param {string} className
+     * @returns {boolean}
+     */
+    var hasClass = function (element, className) {
+        return (element.classList) ?
+            element.classList.contains(className) :
+            (new RegExp('(^| )' + className + '( |$)', 'gi').test(element.className));
+    };
+
+    var getSelector = function (element) {
+        var pieces = [];
+
+        for (; element && element.tagName !== undefined; element = element.parentNode) {
+            if (element.className) {
+                var classes = element.className.split(' ');
+                for (var i in classes) {
+                    if (classes.hasOwnProperty(i) && classes[i]) {
+                        pieces.unshift(classes[i]);
+                        pieces.unshift('.');
+                    }
+                }
+            }
+            if (element.id && !/\s/.test(element.id)) {
+                pieces.unshift(element.id);
+                pieces.unshift('#');
+            }
+            pieces.unshift(element.tagName);
+            pieces.unshift(' > ');
+        }
+        return pieces.slice(1).join('');
+    };
+
+    /**
+     * @param {string|jQuery} selected
+     * @param {EngineJ2D.defaults|Object} options
+     *
+     * @returns {EngineJ2D|EngineJ2D[]|Array.<EngineJ2D>}
+     */
+    EngineJ2D.initEngine = function (selected, options) {
+        var nodes;
+        if (typeof selected === 'string') {
+            nodes = global.document.querySelectorAll(selected);
+        } else if (typeof selected === 'object' && selected instanceof jQuery) {
+            nodes = selected.get();
+        } else return null;
+
+        var inactiveNodes = [];
+        nodes.forEach(function (node) {
+            if (!node.hasAttribute('guid')) inactiveNodes.push(node)
+        });
+
+        inactiveNodes.forEach(function (element) {
+            var options = ObjectUtil.extend(true, {}, EngineJ2D.defaults, options);
+            options.id = UUID.generate();
+
+            element.setAttribute('guid', options.id);
+
+            var id = element.getAttribute('id');
+            if (id === undefined || id === null) {
+                element.setAttribute('guid', options.id);
+            }
+
+            var tabIndex = element.getAttribute('tabindex');
+            if (tabIndex === undefined || tabIndex === null || tabIndex === false) {
+                element.setAttribute('tabindex', '-1');
+            }
+
+            if (!hasClass(element, 'j2d')) {
+                if (element.classList) {
+                    element.classList.add('j2d');
+                } else {
+                    element.className += ' j2d';
+                }
+            }
+
+            EngineJ2D.stack.add(options.id, new EngineJ2D(element, options));
+            element.click();
+            element.focus();
+        });
+
+        var activeNodes = [];
+        nodes = global.document.querySelectorAll('.j2d[guid]');
+        nodes.forEach(function (node) {
+            activeNodes.push(EngineJ2D.stack.get(node.getAttribute('guid')))
+        });
+        return (1 === activeNodes.length) ? activeNodes[0] : activeNodes;
+    };
+
     /* ------------------------------ Plugin ------------------------------ */
 
     (EngineJ2D.initPlugin = function () {
-        if (window.j2dPlugin !== undefined) return null;
-        window.j2dPlugin = {pluginInit: true};
+        if (global.j2dPlugin !== undefined) return null;
+        global.j2dPlugin = {pluginInit: true, stack: new ArrayMap()};
 
         (new Log()).logSystem('j2D v.' + EngineJ2D.VERSION, 'https://github.com/fsggs/j2d');
         /**
          * @param {EngineJ2D.defaults} [options]
          * @returns {EngineJ2D|EngineJ2D[]|Array.<EngineJ2D>}
          */
-        $.fn.j2d = function (options) {
-            this.filter('div.canvas:not([guid])').each(function () {
-                var options = ObjectUtil.extend(true, {}, EngineJ2D.defaults, options);
-
-                options.id = UUID.generate();
-
-                $(this).attr('guid', options.id);
-                var id = $(this).attr('id');
-                if (typeof id === 'undefined' || id === false) {
-                    $(this).attr('id', options.id);
-                }
-                var tabIndex = $(this).attr('tabindex');
-                if (typeof tabIndex === 'undefined' || tabIndex === false) {
-                    $(this).attr('tabindex', '-1');
-                }
-                $(this).data('j2d', new EngineJ2D($(this), options)).addClass('j2d');
-                $(this).click().focus();
-            });
-
-            var $array = [];
-            this.filter('div.canvas[guid]').each(function () {
-                $array.push($(this).data('j2d'));
-            });
-
-            return (1 === $array.length) ? $(this).data('j2d') : $array;
+        jQuery.fn.j2d = function (options) {
+            return EngineJ2D.initEngine(this, options);
         };
+
+        global.j2dPlugin.initEngine = EngineJ2D.initEngine;
 
         var firefox = global.navigator.userAgent.match(/Firefox\/([0-9]+)\./);
         var version = firefox ? parseInt(firefox[2], 10) : false;
 
         var isFullScreen = function () {
             //noinspection JSUnresolvedVariable
-            return !!(document.webkitFullscreenElement
-                || document.webkitCurrentFullScreenElement
-                || (version && version < 47) ? document.mozFullScreenElement : document.fullscreenElement
-                || document.msFullscreenElement
+            return !!(global.document.webkitFullscreenElement
+                || global.document.webkitCurrentFullScreenElement
+                || (version && version < 47) ? global.document.mozFullScreenElement : global.document.fullscreenElement
+                || global.document.msFullscreenElement
             );
         };
 
-        $(document).on('fullscreenchange webkitfullscreenchange mozfullscreenchange MSFullscreenChange', function () {
+        $(global.document).on('fullscreenchange webkitfullscreenchange mozfullscreenchange MSFullscreenChange', function () {
             var fullScreen = isFullScreen();
             if (!fullScreen) {
-                $('div.canvas[guid].active').data('j2d').scene.resizeToFullPage(fullScreen);
-                $('div.canvas[guid]:not(.active)').toggle(!fullScreen);
+                var node, engine;
+                node = global.document.querySelector('.j2d.active');
+                if (node) engine = EngineJ2D.stack.get(node.getAttribute('guid'));
+                if (engine) engine.scene.resizeToFullPage(fullScreen);
+
+                node = global.document.querySelector('.j2d:not(.active)');
+                if (node) engine = EngineJ2D.stack.get(node.getAttribute('guid'));
+                if (engine) engine.toggle(!fullScreen);
             }
         });
 
-        $(document).on('click', 'div.canvas[guid].pause', function () {
-            $(this).data('j2d').resume();
+        // $(global.document).on('click', 'div.canvas[guid].pause', function () {
+        //     $(this).data('j2d').resume();
+        //
+        //     var current = this;
+        //     $('div.canvas[guid]:not(.pause-disable):not(:focus)').each(function () {
+        //         if (current !== this) $(this).removeClass('active').data('j2d').pause();
+        //     });
+        //     $('div.canvas[guid].active.pause-disable:not(:focus)').each(function () {
+        //         if (current !== this) $(this).removeClass('active');
+        //     });
+        // });
+        //
+        // $(global.document).on('click touch mouseenter', 'div.canvas[guid]:not(.resume-by-click):not(:focus)', function () {
+        //     $(this).addClass('active').focus().data('j2d').resume();
+        //
+        //     var current = this;
+        //     $('div.canvas[guid]:not(.pause-disable):not(:focus)').each(function () {
+        //         if (current !== this) $(this).removeClass('active').data('j2d').pause();
+        //     });
+        //     $('div.canvas[guid].active.pause-disable:not(:focus)').each(function () {
+        //         if (current !== this) $(this).removeClass('active');
+        //     });
+        // });
 
-            var current = this;
-            $('div.canvas[guid]:not(.pause-disable):not(:focus)').each(function () {
-                if (current !== this) $(this).removeClass('active').data('j2d').pause();
-            });
-            $('div.canvas[guid].active.pause-disable:not(:focus)').each(function () {
-                if (current !== this) $(this).removeClass('active');
-            });
+        global.addEventListener("focus", function () {
+            var node, engine;
+            node = global.document.querySelector('.j2d.active');
+            if (node) engine = EngineJ2D.stack.get(node.getAttribute('guid'));
+            if (engine) engine.resume();
         });
 
-        $(document).on('click touch mouseenter', 'div.canvas[guid]:not(.resume-by-click):not(:focus)', function () {
-            $(this).addClass('active').focus().data('j2d').resume();
-
-            var current = this;
-            $('div.canvas[guid]:not(.pause-disable):not(:focus)').each(function () {
-                if (current !== this) $(this).removeClass('active').data('j2d').pause();
-            });
-            $('div.canvas[guid].active.pause-disable:not(:focus)').each(function () {
-                if (current !== this) $(this).removeClass('active');
-            });
+        global.addEventListener("blur", function () {
+            var node, engine;
+            node = global.document.querySelector('.j2d');
+            if (node) engine = EngineJ2D.stack.get(node.getAttribute('guid'));
+            if (engine) engine.pause();
         });
 
-        $(window).on('focus', function () {
-            $('div.canvas[guid].active').each(function () {
-                $(this).data('j2d').resume();
+        global.addEventListener('resize', function () {
+            EngineJ2D.stack.forEach(function (guid) {
+                EngineJ2D.stack[guid].device.onResize();
             });
-        }).on('blur', function () {
-            $('div.canvas[guid]').each(function () {
-                $(this).data('j2d').pause();
-            });
-        });
 
-        $(window).on('resize', function () {
-            $('div.canvas[guid]').each(function () {
-                $(this).data('j2d').device.onResize();
-            });
             var fullScreen = isFullScreen();
             if (fullScreen) {
-                $('div.canvas[guid].active').data('j2d').scene.resizeToFullPage(fullScreen);
+                var node, engine;
+                node = global.document.querySelector('.j2d.active');
+                if (node) engine = EngineJ2D.stack.get(node.getAttribute('guid'));
+                if (engine) engine.scene.resizeToFullPage(fullScreen);
             }
+            return true;
         });
     })();
 
