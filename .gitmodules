@@ -1,0 +1,3 @@
+[submodule "src/js/api"]
+	path = src/js/api
+	url = git@github.com:fsggs/j2d.api.git
