@@ -16,7 +16,6 @@
 (function (root, factory) {
     if (typeof define === 'function' && define.amd) {
         define('j2d', [
-            'jquery',
             'core/SceneManager',
             'utils/DeviceUtil',
             'utils/ObjectUtil',
@@ -26,7 +25,6 @@
         ], factory);
     } else if (typeof module === 'object' && typeof module.exports === 'object') {
         module.exports = factory(
-            require('jquery'),
             require('core/SceneManager'),
             require('utils/DeviceUtil'),
             require('utils/ObjectUtil'),
@@ -36,7 +34,6 @@
         );
     } else {
         factory(
-            root.jQuery,
             root.j2d.core.SceneManager,
             root.j2d.utils.DeviceUtil,
             root.j2d.utils.ObjectUtil,
@@ -45,7 +42,7 @@
             root.j2d.utils.ArrayMap
         );
     }
-}(typeof window !== 'undefined' ? window : global, function ($, SceneManager, DeviceUtil, ObjectUtil, UUID, Log, ArrayMap) {
+}(typeof window !== 'undefined' ? window : global, function (SceneManager, DeviceUtil, ObjectUtil, UUID, Log, ArrayMap) {
     "use strict";
 
     /**
@@ -53,7 +50,7 @@
      * @exports module:"j2d"
      * @alias module:"j2d"
      *
-     * @param {Element|jQuery} element
+     * @param {Element} element
      * @param {EngineJ2D.defaults} data
      *
      * @constructor
@@ -66,7 +63,7 @@
     var EngineJ2D = function (element, data) {
         var j2d = this;
 
-        /** @type {Element|jQuery} */
+        /** @type {Element} */
         this.element = element;
 
         /** @type EngineJ2D.defaults */
@@ -88,18 +85,9 @@
             set: function (value) {
                 j2d.data.webGL = !!value;
                 if (!!value && !j2d.data.webGL) {
-                    j2d.element.addClass('WebGL');
-                    if (j2d.element.classList) {
-                        j2d.element.classList.add('WebGL');
-                    } else {
-                        j2d.element.className += ' WebGL';
-                    }
+                    j2d.element.classList.add('WebGL');
                 } else if (!value && j2d.data.webGL) {
-                    if (j2d.element.classList) {
-                        j2d.element.classList.remove('WebGL');
-                    } else {
-                        j2d.element.className = j2d.element.className.replace(new RegExp('(^|\\b)' + 'WebGL'.split(' ').join('|') + '(\\b|$)', 'gi'), ' ');
-                    }
+                    j2d.element.classList.remove('WebGL');
                 }
             }
         });
@@ -172,22 +160,14 @@
     EngineJ2D.prototype.pause = function () {
         if (this.data.io) this.data.io.flush();
         this.data.pause = true;
-        if (this.element.classList) {
-            this.element.classList.add('pause');
-        } else {
-            this.element.className += ' pause';
-        }
+        this.element.classList.add('pause');
         this.trigger('pause');
     };
 
     // TODO:: add MediaManager
     EngineJ2D.prototype.resume = function () {
-        if (j2d.element.classList) {
-            j2d.element.classList.remove('pause');
-        } else {
-            j2d.element.className = j2d.element.className.replace(new RegExp('(^|\\b)' + 'pause'.split(' ').join('|') + '(\\b|$)', 'gi'), ' ');
-        }
-        j2d.element.focus();
+        this.element.classList.remove('pause');
+        this.element.focus();
         this.data.pause = false;
         if (this.data.io) this.data.io.flush();
         this.trigger('resume');
@@ -258,17 +238,6 @@
     EngineJ2D.stack = new ArrayMap();
 
     /**
-     * @param {Element} element
-     * @param {string} className
-     * @returns {boolean}
-     */
-    var hasClass = function (element, className) {
-        return (element.classList) ?
-            element.classList.contains(className) :
-            (new RegExp('(^| )' + className + '( |$)', 'gi').test(element.className));
-    };
-
-    /**
      * @name EngineJ2D
      * @static
      *
@@ -281,7 +250,7 @@
         var nodes = [];
         if (typeof selected === 'string') {
             nodes = global.document.querySelectorAll(selected);
-        } else if (typeof selected === 'object' && selected instanceof jQuery) {
+        } else if (typeof selected === 'object' && jQuery !== undefined && selected instanceof jQuery) {
             nodes = selected.get();
         } else return null;
 
@@ -306,12 +275,8 @@
                 element.setAttribute('tabindex', '-1');
             }
 
-            if (!hasClass(element, 'j2d')) {
-                if (element.classList) {
-                    element.classList.add('j2d');
-                } else {
-                    element.className += ' j2d';
-                }
+            if (!element.classList.contains('j2d')) {
+                element.classList.add('j2d');
             }
 
             EngineJ2D.stack.add(options.id, new EngineJ2D(element, options));
@@ -319,10 +284,48 @@
             element.focus();
         });
 
+        var resumeBind = function (current) {
+            var nodes, engine;
+            nodes = global.document.querySelectorAll('div.canvas[guid]:not(.pause-disable):not(:focus)');
+            Array.prototype.forEach.call(nodes, function (node) {
+                if (current !== node) {
+                    node.classList.remove('active');
+                    engine = EngineJ2D.stack.get(node.getAttribute('guid'));
+                    if (engine) engine.pause();
+                }
+            });
+
+            nodes = global.document.querySelectorAll('div.canvas[guid].active.pause-disable:not(:focus)');
+            Array.prototype.forEach.call(nodes, function (node) {
+                if (current !== node) {
+                    node.classList.remove('active');
+                }
+            });
+        };
+
+        function resumeEventListener() {
+            var engine;
+            if (this.classList.contains('pause')) {
+                engine = EngineJ2D.stack.get(this.getAttribute('guid'));
+                if (engine) engine.resume();
+                resumeBind(this);
+            } else if (!this.classList.contains('resume-by-click') && this.classList.contains(':focus')) {
+                this.classList.add('active');
+                this.focus();
+                engine = EngineJ2D.stack.get(this.getAttribute('guid'));
+                if (engine) engine.resume();
+                resumeBind(this);
+            }
+            return true;
+        }
+
         var activeNodes = [];
         nodes = global.document.querySelectorAll('.j2d[guid]');
         Array.prototype.forEach.call(nodes, function (node) {
-            activeNodes.push(EngineJ2D.stack.get(node.getAttribute('guid')))
+            activeNodes.push(EngineJ2D.stack.get(node.getAttribute('guid')));
+            node.addEventListener('click', resumeEventListener);
+            node.addEventListener('touch', resumeEventListener);
+            node.addEventListener('mouseenter', resumeEventListener);
         });
         return (1 === activeNodes.length) ? activeNodes[0] : activeNodes;
     };
@@ -336,13 +339,15 @@
 
         (new Log()).logSystem('j2D v.' + EngineJ2D.VERSION, 'https://github.com/fsggs/j2d');
 
-        /**
-         * @param {EngineJ2D.defaults} [options]
-         * @returns {EngineJ2D|EngineJ2D[]|Array.<EngineJ2D>}
-         */
-        jQuery.fn.j2d = function (options) {
-            return EngineJ2D.initEngine(this, options);
-        };
+        if (jQuery !== undefined) {
+            /**
+             * @param {EngineJ2D.defaults} [options]
+             * @returns {EngineJ2D|EngineJ2D[]|Array.<EngineJ2D>}
+             */
+            jQuery.fn.j2d = function (options) {
+                return EngineJ2D.initEngine(this, options);
+            };
+        }
 
         global.j2dPlugin.initEngine = EngineJ2D.initEngine;
 
@@ -358,72 +363,60 @@
             );
         };
 
-        $(global.document).on('fullscreenchange webkitfullscreenchange mozfullscreenchange MSFullscreenChange', function () {
+        function fullScreenEventListener() {
             var fullScreen = isFullScreen();
             if (!fullScreen) {
                 var node, engine;
-                node = global.document.querySelector('.j2d.active');
+                node = global.document.querySelector('.j2d[guid].active');
                 if (node) engine = EngineJ2D.stack.get(node.getAttribute('guid'));
                 if (engine) engine.scene.resizeToFullPage(fullScreen);
 
-                node = global.document.querySelector('.j2d:not(.active)');
+                node = global.document.querySelector('.j2d[guid]:not(.active)');
                 if (node) engine = EngineJ2D.stack.get(node.getAttribute('guid'));
                 if (engine) engine.toggle(!fullScreen);
             }
-        });
+        }
 
-        // $(global.document).on('click', 'div.canvas[guid].pause', function () {
-        //     $(this).data('j2d').resume();
-        //
-        //     var current = this;
-        //     $('div.canvas[guid]:not(.pause-disable):not(:focus)').each(function () {
-        //         if (current !== this) $(this).removeClass('active').data('j2d').pause();
-        //     });
-        //     $('div.canvas[guid].active.pause-disable:not(:focus)').each(function () {
-        //         if (current !== this) $(this).removeClass('active');
-        //     });
-        // });
-        //
-        // $(global.document).on('click touch mouseenter', 'div.canvas[guid]:not(.resume-by-click):not(:focus)', function () {
-        //     $(this).addClass('active').focus().data('j2d').resume();
-        //
-        //     var current = this;
-        //     $('div.canvas[guid]:not(.pause-disable):not(:focus)').each(function () {
-        //         if (current !== this) $(this).removeClass('active').data('j2d').pause();
-        //     });
-        //     $('div.canvas[guid].active.pause-disable:not(:focus)').each(function () {
-        //         if (current !== this) $(this).removeClass('active');
-        //     });
-        // });
+        var html = global.document.querySelector('html');
 
-        global.addEventListener("focus", function () {
-            var node, engine;
-            node = global.document.querySelector('.j2d.active');
-            if (node) engine = EngineJ2D.stack.get(node.getAttribute('guid'));
-            if (engine) engine.resume();
-        });
+        if (!html.classList.contains('j2d')) {
+            global.document.addEventListener('fullscreenchange', fullScreenEventListener);
+            global.document.addEventListener('webkitfullscreenchange', fullScreenEventListener);
+            global.document.addEventListener('mozfullscreenchange', fullScreenEventListener);
+            global.document.addEventListener('MSFullscreenChange', fullScreenEventListener);
 
-        global.addEventListener("blur", function () {
-            var node, engine;
-            node = global.document.querySelector('.j2d');
-            if (node) engine = EngineJ2D.stack.get(node.getAttribute('guid'));
-            if (engine) engine.pause();
-        });
-
-        global.addEventListener('resize', function () {
-            EngineJ2D.stack.forEach(function (guid) {
-                EngineJ2D.stack[guid].device.onResize();
+            global.addEventListener('focus', function () {
+                var node, engine;
+                node = global.document.querySelector('.j2d[guid].active:not(.resume-by-click)');
+                if (node) engine = EngineJ2D.stack.get(node.getAttribute('guid'));
+                if (engine) engine.resume();
             });
 
-            var fullScreen = isFullScreen();
-            if (fullScreen) {
-                var node, engine;
-                node = global.document.querySelector('.j2d.active');
-                if (node) engine = EngineJ2D.stack.get(node.getAttribute('guid'));
-                if (engine) engine.scene.resizeToFullPage(fullScreen);
-            }
-            return true;
-        });
+            global.addEventListener('blur', function () {
+                var nodes, engine;
+                nodes = global.document.querySelectorAll('.j2d[guid]:not(.pause-disable)');
+                Array.prototype.forEach.call(nodes, function (node) {
+                    if (node) engine = EngineJ2D.stack.get(node.getAttribute('guid'));
+                    if (engine) engine.pause();
+                });
+            });
+
+            global.addEventListener('resize', function () {
+                EngineJ2D.stack.forEach(function (guid) {
+                    EngineJ2D.stack[guid].device.onResize();
+                });
+
+                var fullScreen = isFullScreen();
+                if (fullScreen) {
+                    var node, engine;
+                    node = global.document.querySelector('.j2d[guid].active');
+                    if (node) engine = EngineJ2D.stack.get(node.getAttribute('guid'));
+                    if (engine) engine.scene.resizeToFullPage(fullScreen);
+                }
+                return true;
+            });
+            html.classList.add('j2d');
+        }
     })();
 
     if (typeof module === 'object' && typeof module.exports === 'object') module.exports.EngineJ2D = EngineJ2D;

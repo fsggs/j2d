@@ -18,7 +18,7 @@
             * [.Log](#module_j2d--EngineJ2D+Log) : <code>SystemConsole</code>
             * [.data](#module_j2d--EngineJ2D+data) : <code>EngineJ2D.defaults</code>
             * [.device](#module_j2d--EngineJ2D+device) : <code>DeviceUtil</code>
-            * [.element](#module_j2d--EngineJ2D+element) : <code>Element</code> &#124; <code>jQuery</code>
+            * [.element](#module_j2d--EngineJ2D+element) : <code>Element</code>
             * [.getFrameManager()](#module_j2d--EngineJ2D+getFrameManager) ⇒ <code>FrameManager</code>
             * [.getGameStatesManager()](#module_j2d--EngineJ2D+getGameStatesManager) ⇒ <code>GameStatesManager</code>
             * [.getLayersManager()](#module_j2d--EngineJ2D+getLayersManager) ⇒ <code>LayersManager</code>
@@ -65,7 +65,7 @@ EngineJ2D
 
 | Param | Type |
 | --- | --- |
-| element | <code>Element</code> &#124; <code>jQuery</code> | 
+| element | <code>Element</code> | 
 | data | <code>EngineJ2D.defaults</code> | 
 
 <a name="module_j2d--EngineJ2D+Log"></a>
@@ -82,7 +82,7 @@ EngineJ2D
 **Kind**: instance property of <code>[EngineJ2D](#exp_module_j2d--EngineJ2D)</code>  
 <a name="module_j2d--EngineJ2D+element"></a>
 
-#### engineJ2D.element : <code>Element</code> &#124; <code>jQuery</code>
+#### engineJ2D.element : <code>Element</code>
 **Kind**: instance property of <code>[EngineJ2D](#exp_module_j2d--EngineJ2D)</code>  
 <a name="module_j2d--EngineJ2D+getFrameManager"></a>
 
