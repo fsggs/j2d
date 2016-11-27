@@ -3,7 +3,7 @@
  *
  * @authors DeVinterX, Skaner(j2Ds)
  * @license BSD
- * @version 0.2.0-dev
+ * @version 1.0.0-dev
  */
 
 /*
@@ -48,7 +48,6 @@
     /**
      * @class EngineJ2D
      * @exports module:"j2d"
-     * @alias module:"j2d"
      *
      * @param {Element} element
      * @param {EngineJ2D.defaults} data
@@ -128,7 +127,7 @@
         });
     };
 
-    EngineJ2D.VERSION = '0.2.0-dev';
+    EngineJ2D.VERSION = '1.0.0-dev (VeNoM iNjecTioN)';
 
     EngineJ2D.defaults = {
         /** @type string|null */

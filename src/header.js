@@ -3,7 +3,7 @@
  *
  * @authors DeVinterX, Skaner(j2Ds)
  * @license BSD
- * @version 0.2.0-dev
+ * @version 1.0.0-dev
  */
 
 if (global === undefined) {
@@ -11,9 +11,15 @@ if (global === undefined) {
 }
 if (typeof define !== 'function' || !define.amd) {
     global.j2d = {
+        api: {
+            interfaces: {}
+        },
         core: {},
+        events: {},
         exceptions: {},
-        io: {},
+        io: {
+            devices: {}
+        },
         loaders: {},
         media: {},
         nodes: {},
