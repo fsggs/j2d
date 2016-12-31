@@ -8,9 +8,9 @@ j2D is JavaScript 2D Engine.
 
 Consequently, it supports the following natively:
 
-* Chrome 29+
-* Firefox 30+
+* Chrome 41+
+* Firefox 38+
 
 ## License
 
-BSD. © 2015-2016 Dimitriy Kalugin, Zlib. © 2015-2016 Нагель Петр
+BSD. © 2015-2017 Dimitriy Kalugin.
