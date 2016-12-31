@@ -27,6 +27,10 @@ if (global === undefined) var global = window || this;
 
         var scope = [];
 
+        /**
+         TODO:: Object.getPrototypeOf(obj),
+         @link https://developer.mozilla.org/ru/docs/Web/JavaScript/Reference/Global_Objects/Object/getPrototypeOf
+         */
         var implement = function (object) {
             if (object.__proto__.constructor.name === 'Object'
                 || object.__proto__.constructor === undefined

@@ -5,7 +5,7 @@ if (global === undefined) var global = window || this;
     } else if (typeof module === 'object' && typeof module.exports === 'object') {
         module.exports = factory(require('api/PrototypeInterface'));
     } else {
-        factory(root.j2d.api.api.PrototypeInterface);
+        factory(root.j2d.api.PrototypeInterface);
     }
 }(typeof window !== 'undefined' ? window : global, function (PrototypeInterface) {
     "use strict";
