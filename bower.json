@@ -1,6 +1,6 @@
 {
   "name": "j2d",
-  "version": "1.0.2-dev",
+  "version": "1.0.3-dev",
   "homepage": "https://github.com/fsggs/j2d",
   "authors": [
     "DeVinterX"
@@ -27,6 +27,7 @@
   ],
   "ignore": [
     "node_modules",
+    "libs",
     "libs/require.min.js",
     "libs/require.min.map",
     "src/application.js",
@@ -34,14 +35,11 @@
     ".babelrc",
     ".npmignore",
     ".gitignore",
-    "gulp.babel.js",
+    "gulpfile.babel.js",
     "index.js",
     "package.json"
   ],
-  "dependencies": {
-  },
-  "resolutions": {
-  },
+  "dependencies": {},
   "repository": {
     "type": "git",
     "url": "git://github.com/fsggs/j2d.git"
