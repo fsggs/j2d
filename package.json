@@ -1,6 +1,6 @@
 {
   "name": "j2d",
-  "version": "1.0.1-dev",
+  "version": "1.0.2-dev",
   "description": "JavaScript 2D Engine.",
   "main": "index.js",
   "scripts": {

@@ -1,5 +1,9 @@
+*Thumbs.db
+*.DS_Store
+.idea/
 .gitignore
 .babelrc
+.npm/
 .npmrc
 gulpfile.babel.js
 bower.json
