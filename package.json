@@ -11,13 +11,14 @@
     "url": "https://github.com/fsggs/j2d.git"
   },
   "keywords": [
-    "AMD",
+    "UMD",
     "javascript",
+    "es2015",
+    "es6",
     "library",
     "canvas",
     "webgl",
     "jquery",
-    "js2de",
     "j2d"
   ],
   "author": "DeVinterX",

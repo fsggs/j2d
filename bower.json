@@ -1,19 +1,21 @@
 {
   "name": "j2d",
-  "version": "0.2.0-dev",
+  "version": "1.0.0-dev",
   "homepage": "https://github.com/fsggs/j2d",
   "authors": [
-    "DeVinterX",
-    "Skaner(j2Ds)"
+    "DeVinterX"
   ],
   "description": "JavaScript 2D Engine.",
   "main": "dist/js/j2d.js",
   "moduleType": [
-    "amd"
+    "umd",
+    "es6"
   ],
   "keywords": [
-    "AMD",
+    "UMD",
     "javascript",
+    "es2015",
+    "es6",
     "library",
     "canvas",
     "webgl",
@@ -21,20 +23,24 @@
     "j2d"
   ],
   "license": [
-    "BSD-4-Clause"
+    "BSD-3-Clause"
   ],
   "ignore": [
-    "**/.*",
     "node_modules",
-    "tests"
+    "libs/require.min.js",
+    "libs/require.min.map",
+    "src/application.js",
+    "src/index.html",
+    ".babelrc",
+    ".npmignore",
+    ".gitignore",
+    "gulp.babel.js",
+    "index.js",
+    "package.json"
   ],
   "dependencies": {
-    "jquery": "",
-    "requirejs": ""
   },
   "resolutions": {
-    "jquery": "",
-    "requirejs": ""
   },
   "repository": {
     "type": "git",

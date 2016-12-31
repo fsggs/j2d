@@ -2,3 +2,7 @@
 .babelrc
 .npmrc
 gulpfile.babel.js
+bower.json
+libs/
+src/application.js
+src/index.html
