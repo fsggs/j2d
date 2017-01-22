@@ -18,7 +18,7 @@ export default class Mouse extends Pointer {
     keyMouseDownEventHandler = (e) => {
         if (this.input.isEnabled && this.input.preventDefault) e.preventDefault();
 
-        var keyCode = this.input.KEYS_HELPER.getKeyById('KEY_MOUSE_' + this.__fixMouseButtonId(e.button));
+        let keyCode = this.input.KEYS_HELPER.getKeyById('KEY_MOUSE_' + this.__fixMouseButtonId(e.button));
         if (!this.input.data.keys.keysDown.includes(keyCode)) {
             this.input.data.keys.keysDown.push(keyCode);
         }
@@ -47,7 +47,7 @@ export default class Mouse extends Pointer {
     keyMouseUpEventHandler = (e) => {
         if (this.input.isEnabled && this.input.preventDefault) e.preventDefault();
 
-        var keyCode = this.input.KEYS_HELPER.getKeyById('KEY_MOUSE_' + this.__fixMouseButtonId(e.button));
+        let keyCode = this.input.KEYS_HELPER.getKeyById('KEY_MOUSE_' + this.__fixMouseButtonId(e.button));
         if (!this.input.data.keys.keysUp.includes(keyCode)) {
             this.input.data.keys.keysUp.push(keyCode);
         }
@@ -88,7 +88,7 @@ export default class Mouse extends Pointer {
     scrollMouseEventHandler = (e) => {
         if (this.input.isEnabled && this.input.preventDefault) e.preventDefault();
 
-        var keyCode = (e.wheelDelta / 120 > 0)
+        let keyCode = (e.wheelDelta / 120 > 0)
             ? this.input.KEYS_HELPER.getKeyById('SCROLL_MOUSE_UP')
             : this.input.KEYS_HELPER.getKeyById('SCROLL_MOUSE_DOWN');
 

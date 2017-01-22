@@ -2,12 +2,12 @@ import Vector2dInteger from "utils/Vector2dInteger";
 /**
  * Class utility for get system browser window size
  *
- * @class DeviceUtil
+ * @class Device
  * @exports module:utils/DeviceUtil
  *
  * @constructor
  */
-export default class DeviceUtil {
+export default class Device {
     constructor() {
         let documentWidth = parseInt(Math.max(
             document.documentElement['clientWidth'],
@@ -30,7 +30,7 @@ export default class DeviceUtil {
     }
 
     /**
-     * @returns {DeviceUtil}
+     * @returns {Device}
      */
     onResize() {
         this.width = window.innerWidth;

@@ -523,4 +523,26 @@ export default class SceneManager {
         this.viewportManager.updateViewport(node.data.id);
         return this;
     }
+
+
+    // static util = {
+    //     /**
+    //      * @param {CanvasRenderingContext2D} context
+    //      */
+    //     disableSmoothing: (context) => {
+    //         let chrome = window.navigator.userAgent.match(/Chrom(e|ium)\/([0-9]+)\./);
+    //         let version = chrome ? parseInt(chrome[2], 10) : false;
+    //
+    //         context['imageSmoothingEnabled'] = false;
+    //         context['mozImageSmoothingEnabled'] = false;
+    //         context['oImageSmoothingEnabled'] = false;
+    //         if (version && version <= 29) {
+    //             context['webkitImageSmoothingEnabled'] = false;
+    //         }
+    //         context['msImageSmoothingEnabled'] = false;
+    //     }
+    // };
+
+    // /** Utils **/
+    //util = EngineJ2D.util;
 }

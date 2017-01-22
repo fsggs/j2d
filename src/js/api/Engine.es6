@@ -1,28 +1,24 @@
 import PrototypeObject from "api/PrototypeObject";
-import IHandler from "api/interfaces/IHandler";
+import IEngine from "api/interfaces/IEngine";
+import RuntimeException from "exceptions/RuntimeException";
 
 /**
- * Handler
+ * Engine
  * @constructor
  */
-export default class Handler extends PrototypeObject {
-    static interfaces = [IHandler];
+export default class Engine extends PrototypeObject {
+    static interfaces = [IEngine];
+    static _$classPreInitialize = [];
 
     _isEnabled = false;
 
-    constructor() {
+    constructor(id) {
         super();
 
-        this.events = null;
-        this._isEnabled = false;
+        if (!Engine._$classPreInitialize.includes(id)) {
+            throw new RuntimeException(`The constructor is private. Please use static ${this.constructor.name}.init()`);
+        } else Engine._$classPreInitialize.splice(Engine._$classPreInitialize.indexOf(id), 1);
     }
-
-    init(eventHandler) {
-        if (eventHandler !== undefined) {
-            this.events = eventHandler;
-        }
-        return this;
-    };
 
     get isEnabled() {
         return this._isEnabled;
@@ -47,4 +43,5 @@ export default class Handler extends PrototypeObject {
         }
         return this;
     };
-}
+};
+

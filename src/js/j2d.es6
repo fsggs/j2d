@@ -1,185 +1,259 @@
-import IEngine from "api/interfaces/IEngine";
-import EngineComponent from "api/EngineComponent";
-import ObjectUtil from "utils/ObjectUtil";
-import UUID from "utils/UUID";
-import DeviceUtil from "utils/DeviceUtil";
+import Engine from "api/Engine";
+import IEngineComponent from "api/interfaces/IEngineComponent";
+import InvalidArgumentException from "exceptions/InvalidArgumentException";
+import EventHandler from "events/EventHandler";
+import InputHandler from "io/InputHandler";
+import FrameHandler from "core/FrameHandler";
 import ArrayMap from "utils/ArrayMap";
-import SceneManager from "core/SceneManager";
-import Log from "utils/SystemConsole"
-
-/*
- * TODO:: Events System
- */
+import Device from "utils/Device";
+import ObjectUtil from "utils/ObjectUtil";
+import SystemConsole from "utils/SystemConsole";
+import UUID from "utils/UUID";
 
 /**
  * @class EngineJ2D
  * @exports module:"j2d"
  *
- * @param {Element} element
- * @param {EngineJ2D.defaults} data
+ * @param {Element|HTMLElement|HTMLInputElement} element
+ * @param {EngineJ2D.defaults|{}} data
  *
  * @constructor
- * @property {boolean} WebGL // TODO:: To scene
- * @property {boolean} smoothing // TODO:: To scene
- * @property {InputManager|null} io
- * @property {MediaManager|null} media
- * @property {boolean} isPlay
  */
-export default class EngineJ2D extends EngineComponent {
-    static interfaces = [IEngine];
-
+export default class EngineJ2D extends Engine {
+    /** @type {string} */
     static VERSION = '1.0.0-dev (VeNoM iNjecTioN)';
 
+    /** @type {{id: string, pause: boolean, components: {
+        * EventHandler: IEngineComponent|EngineComponent|EventHandler,
+        * FrameHandler: IEngineComponent|EngineComponent|FrameHandler,
+        * InputHandler: IEngineComponent|EngineComponent|InputHandler,
+        * MediaHandler: IEngineComponent,
+        * TweenHandler: IEngineComponent,
+        * SceneHandler: IEngineComponent
+        * }}}
+     */
     static defaults = {
-        /** @type string|null */
-        id: null,
-        io: null,
-        media: null,
-        deltaTime: 0,
+        id: '',
         pause: false,
-        ready: false,
-
-        frameLimit: 60,
-        smoothing: true,
-
-        webGL: false
+        components: {
+            EventHandler: null,
+            FrameHandler: null,
+            InputHandler: null,
+            MediaHandler: null,
+            TweenHandler: null,
+            SceneHandler: null
+        }
     };
 
-    /**
-     * @type {Array.<EngineJ2D>|ArrayMap.<EngineJ2D>}
-     */
+    /** @type {Array.<EngineJ2D>|ArrayMap.<EngineJ2D>} */
     static stack = new ArrayMap();
 
+    /** @type boolean */
+    _initialized = false;
+
+    /** @type {Element|HTMLElement|HTMLInputElement} */
+    _element = null;
+
+    /** @type {EngineJ2D.defaults|{}} */
+    _data = {};
+
+    /** @type {function|null} */
+    _state = null;
+
+    /** @type {Device} */
+    device = new Device();
+
+    /** @type {SystemConsole} */
+    logger = new SystemConsole();
+
     constructor(element, data) {
-        super();
+        super(data !== undefined ? data.id : null);
 
-        /** @type {Element} */
-        this.element = element;
+        this._element = element;
+        this._data = data;
 
-        /** @type EngineJ2D.defaults */
-        this.data = data;
-
-        /** @type DeviceUtil */
-        this.device = new DeviceUtil();
-
-        /** @type SceneManager */
-        this.scene = new SceneManager(this);
-
-        /** @type SystemConsole */
-        this.Log = new Log();
+        this.log(`Find scene with id "${this.guid}"`, 'info');
+        this.log(this._data.components);
     }
 
-    get WebGL() {
-        return this.data.webGL;
+    get guid() {
+        return this._data.id;
     }
 
-    set WebGL(value) {
-        this.data.webGL = !!value;
-        if (!!value && !this.data.webGL) {
-            this.element.classList.add('WebGL');
-        } else if (!value && this.data.webGL) {
-            this.element.classList.remove('WebGL');
-        }
+    set state(state) {
+        return this._state = state;
     }
 
-    get smoothing() {
-        return this.data.smoothing;
+    /* +Handlers */
+
+    get events() {
+        return this.EventHandler;
     }
 
-    set smoothing(value) {
-        this.data.smoothing = !!value;
+    get EventHandler() {
+        return this._data.components.EventHandler;
+    }
+
+    set EventHandler(handler) {
+        if (!handler.instanceOf(IEngineComponent))
+            throw new InvalidArgumentException('Handler not implements IEngineComponent');
+        return this._data.components.EventHandler = handler;
+    }
+
+    get frame() {
+        return this.FrameHandler;
+    }
+
+    get FrameHandler() {
+        return this._data.components.FrameHandler;
+    }
+
+    set FrameHandler(handler) {
+        if (!handler.instanceOf(IEngineComponent))
+            throw new InvalidArgumentException('Handler not implements IEngineComponent');
+        return this._data.components.FrameHandler = handler;
     }
 
     get io() {
-        return this.data.io;
+        return this.InputHandler;
     }
 
-    set io(value) {
-        return this.data.io = value
+    get InputHandler() {
+        return this._data.components.InputHandler;
+    }
+
+    set InputHandler(handler) {
+        if (!handler.instanceOf(IEngineComponent))
+            throw new InvalidArgumentException('Handler not implements IEngineComponent');
+        return this._data.components.InputHandler = handler;
     }
 
     get media() {
-        return this.data.media;
+        return this.MediaHandler;
     }
 
-    set media(value) {
-        return this.data.media = value
+    get MediaHandler() {
+        return this._data.components.MediaHandler;
     }
 
-    get isPlay() {
-        return !this.data.pause;
+    set MediaHandler(handler) {
+        if (!handler.instanceOf(IEngineComponent))
+            throw new InvalidArgumentException('Handler not implements IEngineComponent');
+        return this._data.components.MediaHandler = handler;
     }
 
-    /** +GameEngine **/
+    get tweens() {
+        return this.TweenHandler;
+    }
+
+    get TweenHandler() {
+        return this._data.components.TweenHandler;
+    }
+
+    set TweenHandler(handler) {
+        if (!handler.instanceOf(IEngineComponent))
+            throw new InvalidArgumentException('Handler not implements IEngineComponent');
+        return this._data.components.TweenHandler = handler;
+    }
+
+    get scene() {
+        return this.SceneHandler;
+    }
+
+    get SceneHandler() {
+        return this._data.components.SceneHandler;
+    }
+
+    set SceneHandler(handler) {
+        if (!handler.instanceOf(IEngineComponent))
+            throw new InvalidArgumentException('Handler not implements IEngineComponent');
+        return this._data.components.SceneHandler = handler;
+    }
+
+    /* -Handlers */
+
+    /* +GameEngine */
+
     start() {
-        this.scene.start();
-        this.trigger('start');
+        if (!this._initialized) this.tryLoadComponents();
+        this.enable();
+
+        this.frame.start(this);
+        this.events.trigger('start');
     };
 
     stop() {
-        this.scene.stop();
-        this.trigger('stop');
+        if (!this._initialized) this.tryLoadComponents();
+        this.disable();
+
+        this.frame.stop(this);
+        this.events.trigger('stop');
     };
 
     // TODO:: add MediaManager
     pause() {
-        if (this.data.io) this.data.io.flush();
-        this.data.pause = true;
-        this.element.classList.add('pause');
-        this.trigger('pause');
+        if (!this._initialized) this.tryLoadComponents();
+
+        if (this.io) this.io.flush();
+        this._data.pause = true;
+        this._element.classList.add('pause');
+        this.events.trigger('pause');
     };
 
     // TODO:: add MediaManager
     resume() {
-        this.element.classList.remove('pause');
-        this.element.focus();
-        this.data.pause = false;
-        if (this.data.io) this.data.io.flush();
-        this.trigger('resume');
+        if (!this._initialized) this.tryLoadComponents();
+
+        this._element.classList.remove('pause');
+        this._element.focus();
+        this._data.pause = false;
+        if (this.io) this.io.flush();
+        this.events.trigger('resume');
     };
 
-    /** -GameEngine **/
+    update(timestamp) {
+        if (this._state) this._state.bind(this, timestamp)();
+    }
 
-    /** @returns {SceneManager} */
-    getSceneManager() {
-        return this.scene;
-    };
+    /* -GameEngine **/
 
-    /** @returns {LayersManager} */
-    getLayersManager() {
-        return this.scene.layersManager;
-    };
-
-    /** @returns {FrameManager} */
-    getFrameManager() {
-        return this.scene.frameManager;
-    };
-
-    /** @returns {ViewportManager} */
-    getViewportManager() {
-        return this.scene.viewportManager;
-    };
-
-    /** @returns {GameStatesManager} */
-    getGameStatesManager() {
-        return this.scene.gameStatesManager;
-    };
-
-    on() {
-    };
-
-    once() {
-    };
-
-    off() {
-    };
-
-    trigger() {
-    };
+    /* +System **/
 
     log(message, level) {
-        this.Log.log(message, level);
+        this.logger.log(message, level);
     };
+
+    tryLoadComponents() {
+        if (this._initialized) return;
+        // EventHandler
+        if (this.EventHandler === null) {
+            this.EventHandler = new EventHandler();
+        }
+        this.EventHandler.enable();
+
+        // InputHandler
+        if (this.InputHandler === null) {
+            this.InputHandler = new InputHandler();
+            this.InputHandler.init(this.EventHandler, [
+                InputHandler.IO.KEYBOARD,
+                InputHandler.IO.MOUSE
+            ], {
+                cursor: 'default'
+            });
+        }
+        this.InputHandler.enable();
+
+        // FrameHandler
+        if (this.FrameHandler === null) {
+            this.FrameHandler = FrameHandler.init();
+            this.FrameHandler.init(this.EventHandler);
+        }
+        this.FrameHandler.enable();
+
+        this._initialized = true;
+    }
+
+    /* -System **/
 
     /**
      * @name EngineJ2D
@@ -190,31 +264,35 @@ export default class EngineJ2D extends EngineComponent {
      *
      * @returns {EngineJ2D|EngineJ2D[]|Array.<EngineJ2D>}
      */
-    static initEngine(selected, options) {
-        var nodes = [];
+    static init(selected, options) {
+        if (selected === undefined) selected = '.j2d';
+        if (options === undefined) options = {};
+
+        options = ObjectUtil.extend(true, {}, EngineJ2D.defaults, options);
+
+        let nodes = [];
         if (typeof selected === 'string') {
             nodes = window.document.querySelectorAll(selected);
         } else if (typeof selected === 'object' && window.jQuery !== undefined && selected instanceof window.jQuery) {
             nodes = selected.get();
         } else return null;
 
-        var inactiveNodes = [];
+        let inactiveNodes = [];
         Array.prototype.forEach.call(nodes, (node) => {
             if (!node.hasAttribute('guid')) inactiveNodes.push(node)
         });
 
         inactiveNodes.forEach((element) => {
-            var options = ObjectUtil.extend(true, {}, EngineJ2D.defaults, options);
             options.id = UUID.generate();
 
             element.setAttribute('guid', options.id);
 
-            var id = element.getAttribute('id');
+            let id = element.getAttribute('id');
             if (id === undefined || id === null) {
                 element.setAttribute('guid', options.id);
             }
 
-            var tabIndex = element.getAttribute('tabindex');
+            let tabIndex = element.getAttribute('tabindex');
             if (tabIndex === undefined || tabIndex === null || tabIndex === false) {
                 element.setAttribute('tabindex', '-1');
             }
@@ -223,13 +301,15 @@ export default class EngineJ2D extends EngineComponent {
                 element.classList.add('j2d');
             }
 
+            Engine._$classPreInitialize.push(options.id);
             EngineJ2D.stack.add(options.id, new EngineJ2D(element, options));
+
             element.click();
             element.focus();
         });
 
-        var resumeBind = (current) => {
-            var nodes, engine;
+        let resumeBind = (current) => {
+            let nodes, engine;
             nodes = window.document.querySelectorAll('div.canvas[guid]:not(.pause-disable):not(:focus)');
             Array.prototype.forEach.call(nodes, (node) => {
                 if (current !== node) {
@@ -248,7 +328,7 @@ export default class EngineJ2D extends EngineComponent {
         };
 
         function resumeEventListener() {
-            var engine;
+            let engine;
             if (this.classList.contains('pause')) {
                 engine = EngineJ2D.stack.get(this.getAttribute('guid'));
                 if (engine) engine.resume();
@@ -263,7 +343,7 @@ export default class EngineJ2D extends EngineComponent {
             return true;
         }
 
-        var activeNodes = [];
+        let activeNodes = [];
         nodes = window.document.querySelectorAll('.j2d[guid]');
         Array.prototype.forEach.call(nodes, (node) => {
             activeNodes.push(EngineJ2D.stack.get(node.getAttribute('guid')));
@@ -272,29 +352,7 @@ export default class EngineJ2D extends EngineComponent {
             node.addEventListener('mouseenter', resumeEventListener);
         });
         return (1 === activeNodes.length) ? activeNodes[0] : activeNodes;
-    };
-
-    static util = {
-        /**
-         * @param {CanvasRenderingContext2D} context
-         */
-        disableSmoothing: (context) => {
-            var chrome = window.navigator.userAgent.match(/Chrom(e|ium)\/([0-9]+)\./);
-            var version = chrome ? parseInt(chrome[2], 10) : false;
-
-            context['imageSmoothingEnabled'] = false;
-            context['mozImageSmoothingEnabled'] = false;
-            context['oImageSmoothingEnabled'] = false;
-            if (version && version <= 29) {
-                context['webkitImageSmoothingEnabled'] = false;
-            }
-            context['msImageSmoothingEnabled'] = false;
-        }
-    };
-
-    /** Utils **/
-    util = EngineJ2D.util;
-    initEngine = EngineJ2D.initEngine;
+    }
 }
 
 /* ------------------------------ Plugin ------------------------------ */
@@ -302,7 +360,7 @@ export default class EngineJ2D extends EngineComponent {
     if (window.j2dPlugin !== undefined) return null;
     window.j2dPlugin = {pluginInit: true, stack: new ArrayMap()};
 
-    (new Log()).logSystem('j2D v.' + EngineJ2D.VERSION, 'https://github.com/fsggs/j2d');
+    (new SystemConsole()).logSystem('j2D v.' + EngineJ2D.VERSION, 'https://github.com/fsggs/j2d');
 
     if (window.jQuery !== undefined) {
         /**
@@ -310,28 +368,28 @@ export default class EngineJ2D extends EngineComponent {
          * @returns {EngineJ2D|EngineJ2D[]|Array.<EngineJ2D>}
          */
         window.jQuery.fn.j2d = (options) => {
-            return EngineJ2D.initEngine(this, options);
+            return EngineJ2D.init(this, options);
         };
     }
 
-    window.j2dPlugin.initEngine = EngineJ2D.initEngine;
+    window.j2dPlugin.init = EngineJ2D.init;
 
-    var firefox = window.navigator.userAgent.match(/Firefox\/([0-9]+)\./);
-    var version = firefox ? parseInt(firefox[2], 10) : false;
+    let firefox = window.navigator.userAgent.match(/Firefox\/([0-9]+)\./);
+    let version = firefox ? parseInt(firefox[2], 10) : false;
 
-    var isFullScreen = () => {
+    let isFullScreen = () => {
         //noinspection JSUnresolvedVariable
         return !!(window.document.webkitFullscreenElement
             || window.document.webkitCurrentFullScreenElement
             || (version && version < 47) ? window.document.mozFullScreenElement : window.document.fullscreenElement
-            || window.document.msFullscreenElement
+                || window.document.msFullscreenElement
         );
     };
 
     function fullScreenEventListener() {
-        var fullScreen = isFullScreen();
+        let fullScreen = isFullScreen();
         if (!fullScreen) {
-            var node, engine;
+            let node, engine;
             node = window.document.querySelector('.j2d[guid].active');
             if (node) engine = EngineJ2D.stack.get(node.getAttribute('guid'));
             if (engine) engine.scene.resizeToFullPage(fullScreen);
@@ -342,23 +400,23 @@ export default class EngineJ2D extends EngineComponent {
         }
     }
 
-    var html = window.document.querySelector('html');
+    let html = window.document.querySelector('html');
 
-    if (!html.classList.contains('j2d')) {
+    if (!html.classList.contains('j2d-engine')) {
         window.document.addEventListener('fullscreenchange', fullScreenEventListener);
         window.document.addEventListener('webkitfullscreenchange', fullScreenEventListener);
         window.document.addEventListener('mozfullscreenchange', fullScreenEventListener);
         window.document.addEventListener('MSFullscreenChange', fullScreenEventListener);
 
         window.addEventListener('focus', () => {
-            var node, engine;
+            let node, engine;
             node = window.document.querySelector('.j2d[guid].active:not(.resume-by-click)');
             if (node) engine = EngineJ2D.stack.get(node.getAttribute('guid'));
             if (engine) engine.resume();
         });
 
         window.addEventListener('blur', () => {
-            var nodes, engine;
+            let nodes, engine;
             nodes = window.document.querySelectorAll('.j2d[guid]:not(.pause-disable)');
             Array.prototype.forEach.call(nodes, (node) => {
                 if (node) engine = EngineJ2D.stack.get(node.getAttribute('guid'));
@@ -371,16 +429,15 @@ export default class EngineJ2D extends EngineComponent {
                 EngineJ2D.stack[guid].device.onResize();
             });
 
-            var fullScreen = isFullScreen();
+            let fullScreen = isFullScreen();
             if (fullScreen) {
-                var node, engine;
+                let node, engine;
                 node = window.document.querySelector('.j2d[guid].active');
                 if (node) engine = EngineJ2D.stack.get(node.getAttribute('guid'));
                 if (engine) engine.scene.resizeToFullPage(fullScreen);
             }
             return true;
         });
-        html.classList.add('j2d');
+        html.classList.add('j2d-engine');
     }
 })();
-

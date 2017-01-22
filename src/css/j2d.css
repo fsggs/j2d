@@ -1,5 +1,6 @@
 .j2d {
-    border: 0;
+    border: none;
+    outline: none;
     cursor: none;
     position: relative;
 }

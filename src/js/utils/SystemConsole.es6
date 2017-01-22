@@ -3,8 +3,12 @@ export default class SystemConsole {
         return 'background: ' + color + ';' +
             'background-repeat: no-repeat;' +
             'color: #1df9a8;' +
-            'line-height: 16px' +
-            'padding: 3px 0';
+            'line-height: 16px;' +
+            'padding: 1px 0;' +
+            'margin: 0;' +
+            'user-select: none;' +
+            '-webkit-user-select: none;' +
+            '-moz-user-select: none;';
     };
 
     link = (color) => {
@@ -25,7 +29,7 @@ export default class SystemConsole {
     }
 
     log(message, level) {
-        var css = '';
+        let css = '';
         if (typeof level === 'string') level = level.toLowerCase();
         switch (level) {
             case 'info':

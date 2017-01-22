@@ -5,14 +5,16 @@ import Joystick from "io/devices/Joystick";
 import Mouse from "io/devices/Mouse";
 import Touch from "io/devices/Touch";
 import Device from "api/Device";
+import EngineComponent from "api/EngineComponent";
 
 /**
  * InputHandler
  * @constructor
- * @extends Handler
+ * @extends EngineComponent
+ *
+ * @interface IEngineComponent
  */
-export default class InputHandler extends Handler {
-    static interfaces = [];
+export default class InputHandler extends EngineComponent {
 
     static IO = {
         KEYBOARD: 'keyboard',
@@ -29,6 +31,7 @@ export default class InputHandler extends Handler {
     };
 
     static KEY = InputHandlerCodes;
+    KEY = InputHandler.KEY;
 
     static KEYS_HELPER = InputHandler.prototype.KEYS_HELPER = {
         getKeyById: function (index) {
@@ -59,20 +62,20 @@ export default class InputHandler extends Handler {
     }
 
     bindListeners() {
-        for (var i = 0; i < this.IO.length; i++) {
+        for (let i = 0; i < this.IO.length; i++) {
             if (this.IO[i].enable() === false) return false;
         }
     };
 
     unBindListeners() {
-        for (var i = 0; i < this.IO.length; i++) {
+        for (let i = 0; i < this.IO.length; i++) {
             if (this.IO[i].disable() === false) return false;
         }
     };
 
     update() {
         if (!this.isEnabled) return false;
-        for (var i = 0; i < this.IO.length; i++) {
+        for (let i = 0; i < this.IO.length; i++) {
             if (this.IO[i].update() === false) return false;
         }
         return true;
@@ -80,14 +83,14 @@ export default class InputHandler extends Handler {
 
     clear() {
         if (!this.isEnabled) return false;
-        for (var i = 0; i < this.IO.length; i++) {
+        for (let i = 0; i < this.IO.length; i++) {
             if (this.IO[i].clear() === false) return false;
         }
         return true;
     };
 
     load(newKeyCodeMap) {
-        var oldKeyCodeMap = JSON.stringify(this.keyCodeMap);
+        let oldKeyCodeMap = JSON.stringify(this.keyCodeMap);
         this.keyCodeMap = JSON.parse(newKeyCodeMap);
         return oldKeyCodeMap;
     };
@@ -95,6 +98,9 @@ export default class InputHandler extends Handler {
     save() {
         return JSON.stringify(this.keyCodeMap);
     };
+
+    flush() {
+    }
 
     // TODO:: to refactoring
 
@@ -176,6 +182,4 @@ export default class InputHandler extends Handler {
         Handler.prototype.toggle.call(this, status);
         return this;
     }
-
-    KEY = InputHandler.KEY;
 }

@@ -1,10 +1,12 @@
 import Handler from "api/Handler";
+import EngineComponent from "../api/EngineComponent";
 
 /**
  * EventHandler
  * @constructor
  */
-export default class EventHandler extends Handler {
+export default class EventHandler extends EngineComponent {
+
     events = [];
     onces = [];
 
