@@ -108,22 +108,22 @@ export default class EventHandler extends EngineComponent {
     }
 
     init(eventHandler) {
-        Handler.prototype.init.call(this, eventHandler);
+        super.init(eventHandler);
         return this;
     }
 
     enable() {
-        Handler.prototype.enable.call(this);
+        super.enable();
         return this;
     }
 
     disable() {
-        Handler.prototype.disable.call(this);
+        super.disable();
         return this;
     }
 
     toggle(status) {
-        Handler.prototype.toggle.call(this, status);
+        super.toggle(status);
         return this;
     }
 }

@@ -1,6 +1,6 @@
-import ObjectUtil from "utils/ObjectUtil";
-import BaseNode from "nodes/BaseNode";
-import Vector2d from "utils/Vector2d";
+import ObjectUtil from "../../utils/ObjectUtil";
+import BaseNode from "../BaseNode";
+import Vector2d from "../../utils/Vector2d";
 import Tween from "transitions/Tween";
 
 // TODO:: move(+v.x, +v.y)

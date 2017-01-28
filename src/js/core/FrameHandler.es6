@@ -123,18 +123,18 @@ export default class FrameHandler extends EngineComponent {
     }
 
     init(eventHandler) {
-        Handler.prototype.init.call(this, eventHandler);
+        super.init(eventHandler);
         return this;
     }
 
     enable() {
-        Handler.prototype.enable.call(this);
+        super.enable();
         this._data.pause = false;
         return this;
     }
 
     disable() {
-        Handler.prototype.disable.call(this);
+        super.disable();
         this._data.pause = true;
         return this;
     }

@@ -110,7 +110,7 @@ export default class Mouse extends Pointer {
     }
 
     init(input) {
-        if (input !== undefined && this.input === undefined) this.input = input;
+        super.init(input);
         this.input.data.keys = {
             keysUp: [],
             keysDown: []

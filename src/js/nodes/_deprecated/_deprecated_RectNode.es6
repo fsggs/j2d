@@ -1,6 +1,6 @@
-import ObjectUtil from "utils/ObjectUtil";
+import ObjectUtil from "../../utils/ObjectUtil";
 import AnimatedNode from "nodes/AnimatedNode";
-import MathUtil from "utils/MathUtil";
+import MathUtil from "../../utils/MathUtil";
 
 /**
  * @class RectNode

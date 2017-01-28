@@ -44,7 +44,7 @@ export default class MathUtil {
      * @returns {number}
      */
     static random(min, max, omitZero) {
-        var random = (Math.floor(Math.random() * (max - min + 1) + min));
+        let random = (Math.floor(Math.random() * (max - min + 1) + min));
         return (omitZero && random == 0)
             ? MathUtil.random(min, max, omitZero)
             : random;

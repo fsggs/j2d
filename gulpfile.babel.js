@@ -23,6 +23,8 @@ let config = {
         'libs/require.min.map',
         'src/application.js',
         'src/index.html',
+        'node_modules/jquery/dist/jquery.min.js',
+        'node_modules/jquery/dist/jquery.min.map'
     ]
 };
 

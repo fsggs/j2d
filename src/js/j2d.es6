@@ -4,11 +4,13 @@ import InvalidArgumentException from "exceptions/InvalidArgumentException";
 import EventHandler from "events/EventHandler";
 import InputHandler from "io/InputHandler";
 import FrameHandler from "core/FrameHandler";
-import ArrayMap from "utils/ArrayMap";
+import SceneHandler from "core/SceneHandler";
 import Device from "utils/Device";
 import ObjectUtil from "utils/ObjectUtil";
 import SystemConsole from "utils/SystemConsole";
 import UUID from "utils/UUID";
+import LayersHandler from "layers/LayersHandler";
+import ViewportHandler from "core/ViewportHandler";
 
 /**
  * @class EngineJ2D
@@ -23,13 +25,16 @@ export default class EngineJ2D extends Engine {
     /** @type {string} */
     static VERSION = '1.0.0-dev (VeNoM iNjecTioN)';
 
+    /** @type {boolean} */
+    static PluginInit = false;
+
     /** @type {{id: string, pause: boolean, components: {
         * EventHandler: IEngineComponent|EngineComponent|EventHandler,
         * FrameHandler: IEngineComponent|EngineComponent|FrameHandler,
         * InputHandler: IEngineComponent|EngineComponent|InputHandler,
         * MediaHandler: IEngineComponent,
         * TweenHandler: IEngineComponent,
-        * SceneHandler: IEngineComponent
+        * SceneHandler: IEngineComponent|EngineComponent|SceneHandler
         * }}}
      */
     static defaults = {
@@ -45,8 +50,11 @@ export default class EngineJ2D extends Engine {
         }
     };
 
-    /** @type {Array.<EngineJ2D>|ArrayMap.<EngineJ2D>} */
-    static stack = new ArrayMap();
+    /** @type {Array.<EngineJ2D>|string} */
+    static stack = [];
+
+    /** @type jQuery|function */
+    static _jQuery;
 
     /** @type boolean */
     _initialized = false;
@@ -72,7 +80,6 @@ export default class EngineJ2D extends Engine {
         this._element = element;
         this._data = data;
 
-        this.log(`Find scene with id "${this.guid}"`, 'info');
         this.log(this._data.components);
     }
 
@@ -243,6 +250,25 @@ export default class EngineJ2D extends Engine {
         }
         this.InputHandler.enable();
 
+        // SceneHandler
+        if (this.SceneHandler === null) {
+            this.SceneHandler = new SceneHandler();
+            this.SceneHandler.init(this.EventHandler, this, {
+                width: 640,
+                height: 360,
+                backgroundColor: 'black'
+            });
+
+            this.SceneHandler.LayersHandler = new LayersHandler();
+            this.SceneHandler.LayersHandler.init(this.EventHandler);
+
+            this.SceneHandler.ViewportHandler = new ViewportHandler();
+            this.SceneHandler.ViewportHandler.init(this.EventHandler);
+        }
+        this.SceneHandler.LayersHandler.enable();
+        this.SceneHandler.ViewportHandler.enable();
+        this.SceneHandler.enable();
+
         // FrameHandler
         if (this.FrameHandler === null) {
             this.FrameHandler = FrameHandler.init();
@@ -259,7 +285,7 @@ export default class EngineJ2D extends Engine {
      * @name EngineJ2D
      * @static
      *
-     * @param {string|window.jQuery} selected
+     * @param {string|jQuery} selected
      * @param {EngineJ2D.defaults|Object} options
      *
      * @returns {EngineJ2D|EngineJ2D[]|Array.<EngineJ2D>}
@@ -278,7 +304,8 @@ export default class EngineJ2D extends Engine {
         } else return null;
 
         let inactiveNodes = [];
-        Array.prototype.forEach.call(nodes, (node) => {
+
+        nodes.forEach(node => {
             if (!node.hasAttribute('guid')) inactiveNodes.push(node)
         });
 
@@ -302,7 +329,8 @@ export default class EngineJ2D extends Engine {
             }
 
             Engine._$classPreInitialize.push(options.id);
-            EngineJ2D.stack.add(options.id, new EngineJ2D(element, options));
+            EngineJ2D.stack[options.id] = new EngineJ2D(element, options);
+            EngineJ2D.stack.push(options.id);
 
             element.click();
             element.focus();
@@ -314,7 +342,7 @@ export default class EngineJ2D extends Engine {
             Array.prototype.forEach.call(nodes, (node) => {
                 if (current !== node) {
                     node.classList.remove('active');
-                    engine = EngineJ2D.stack.get(node.getAttribute('guid'));
+                    engine = EngineJ2D.stack[node.getAttribute('guid')] || null;
                     if (engine) engine.pause();
                 }
             });
@@ -330,13 +358,13 @@ export default class EngineJ2D extends Engine {
         function resumeEventListener() {
             let engine;
             if (this.classList.contains('pause')) {
-                engine = EngineJ2D.stack.get(this.getAttribute('guid'));
+                engine = EngineJ2D.stack[this.getAttribute('guid')] || null;
                 if (engine) engine.resume();
                 resumeBind(this);
             } else if (!this.classList.contains('resume-by-click') && this.classList.contains(':focus')) {
                 this.classList.add('active');
                 this.focus();
-                engine = EngineJ2D.stack.get(this.getAttribute('guid'));
+                engine = EngineJ2D.stack[this.getAttribute('guid')] || null;
                 if (engine) engine.resume();
                 resumeBind(this);
             }
@@ -346,33 +374,57 @@ export default class EngineJ2D extends Engine {
         let activeNodes = [];
         nodes = window.document.querySelectorAll('.j2d[guid]');
         Array.prototype.forEach.call(nodes, (node) => {
-            activeNodes.push(EngineJ2D.stack.get(node.getAttribute('guid')));
+            activeNodes.push(EngineJ2D.stack[node.getAttribute('guid')] || null);
             node.addEventListener('click', resumeEventListener);
             node.addEventListener('touch', resumeEventListener);
             node.addEventListener('mouseenter', resumeEventListener);
         });
         return (1 === activeNodes.length) ? activeNodes[0] : activeNodes;
     }
+
+    static ready(callback) {
+        if (EngineJ2D.PluginInit) {
+            if (EngineJ2D._jQuery) {
+                EngineJ2D._jQuery(document).ready(callback);
+            } else callback();
+        } else {
+            if (EngineJ2D._jQuery) {
+                EngineJ2D._jQuery(document).on('j2d-ready', () => {
+                    EngineJ2D._jQuery(document).ready(callback);
+                });
+            } else window.document.addEventListener('j2d-ready', callback);
+        }
+    }
+
+    /**
+     * @param {jQuery} jQuery
+     * @return {jQuery}
+     */
+    static jQuery(jQuery) {
+        EngineJ2D._jQuery = jQuery !== undefined ? jQuery : window.jQuery;
+
+        (function ($) {
+            //noinspection JSUnresolvedVariable
+            /**
+             * @param {EngineJ2D.defaults} [options]
+             * @returns {EngineJ2D|Array.<EngineJ2D>}
+             */
+            $.fn.j2d = function (options) {
+                /** @type {jQuery|EngineJ2D._jQuery} */
+                let instance = this;
+                return EngineJ2D.init(instance, options);
+            };
+        })(EngineJ2D._jQuery);
+
+        return EngineJ2D._jQuery;
+    }
 }
 
 /* ------------------------------ Plugin ------------------------------ */
 (EngineJ2D.initPlugin = () => {
-    if (window.j2dPlugin !== undefined) return null;
-    window.j2dPlugin = {pluginInit: true, stack: new ArrayMap()};
+    if (EngineJ2D.PluginInit) return true;
 
     (new SystemConsole()).logSystem('j2D v.' + EngineJ2D.VERSION, 'https://github.com/fsggs/j2d');
-
-    if (window.jQuery !== undefined) {
-        /**
-         * @param {EngineJ2D.defaults} [options]
-         * @returns {EngineJ2D|EngineJ2D[]|Array.<EngineJ2D>}
-         */
-        window.jQuery.fn.j2d = (options) => {
-            return EngineJ2D.init(this, options);
-        };
-    }
-
-    window.j2dPlugin.init = EngineJ2D.init;
 
     let firefox = window.navigator.userAgent.match(/Firefox\/([0-9]+)\./);
     let version = firefox ? parseInt(firefox[2], 10) : false;
@@ -391,11 +443,11 @@ export default class EngineJ2D extends Engine {
         if (!fullScreen) {
             let node, engine;
             node = window.document.querySelector('.j2d[guid].active');
-            if (node) engine = EngineJ2D.stack.get(node.getAttribute('guid'));
+            if (node) engine = EngineJ2D.stack[node.getAttribute('guid')] || null;
             if (engine) engine.scene.resizeToFullPage(fullScreen);
 
             node = window.document.querySelector('.j2d[guid]:not(.active)');
-            if (node) engine = EngineJ2D.stack.get(node.getAttribute('guid'));
+            if (node) engine = EngineJ2D.stack[node.getAttribute('guid')] || null;
             if (engine) engine.toggle(!fullScreen);
         }
     }
@@ -411,21 +463,21 @@ export default class EngineJ2D extends Engine {
         window.addEventListener('focus', () => {
             let node, engine;
             node = window.document.querySelector('.j2d[guid].active:not(.resume-by-click)');
-            if (node) engine = EngineJ2D.stack.get(node.getAttribute('guid'));
+            if (node) engine = EngineJ2D.stack[node.getAttribute('guid')] || null;
             if (engine) engine.resume();
         });
 
         window.addEventListener('blur', () => {
             let nodes, engine;
             nodes = window.document.querySelectorAll('.j2d[guid]:not(.pause-disable)');
-            Array.prototype.forEach.call(nodes, (node) => {
-                if (node) engine = EngineJ2D.stack.get(node.getAttribute('guid'));
+            nodes.forEach(node => {
+                if (node) engine = EngineJ2D.stack[node.getAttribute('guid')] || null;
                 if (engine) engine.pause();
             });
         });
 
         window.addEventListener('resize', () => {
-            EngineJ2D.stack.forEach((guid) => {
+            EngineJ2D.stack.forEach(guid => {
                 EngineJ2D.stack[guid].device.onResize();
             });
 
@@ -433,11 +485,15 @@ export default class EngineJ2D extends Engine {
             if (fullScreen) {
                 let node, engine;
                 node = window.document.querySelector('.j2d[guid].active');
-                if (node) engine = EngineJ2D.stack.get(node.getAttribute('guid'));
+                if (node) engine = EngineJ2D.stack[node.getAttribute('guid')] || null;
                 if (engine) engine.scene.resizeToFullPage(fullScreen);
             }
             return true;
         });
         html.classList.add('j2d-engine');
     }
+
+    window.document.dispatchEvent((new CustomEvent('j2d-ready')));
+
+    return EngineJ2D.PluginInit = true;
 })();

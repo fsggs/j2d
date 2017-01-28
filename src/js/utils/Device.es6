@@ -3,7 +3,7 @@ import Vector2dInteger from "utils/Vector2dInteger";
  * Class utility for get system browser window size
  *
  * @class Device
- * @exports module:utils/DeviceUtil
+ * @exports module:utils/Device
  *
  * @constructor
  */

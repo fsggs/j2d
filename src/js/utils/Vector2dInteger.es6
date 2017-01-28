@@ -5,7 +5,7 @@ import Vector2d from "utils/Vector2d";
  * @exports module:utils/Vector2dInteger
  *
  * @constructor
- * @extends utils/Vector2d
+ * @extends Vector2d
  * @param {number} x
  * @param {number} y
  */

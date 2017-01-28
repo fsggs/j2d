@@ -1,4 +1,3 @@
-import Handler from "api/Handler";
 import InputHandlerCodes from "io/InputHandlerCodes";
 import Keyboard from "io/devices/Keyboard";
 import Joystick from "io/devices/Joystick";
@@ -138,18 +137,18 @@ export default class InputHandler extends EngineComponent {
     }
 
     init(eventHandler, io, options) {
-        Handler.prototype.init.call(this, eventHandler);
-        if (options !== undefined && options !== null && typeof options === 'object') {
+        super.init(eventHandler);
+        if (options && typeof options === 'object') {
             this.options = options;
         }
-        if (io !== undefined && io !== null && typeof io === 'object' && io instanceof Array) {
+        if (io && typeof io === 'object' && io instanceof Array) {
             this.IO = [];
             io.map(function (device) {
                 if (typeof device === 'string' && InputHandler.IO[device.toUpperCase()] !== undefined) {
                     device = new (this.defaultIO[device.toUpperCase()])();
                     this.IO[device.toString()] = device;
                     this.IO.push(device);
-                    if (this.IO[device].init(this) === false) {
+                    if (this.IO[device.toString()].init(this) === false) {
                         throw new Error('Error. Device "' + device + '" not initialize.');
                     }
                 } else if (typeof device === 'object' && device instanceof Device) {
@@ -167,19 +166,19 @@ export default class InputHandler extends EngineComponent {
     }
 
     enable() {
-        Handler.prototype.enable.call(this);
+        super.enable();
         this.bindListeners();
         return this;
     }
 
     disable() {
-        Handler.prototype.disable.call(this);
+        super.disable();
         this.unBindListeners();
         return this;
     }
 
     toggle(status) {
-        Handler.prototype.toggle.call(this, status);
+        super.toggle(status);
         return this;
     }
 }

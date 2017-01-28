@@ -1,7 +1,7 @@
-import ObjectUtil from "utils/ObjectUtil";
+import ObjectUtil from "../../utils/ObjectUtil";
 import AnimatedNode from "nodes/AnimatedNode";
 import ArrayMap from "utils/ArrayMap";
-import BaseNode from "nodes/BaseNode";
+import BaseNode from "../BaseNode";
 
 /**
  * @class CollectionNode
