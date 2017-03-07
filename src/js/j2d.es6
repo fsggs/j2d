@@ -197,17 +197,16 @@ export default class EngineJ2D extends Engine {
         this.events.trigger('stop');
     };
 
-    // TODO:: add MediaManager
     pause() {
         if (!this._initialized) this.tryLoadComponents();
 
         if (this.io) this.io.flush();
+        if (this.media) this.media.pause();
         this._data.pause = true;
         this._element.classList.add('pause');
         this.events.trigger('pause');
     };
 
-    // TODO:: add MediaManager
     resume() {
         if (!this._initialized) this.tryLoadComponents();
 
@@ -215,6 +214,7 @@ export default class EngineJ2D extends Engine {
         this._element.focus();
         this._data.pause = false;
         if (this.io) this.io.flush();
+        if (this.media) this.media.resume();
         this.events.trigger('resume');
     };
 

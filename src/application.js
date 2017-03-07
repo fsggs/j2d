@@ -46,51 +46,57 @@ requirejs.config({
             'nodes/BaseNode',
             'nodes/CameraNode',
             'nodes/GroupNode',
+            'objects/Immutable',
+            'objects/Mutable',
             'utils/Device',
             'utils/Events',
             'utils/MathUtil',
             'utils/ObjectUtil',
             'utils/SystemConsole',
             'utils/UUID',
-            'utils/Vector2d',
-            'utils/Vector2dInteger'
+            'utils/Vector2d'
         ]
     }
 });
 
 define('Test', (require) => {
-    let $ = require('jquery');
-    let EngineJ2D = require('j2d');
-    let Layer = require('layers/Layer').default;
-    let GroupNode = require('nodes/GroupNode');
+    // let $ = require('jquery');
+    // let EngineJ2D = require('j2d');
+    // let Layer = require('layers/Layer').default;
+    // let GroupNode = require('nodes/GroupNode');
+    //
+    // EngineJ2D.jQuery($);
+    //
+    // EngineJ2D.ready(() => {
+    //     /** @type EngineJ2D|Array.<EngineJ2D> */
+    //         //let j2d = EngineJ2D.init('#j2d'); // JS
+    //     let j2d = $('#j2d').j2d(); // jQuery
+    //
+    //     // j2d.state = ((timestamp) => {
+    //     //     console.log(timestamp);
+    //     // });
+    //
+    //     j2d.start();
+    //
+    //     let lm = j2d.scene.layers;
+    //
+    //     let backgroundLayer = new Layer('background');
+    //     let group1 = new GroupNode('logo');
+    //     let group2 = new GroupNode('ui');
+    //
+    //     lm.add(backgroundLayer, -1);
+    //
+    //     //group1.add(backgroundLayer);
+    //
+    //     lm.add(group1);
+    //     lm.add(group2);
+    //
+    //     //console.log(lm);
+    // });
 
-    EngineJ2D.jQuery($);
+    const Immutable = require('objects/Immutable');
 
-    EngineJ2D.ready(() => {
-        /** @type EngineJ2D|Array.<EngineJ2D> */
-            //let j2d = EngineJ2D.init('#j2d'); // JS
-        let j2d = $('#j2d').j2d(); // jQuery
-
-        // j2d.state = ((timestamp) => {
-        //     console.log(timestamp);
-        // });
-
-        j2d.start();
-
-        let lm = j2d.scene.layers;
-
-        let backgroundLayer = new Layer('background');
-        let group1 = new GroupNode('logo');
-        let group2 = new GroupNode('ui');
-
-        lm.add(backgroundLayer, -1);
-
-        //group1.add(backgroundLayer);
-
-        lm.add(group1);
-        lm.add(group2);
-
-        //console.log(lm);
-    });
+    window.a = new Immutable([0, 1, 2, 3, 4, 5]);
+    console.log(a);
 });
 require(['Test']);

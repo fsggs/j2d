@@ -38,12 +38,13 @@
   "nodes/BaseNode": "j2d.nodes.BaseNode",
   "nodes/CameraNode": "j2d.nodes.CameraNode",
   "nodes/GroupNode": "j2d.nodes.GroupNode",
+  "objects/Immutable": "j2d.objects.Immutable",
+  "objects/Mutable": "j2d.objects.Mutable",
   "utils/Device": "j2d.utils.Device",
   "utils/Events": "j2d.utils.Events",
   "utils/MathUtil": "j2d.utils.MathUtil",
   "utils/ObjectUtil": "j2d.utils.ObjectUtil",
   "utils/SystemConsole": "j2d.utils.SystemConsole",
   "utils/UUID": "j2d.utils.UUID",
-  "utils/Vector2d": "j2d.utils.Vector2d",
-  "utils/Vector2dInteger": "j2d.utils.Vector2dInteger"
+  "utils/Vector2d": "j2d.utils.Vector2d"
 }

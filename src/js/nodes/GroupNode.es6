@@ -28,6 +28,17 @@ export default class GroupNode extends BaseNode {
         return this;
     }
 
+    insert(node, index) {
+        if (node.isSpecialNode) {
+            throw new RuntimeException(`You try add the ${node.constructor.name} to GroupNode, but this not work.`);
+        }
+        if (node.instanceOf(BaseNode)) {
+            this._nodes[node.guid] = node;
+            this._nodes.splice(index, 0, node);
+        }
+        return this;
+    }
+
     remove(node) {
         if (node.instanceOf(BaseNode) && this.has(node.guid)) {
             this._nodes.splice(this._nodes.indexOf(node), 1);
@@ -37,7 +48,7 @@ export default class GroupNode extends BaseNode {
     }
 
     flush() {
-        this._nodes.length = 0;
+        this._nodes = [];
         return this;
     }
 

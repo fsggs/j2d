@@ -11,17 +11,21 @@ export default class Layer extends GroupNode {
 
     _registry = [];
 
+    get(key) {
+        return this._nodes[`${LAYER_PREFIX}${key}`] || this._nodes[key] || null;
+    }
+
+    has(key) {
+        return this._nodes[`${LAYER_PREFIX}${key}`] !== undefined || this._nodes[key] !== undefined;
+    }
+
     constructor(guid) {
         super({id: `${LAYER_PREFIX}${guid}`});
         if (guid === 'global') this._isGlobal = true;
     }
 
     add(node, index) {
-        if (index === undefined) {
-            index = this.count();
-        } else {
-            index = this.find('main') + index;
-        }
+        index = index === undefined ? this.count() : this.find('main') + index;
         if (node.instanceOf(Layer) && this._isGlobal) {
             if (this._registry[node.guid] !== undefined) {
                 throw new RuntimeException(`Global layer already contain layer with id: "${node.guid}"`);
@@ -29,7 +33,6 @@ export default class Layer extends GroupNode {
             this._registry[node.guid] = node;
             this._nodes[node.guid] = node;
             this._nodes.splice(index, 0, node);
-
             //TODO:: registry of layers
         } else if (node.instanceOf(Layer) && !this._isGlobal) {
             throw RuntimeException('Only global layer has another layer as child.');
