@@ -18,14 +18,14 @@ export default class Immutable extends Object {
             throw new InvalidArgumentException('Attribute object type must be instance of Object.');
         }
 
-        if (options === undefined) options = {freeze: true};
+        if (options === undefined) options = {};
         if (object === undefined) object = {};
 
         super(object instanceof Array ? new ImmutableArray(object, options) : Object.assign({}, object));
 
         this.__$ImmutableOptions = options;
 
-        if (!Object.isFrozen(this) && options.freeze) Immutable.freeze(this, options);
+        if (!Object.isFrozen(this)) Immutable.freeze(this, options);
     }
 
     toJS = () => Immutable.unFreeze(Object.assign(this instanceof Array ? [] : {}, this));
@@ -108,7 +108,7 @@ class ImmutableArray extends Array {
     __$ImmutableOptions;
 
     constructor(array, options) {
-        if (options === undefined) options = {freeze: true};
+        if (options === undefined) options = {};
 
         super([]);
 

@@ -1,6 +1,6 @@
 import PrototypeObject from "api/PrototypeObject";
-import ObjectUtil from "utils/ObjectUtil";
 import UUID from "utils/UUID";
+import Mutable from "objects/Mutable";
 
 export default class BaseNode extends PrototypeObject {
     static NodeName = 'BaseNode';
@@ -17,7 +17,7 @@ export default class BaseNode extends PrototypeObject {
     constructor(data) {
         super();
         if (typeof data === 'string') data = {id: data};
-        this._data = ObjectUtil.extend(true, {}, BaseNode.defaults, data);
+        this._data = Mutable.extend(true, {}, BaseNode.defaults, data);
         if (this._data.id === null) this._data.id = UUID.generate();
     }
 

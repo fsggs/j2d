@@ -10,11 +10,10 @@ export default class Handler extends PrototypeObject {
 
     _isEnabled = false;
 
+    events = null;
+
     constructor() {
         super();
-
-        this.events = null;
-        this._isEnabled = false;
     }
 
     init(eventHandler) {

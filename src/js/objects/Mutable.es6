@@ -1,9 +1,29 @@
+import InvalidArgumentException from "exceptions/InvalidArgumentException";
+
 /**
  * @exports module:objects/Mutable
  */
 export default class Mutable extends Object {
-    static extend() {
-        let args = Array.prototype.slice.call(arguments);
+    __$MutableOptions;
+
+    constructor(object, options) {
+        if (object !== undefined && typeof object !== 'object') {
+            throw new InvalidArgumentException('Attribute object type must be instance of Object.');
+        }
+
+        if (options === undefined) options = {};
+        if (object === undefined) object = {};
+
+        super(object);
+
+        this.__$MutableOptions = options;
+    }
+
+    extend(...args) {
+        Mutable.extend(true, typeof this === Array ? [] : {}, this, ...args);
+    }
+
+    static extend(...args) {
         let deepness = false;
         if (typeof args[0] === 'boolean') {
             deepness = args[0];

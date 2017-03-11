@@ -1,7 +1,7 @@
 import EngineComponent from "api/EngineComponent";
 import Layer from "layers/Layer";
 import BaseNode from "nodes/BaseNode";
-import ObjectUtil from "utils/ObjectUtil";
+import Mutable from "objects/Mutable";
 
 export default class LayersHandler extends EngineComponent {
     /**
@@ -24,7 +24,7 @@ export default class LayersHandler extends EngineComponent {
 
     init(eventHandler, options) {
         super.init(eventHandler);
-        this._data = ObjectUtil.extend(true, {}, LayersHandler.defaults, options);
+        this._data = Mutable.extend(true, {}, LayersHandler.defaults, options);
     }
 
     get layers() {

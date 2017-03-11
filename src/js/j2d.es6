@@ -6,11 +6,11 @@ import InputHandler from "io/InputHandler";
 import FrameHandler from "core/FrameHandler";
 import SceneHandler from "core/SceneHandler";
 import Device from "utils/Device";
-import ObjectUtil from "utils/ObjectUtil";
 import SystemConsole from "utils/SystemConsole";
 import UUID from "utils/UUID";
 import LayersHandler from "layers/LayersHandler";
 import ViewportHandler from "core/ViewportHandler";
+import Mutable from "objects/Mutable";
 
 /**
  * @class EngineJ2D
@@ -294,7 +294,7 @@ export default class EngineJ2D extends Engine {
         if (selected === undefined) selected = '.j2d';
         if (options === undefined) options = {};
 
-        options = ObjectUtil.extend(true, {}, EngineJ2D.defaults, options);
+        options = Mutable.extend(true, {}, EngineJ2D.defaults, options);
 
         let nodes = [];
         if (typeof selected === 'string') {

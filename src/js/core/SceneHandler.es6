@@ -1,7 +1,7 @@
 import EngineComponent from "api/EngineComponent";
 import InvalidArgumentException from "exceptions/InvalidArgumentException";
 import IEngineComponent from "api/interfaces/IEngineComponent";
-import ObjectUtil from "utils/ObjectUtil";
+import Mutable from "objects/Mutable";
 
 export default class SceneHandler extends EngineComponent {
     /**
@@ -102,11 +102,11 @@ export default class SceneHandler extends EngineComponent {
         super.init(eventHandler);
 
         if (options && typeof options === 'object') this.options = options;
-        options = ObjectUtil.extend(true, {}, SceneHandler.defaults, options);
+        options = Mutable.extend(true, {}, SceneHandler.defaults, options);
         if (options.components !== undefined) delete options.components;
 
         this._engine = engine;
-        this._data = ObjectUtil.extend(true, {}, this._data, options);
+        this._data = Mutable.extend(true, {}, this._data, options);
 
         this.initCanvas();
     }
