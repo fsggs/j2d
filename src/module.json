@@ -40,6 +40,7 @@
   "nodes/GroupNode": "j2d.nodes.GroupNode",
   "objects/Immutable": "j2d.objects.Immutable",
   "objects/Mutable": "j2d.objects.Mutable",
+  "stores/BaseStore": "j2d.stores.BaseStore",
   "utils/Device": "j2d.utils.Device",
   "utils/Events": "j2d.utils.Events",
   "utils/MathUtil": "j2d.utils.MathUtil",

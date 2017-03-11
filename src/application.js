@@ -48,6 +48,7 @@ requirejs.config({
             'nodes/GroupNode',
             'objects/Immutable',
             'objects/Mutable',
+            'stores/BaseStore',
             'utils/Device',
             'utils/Events',
             'utils/MathUtil',
