@@ -2,18 +2,30 @@ import InvalidArgumentException from "exceptions/InvalidArgumentException";
 import Mutable from "objects/Mutable";
 
 const FREEZE_NODE_METHODS = ['get', 'set', 'toJS', 'toJSON'];
+const FREEZE_NODE_ARRAY_METHODS = [
+    'concat', 'copyWithin', 'fill', 'filter', 'map', 'pop', 'reduce',
+    'reduceRight', 'reverse', 'shift', 'slice', 'sort', 'splice', 'unshift',
+];
 
 /**
  * @exports module:objects/Immutable
  */
 export default class Immutable extends Object {
-    constructor(object) {
-        if (typeof object !== 'object' && object !== undefined) {
+    __$ImmutableOptions;
+
+    constructor(object, options) {
+        if (object !== undefined && typeof object !== 'object') {
             throw new InvalidArgumentException('Attribute object type must be instance of Object.');
         }
+
+        if (options === undefined) options = {freeze: true};
         if (object === undefined) object = {};
-        super(Object.assign(object instanceof Array ? [] : {}, object));
-        Immutable.freeze(this);
+
+        super(object instanceof Array ? new ImmutableArray(object, options) : Object.assign({}, object));
+
+        this.__$ImmutableOptions = options;
+
+        if (!Object.isFrozen(this) && options.freeze) Immutable.freeze(this, options);
     }
 
     toJS = () => Immutable.unFreeze(Object.assign(this instanceof Array ? [] : {}, this));
@@ -22,10 +34,10 @@ export default class Immutable extends Object {
         Immutable.unFreeze(Object.assign(this instanceof Array ? [] : {}, this))
     );
 
-    get = () => Object.assign(this instanceof Array ? [] : {}, this);
+    get = () => Immutable.freeze(Object.assign(this instanceof Array ? [] : {}, this), this.__$ImmutableOptions);
 
     set = (data) => {
-        if (typeof data !== 'object' && data !== undefined) {
+        if (data !== undefined && typeof data !== 'object') {
             throw new InvalidArgumentException('Attribute object type must be instance of Object.');
         }
 
@@ -34,25 +46,28 @@ export default class Immutable extends Object {
             let newObject = Mutable.extend(true, oldObject instanceof Array ? [] : {}, oldObject, data);
             console.log(oldObject, this, newObject);
 
-            return Immutable.freeze(newObject);
-        } else {
-            console.log(data)
+            return Immutable.freeze(newObject, this.__$ImmutableOptions);
         }
+
+        return null;
     };
 
     /**
      * @param {Object} object
+     * @param {Object} options
      * @return {Object}
      */
-    static freeze(object) {
+    static freeze(object, options) {
         Object.getOwnPropertyNames(object).forEach((property) => {
             if (object.hasOwnProperty(property)
                 && object[property] !== null
                 && (typeof object[property] === 'object' || typeof object[property] === 'function')
                 && !Object.isFrozen(object[property])
                 && !FREEZE_NODE_METHODS.includes(property)
+                && !FREEZE_NODE_ARRAY_METHODS.includes(property)
+                && property !== '__$ImmutableOptions'
             ) {
-                object[property] = new Immutable(object[property]);
+                object[property] = new Immutable(object[property], options);
             }
         });
 
@@ -73,7 +88,11 @@ export default class Immutable extends Object {
             result = String(object).toString();
         } else if (typeof object == 'object') {
             for (let property in object) {
-                if (object.hasOwnProperty(property) && !FREEZE_NODE_METHODS.includes(property)) {
+                if (object.hasOwnProperty(property)
+                    && !FREEZE_NODE_METHODS.includes(property)
+                    && !FREEZE_NODE_ARRAY_METHODS.includes(property)
+                    && property !== '__$ImmutableOptions'
+                ) {
                     result[property] = (typeof object[property] === 'object' && Object.isFrozen(object[property]))
                         ? Immutable.unFreeze(object[property])
                         : object[property];
@@ -82,5 +101,157 @@ export default class Immutable extends Object {
         }
 
         return result;
+    }
+}
+
+class ImmutableArray extends Array {
+    __$ImmutableOptions;
+
+    constructor(array, options) {
+        if (options === undefined) options = {freeze: true};
+
+        super([]);
+
+        this.__$ImmutableOptions = options;
+
+        if ((typeof array === 'object' && array instanceof Array)) {
+            array.forEach((value, key) => this[key] = value);
+        }
+    }
+
+    // Immutable methods
+    /**
+     * @param args
+     * @return {Immutable|ImmutableArray|Object}
+     */
+    concat(...args) {
+        return Immutable.freeze(super.concat(...args), this.__$ImmutableOptions);
+    }
+
+    /**
+     * @param args
+     * @return {Immutable|ImmutableArray|Object}
+     */
+    copyWithin(...args) {
+        return Immutable.freeze(super.copyWithin(...args), this.__$ImmutableOptions);
+    }
+
+    /**
+     * @param args
+     * @return {Immutable|ImmutableArray|Object}
+     */
+    fill(...args) {
+        let array = Immutable.unFreeze(Object.assign([], this));
+        return Immutable.freeze(array.fill(...args), this.__$ImmutableOptions);
+    }
+
+    /**
+     * @param args
+     * @return {Immutable|ImmutableArray|Object}
+     */
+    filter(...args) {
+        return Immutable.freeze(super.filter(...args), this.__$ImmutableOptions);
+    }
+
+    /**
+     * @param args
+     * @return {Immutable|ImmutableArray|Object}
+     */
+    map(...args) {
+        return Immutable.freeze(super.map(...args), this.__$ImmutableOptions);
+    }
+
+    /**
+     * @param args
+     * @return {Immutable|ImmutableArray|Object}
+     */
+    pop(...args) {
+        let array = Immutable.unFreeze(Object.assign([], this));
+        array.pop(...args);
+        return Immutable.freeze(array, this.__$ImmutableOptions);
+    }
+
+    /**
+     * @param args
+     * @return {Immutable|ImmutableArray|Object}
+     */
+    push(...args) {
+        let array = Immutable.unFreeze(Object.assign([], this));
+        array.push(...args);
+        return Immutable.freeze(array, this.__$ImmutableOptions);
+    }
+
+    /**
+     * @param args
+     * @return {Immutable|ImmutableArray|Object}
+     */
+    reduce(...args) {
+        let array = Immutable.unFreeze(Object.assign([], this));
+        return Immutable.freeze(array.reduce(...args), this.__$ImmutableOptions);
+    }
+
+    /**
+     * @param args
+     * @return {Immutable|ImmutableArray|Object}
+     */
+    reduceRight(...args) {
+        let array = Immutable.unFreeze(Object.assign([], this));
+        return Immutable.freeze(array.reduceRight(...args), this.__$ImmutableOptions);
+    }
+
+    /**
+     * @param args
+     * @return {Immutable|ImmutableArray|Object}
+     */
+    reverse(...args) {
+        let array = Immutable.unFreeze(Object.assign([], this));
+        return Immutable.freeze(array.reverse(...args), this.__$ImmutableOptions);
+    }
+
+    /**
+     * @param args
+     * @return {Immutable|ImmutableArray|Object}
+     */
+    shift(...args) {
+        let array = Immutable.unFreeze(Object.assign([], this));
+        array.shift(...args);
+        return Immutable.freeze(array, this.__$ImmutableOptions);
+    }
+
+    /**
+     * @param args
+     * @return {Immutable|ImmutableArray|Object}
+     */
+    slice(...args) {
+        let array = Immutable.unFreeze(Object.assign([], this));
+        return Immutable.freeze(array.slice(...args), this.__$ImmutableOptions);
+    }
+
+    /**
+     * @param args
+     * @return {Immutable|ImmutableArray|Object}
+     */
+    sort(...args) {
+        let array = Immutable.unFreeze(Object.assign([], this));
+        return Immutable.freeze(array.sort(...args), this.__$ImmutableOptions);
+    }
+
+    /**
+     * @param args
+     * @return {Immutable|ImmutableArray|Object}
+     */
+    splice(...args) {
+        let array = Immutable.unFreeze(Object.assign([], this));
+        return Immutable.freeze(array.splice(...args), this.__$ImmutableOptions);
+    }
+
+    /**
+     * @param args
+     * @return {Immutable|ImmutableArray|Object}
+     */
+    unshift(...args) {
+        let array = Immutable.unFreeze(Object.assign([], this));
+        array.unshift(...args);
+        return Immutable.freeze(array, this.__$ImmutableOptions);
     }
 }

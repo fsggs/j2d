@@ -18,12 +18,12 @@ export default class Mutable extends Object {
             }();
 
         for (let i = 1; i < args.length; i++) {
+            /** @type {Object} */
             let object = args[i];
 
             if (!object) continue;
 
             for (let key in object) {
-                //noinspection JSUnresolvedFunction
                 if (object.hasOwnProperty(key)) {
                     if (typeof object[key] === 'object' && object[key] !== null) {
                         out[key] = deepness ? Mutable.extend(deepness, out[key], object[key]) : object[key];

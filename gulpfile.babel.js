@@ -84,6 +84,8 @@ gulp.task('babel:build-dev', () => {
                 ['babel-plugin-transform-builtin-extend', {
                     globals: ['Error', 'Array']
                 }],
+                // 'transform-decorators-legacy',
+                // 'transform-decorators',
                 ['transform-class-properties', {spec: true}],
                 'add-module-exports',
                 ['transform-es2015-modules-umd', {

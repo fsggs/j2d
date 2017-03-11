@@ -96,7 +96,8 @@ define('Test', (require) => {
 
     const Immutable = require('objects/Immutable');
 
-    window.a = new Immutable([0, 1, 2, 3, 4, 5]);
+    window.a = new Immutable({a: 1, b: 2, c: [0, 1, 2, 3]});
+    console.info(a.c.concat(3, 4, 5));
     console.log(a);
 });
 require(['Test']);
