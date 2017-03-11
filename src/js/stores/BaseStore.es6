@@ -26,8 +26,8 @@ export default class BaseStore extends Handler {
     setState(state, callback) {
         if (!this._isEnabled) throw new RuntimeException('Trying setState() on disabled store.');
 
-        let oldState = this.state.toJS();
-        this.state = new Immutable(Mutable.extend(true, {}, oldState, state));
+        let oldState = this.state;
+        this.state = new Immutable(Mutable.extend(true, {}, oldState.toJS(), state));
 
 
         if (this.events) {
