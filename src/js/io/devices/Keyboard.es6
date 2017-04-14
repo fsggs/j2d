@@ -3,7 +3,7 @@ import Device from "api/Device";
 export default class Keyboard extends Device {
     keyDownEventHandler = (e) => {
         if (this.input.isEnabled && this.input.preventDefault) e.preventDefault();
-        if (!this.input.data.keys.keysDown.includes(e.keyCode)) {
+        if (!(this.input.data.keys.keysDown.indexOf(e.keyCode) !== -1)) {
             this.input.data.keys.keysDown.push(e.keyCode);
         }
 
@@ -22,7 +22,7 @@ export default class Keyboard extends Device {
 
     keyUpEventHandler = (e) => {
         if (this.input.isEnabled && this.input.preventDefault) e.preventDefault();
-        if (!this.input.data.keys.keysUp.includes(e.keyCode)) {
+        if (!(this.input.data.keys.keysUp.indexOf(e.keyCode) !== -1)) {
             this.input.data.keys.keysUp.push(e.keyCode);
         }
 
@@ -33,13 +33,6 @@ export default class Keyboard extends Device {
 
         this.input.events.trigger('io.keyboardKeyUp', e);
     };
-
-    constructor(input) {
-        super(input);
-
-        this.keyDownEventHandler = this.keyDownEventHandler.bind(this);
-        this.keyUpEventHandler = this.keyUpEventHandler.bind(this);
-    }
 
     init(input) {
         super.init(input);

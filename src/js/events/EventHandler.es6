@@ -1,4 +1,3 @@
-import Handler from "api/Handler";
 import EngineComponent from "../api/EngineComponent";
 
 /**
@@ -6,28 +5,22 @@ import EngineComponent from "../api/EngineComponent";
  * @constructor
  */
 export default class EventHandler extends EngineComponent {
-
-    events = [];
-    onces = [];
-
-    constructor() {
-        super();
-        this.flush();
-    }
+    _events = [];
+    _onces = [];
 
     /**
      * @param {string} eventName
      * @param {function} callback
      */
     on(eventName, callback) {
-        if (this.events[eventName] !== undefined) {
-            var stack = this.events[eventName];
+        if (this._events[eventName] !== undefined) {
+            let stack = this._events[eventName];
             if (stack.indexOf(callback) === -1) {
                 stack.push(callback);
             }
         } else {
-            this.events[eventName] = [];
-            this.events[eventName].push(callback)
+            this._events[eventName] = [];
+            this._events[eventName].push(callback)
         }
         return this;
     }
@@ -37,14 +30,14 @@ export default class EventHandler extends EngineComponent {
      * @param {function} callback
      */
     once(eventName, callback) {
-        if (this.onces[eventName] !== undefined) {
-            var stack = this.onces[eventName];
+        if (this._onces[eventName] !== undefined) {
+            let stack = this._onces[eventName];
             if (stack.indexOf(callback) === -1) {
                 stack.push(callback);
             }
         } else {
-            this.onces[eventName] = [];
-            this.onces[eventName].push(callback)
+            this._onces[eventName] = [];
+            this._onces[eventName].push(callback)
         }
         return this;
     }
@@ -54,8 +47,14 @@ export default class EventHandler extends EngineComponent {
      * @param {function} callback
      */
     off(eventName, callback) {
-        if (this.onces[eventName] !== undefined) {
-            var stack = this.events[eventName];
+        if (this._events[eventName] !== undefined) {
+            let stack = this._events[eventName];
+            if (stack.indexOf(callback) !== -1) {
+                stack.splice(stack.indexOf(callback));
+            }
+        }
+        if (this._onces[eventName] !== undefined) {
+            let stack = this._onces[eventName];
             if (stack.indexOf(callback) !== -1) {
                 stack.splice(stack.indexOf(callback));
             }
@@ -68,22 +67,23 @@ export default class EventHandler extends EngineComponent {
      * @param {Object} [data]
      */
     trigger(eventName, data) {
-        var stack, i, result;
+        let stack, i, result;
 
-        if (this.onces[eventName] !== undefined) {
-            stack = this.onces[eventName];
+        if (this._onces[eventName] !== undefined) {
+            stack = this._onces[eventName];
             for (i = 0; i < stack.length; i++) {
                 result = stack[i].call(stack[i], data);
-                if (typeof result === 'boolean' && !result) return this;
+                if (typeof result === 'boolean' && !result) break;
             }
-            this.flush(eventName);
+            this._onces[eventName] = [];
+            if (typeof result === 'boolean' && !result) return this;
         }
 
-        if (this.events[eventName] !== undefined) {
-            stack = this.events[eventName];
+        if (this._events[eventName] !== undefined) {
+            stack = this._events[eventName];
             for (i = 0; i < stack.length; i++) {
                 result = stack[i].call(stack[i], data);
-                if (typeof result === 'boolean' && !result) return this;
+                if (typeof result === 'boolean' && !result) break;
             }
         }
         return this;
@@ -94,36 +94,16 @@ export default class EventHandler extends EngineComponent {
      */
     flush(eventName) {
         if (eventName !== undefined) {
-            if (this.events[eventName] !== undefined) {
-                this.events[eventName] = [];
+            if (this._events[eventName] !== undefined) {
+                this._events[eventName] = [];
             }
-            if (this.onces[eventName] !== undefined) {
-                this.onces[eventName] = [];
+            if (this._onces[eventName] !== undefined) {
+                this._onces[eventName] = [];
             }
         } else {
-            this.onces = [];
-            this.events = [];
+            this._onces = [];
+            this._events = [];
         }
-        return this;
-    }
-
-    init(eventHandler) {
-        super.init(eventHandler);
-        return this;
-    }
-
-    enable() {
-        super.enable();
-        return this;
-    }
-
-    disable() {
-        super.disable();
-        return this;
-    }
-
-    toggle(status) {
-        super.toggle(status);
         return this;
     }
 }

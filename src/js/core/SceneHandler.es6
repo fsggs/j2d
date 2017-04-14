@@ -2,6 +2,7 @@ import EngineComponent from "api/EngineComponent";
 import InvalidArgumentException from "exceptions/InvalidArgumentException";
 import IEngineComponent from "api/interfaces/IEngineComponent";
 import Mutable from "objects/Mutable";
+import RuntimeException from "exceptions/RuntimeException";
 
 export default class SceneHandler extends EngineComponent {
     /**
@@ -37,15 +38,16 @@ export default class SceneHandler extends EngineComponent {
         smoothing: false
     };
 
-    /** @type {SceneHandler.defaults|{components: {
-        * LayersHandler: IEngineComponent|EngineComponent|LayersHandler,
-        * ViewportHandler: IEngineComponent|EngineComponent|ViewportHandler
+    /** @type {SceneHandler.defaults|{render:string, components: {
+        * LayersHandler: IEngineComponent|EngineComponent|LayersHandler|boolean|null,
+        * ViewportHandler: IEngineComponent|EngineComponent|ViewportHandler|boolean|null
         * }}}
      */
     _data = {
+        render: 'auto',
         components: {
-            LayersHandler: null,
-            ViewportHandler: null
+            LayersHandler: true,
+            ViewportHandler: true
         }
     };
 
@@ -63,19 +65,26 @@ export default class SceneHandler extends EngineComponent {
     }
 
     /**
-     * @return {LayersHandler|null}
+     * @return {IEngineComponent|EngineComponent|LayersHandler|boolean|null}
      */
     get LayersHandler() {
-        return this._data.components.LayersHandler;
+        if (typeof this._data.components.LayersHandler === 'boolean') {
+            return null;
+        } else return this._data.components.LayersHandler;
     }
 
     /**
-     * @param {LayersHandler|null} handler
+     * @param {IEngineComponent|EngineComponent|LayersHandler|boolean|null} handler
      */
     set LayersHandler(handler) {
-        if (!handler.instanceOf(IEngineComponent))
+        if ((typeof handler === 'boolean' && handler === false) || handler === null) {
+            this._data.components.LayersHandler = false;
+            return;
+        } else if (typeof handler === 'object' && !handler.instanceOf(IEngineComponent)) {
             throw new InvalidArgumentException('Handler not implements IEngineComponent');
-        return this._data.components.LayersHandler = handler;
+        }
+
+        this._data.components.LayersHandler = handler;
     }
 
     get viewport() {
@@ -83,19 +92,26 @@ export default class SceneHandler extends EngineComponent {
     }
 
     /**
-     * @return {ViewportHandler|null}
+     * @return {IEngineComponent|EngineComponent|ViewportHandler|boolean|null}
      */
     get ViewportHandler() {
-        return this._data.components.ViewportHandler;
+        if (typeof this._data.components.ViewportHandler === 'boolean') {
+            return null;
+        } else return this._data.components.ViewportHandler;
     }
 
     /**
-     * @param {ViewportHandler|null} handler
+     * @param {IEngineComponent|EngineComponent|ViewportHandler|boolean|null} handler
      */
     set ViewportHandler(handler) {
-        if (!handler.instanceOf(IEngineComponent))
+        if ((typeof handler === 'boolean' && handler === false) || handler === null) {
+            this._data.components.ViewportHandler = false;
+            return;
+        } else if (typeof handler === 'object' && !handler.instanceOf(IEngineComponent)) {
             throw new InvalidArgumentException('Handler not implements IEngineComponent');
-        return this._data.components.ViewportHandler = handler;
+        }
+
+        this._data.components.ViewportHandler = handler;
     }
 
     init(eventHandler, engine, options) {
@@ -122,9 +138,9 @@ export default class SceneHandler extends EngineComponent {
                     node.appendChild(canvas);
                     nodes = [canvas];
                 } else if (nodes.length > 1) {
-                    nodes.forEach((_node, i) => {
-                        if (i !== 0) node.removeChild(_node);
-                    });
+                    for (let i = 0; i < nodes.length; i++) {
+                        if (i !== 0) node.removeChild(nodes[i]);
+                    }
                 }
                 node = nodes[0];
             }
@@ -142,37 +158,65 @@ export default class SceneHandler extends EngineComponent {
 
                 node.style.backgroundColor = this._data.backgroundColor;
 
-                this._context = node.getContext('2d');
+                try {
+                    if ((this._data.render === 'auto' || this._data.render === 'webgl2')
+                        && (this._context = node.getContext('webgl2') || node.getContext('experimental-webgl2'))
+                    ) {
+                        this._data.render = 'webgl2';
+                    } else if ((this._data.render === 'auto' || this._data.render === 'webgl')
+                        && (this._context = node.getContext('webgl') || node.getContext('experimental-webgl'))
+                    ) {
+                        this._data.render = 'webgl';
+                    } else if ((this._data.render === 'auto' || this._data.render === 'canvas2d')
+                        && (this._context = node.getContext('2d'))
+                    ) {
+                        this._data.render = 'canvas2d';
+                    } else {
+                        //noinspection ExceptionCaughtLocallyJS
+                        throw new RuntimeException(`Browser does not support ${(this._data.render === 'auto')
+                            ? 'any' : `"${this._data.render}"`} render type.`);
+                    }
+                } catch (error) {
+                    this._engine.log(error, 'error');
+                    return;
+                }
+
+                if (this._context.hasOwnProperty('viewportWidth')) this._context.viewportWidth = this._data.width;
+                if (this._context.hasOwnProperty('viewportHeight')) this._context.viewportHeight = this._data.height;
 
                 if (!this._data.smoothing) {
-                    this._disableSmoothing(this._context);
+                    SceneHandler.disableSmoothing(this._context);
                 }
 
                 this._context.shadowColor = 'rgba(0, 0, 0, 0)';
 
                 this._element = node;
 
-                this._engine.log(`Find scene with GUID "${this._engine.guid}"`, 'info');
+                this._engine.log(`Find scene with GUID "${this._engine.guid}" [${this._data.render.toUpperCase()}]`, 'info');
             }
         }
     }
 
-    _disableSmoothing() {
+    static disableSmoothing(context) {
         let chrome = window.navigator.userAgent.match(/Chrom(e|ium)\/([0-9]+)\./);
         let version = chrome ? parseInt(chrome[2], 10) : false;
 
-        this._context['imageSmoothingEnabled'] = false;
-        this._context['mozImageSmoothingEnabled'] = false;
-        this._context['oImageSmoothingEnabled'] = false;
-        if (version && version <= 29) {
-            this._context['webkitImageSmoothingEnabled'] = false;
+        if (context.hasOwnProperty('imageSmoothingEnabled')) {
+            context.imageSmoothingEnabled = false;
+        } else {
+            context['imageSmoothingEnabled'] = false;
+            context['mozImageSmoothingEnabled'] = false;
+            context['oImageSmoothingEnabled'] = false;
+            if (version && version <= 29) {
+                context['webkitImageSmoothingEnabled'] = false;
+            }
+            context['msImageSmoothingEnabled'] = false;
         }
-        this._context['msImageSmoothingEnabled'] = false;
     }
 
     render(data) {
-        this.layers.forEach(layer => {
-            layer.render(this._context, this.viewport, this.layers, data || {})
-        });
+        for (let i = 0; i < this.layers.length; i++) {
+            this.layers[i].render(this._context, this.viewport, this.layers, data || {})
+        }
     }
 }

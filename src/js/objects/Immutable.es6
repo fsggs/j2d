@@ -58,18 +58,19 @@ export default class Immutable extends Object {
      * @return {Object}
      */
     static freeze(object, options) {
-        Object.getOwnPropertyNames(object).forEach((property) => {
-            if (object.hasOwnProperty(property)
-                && object[property] !== null
-                && (typeof object[property] === 'object' || typeof object[property] === 'function')
-                && !Object.isFrozen(object[property])
-                && !FREEZE_NODE_METHODS.includes(property)
-                && !FREEZE_NODE_ARRAY_METHODS.includes(property)
-                && property !== '__$ImmutableOptions'
+        let properties = Object.getOwnPropertyNames(object);
+        for (let i = 0; i < properties.length; i++) {
+            if (object.hasOwnProperty(properties[i])
+                && object[properties[i]] !== null
+                && (typeof object[properties[i]] === 'object' || typeof object[properties[i]] === 'function')
+                && !Object.isFrozen(object[properties[i]])
+                && !(FREEZE_NODE_METHODS.indexOf(properties[i]) !== -1)
+                && !(FREEZE_NODE_ARRAY_METHODS.indexOf(properties[i]) !== -1)
+                && properties[i] !== '__$ImmutableOptions'
             ) {
-                object[property] = new Immutable(object[property], options);
+                object[properties[i]] = new Immutable(object[properties[i]], options);
             }
-        });
+        }
 
         Object.freeze(object);
         return object;
@@ -83,14 +84,14 @@ export default class Immutable extends Object {
         let result = object instanceof Array ? [] : {};
 
         if (object instanceof Array) {
-            object.forEach((v) => result.push(v));
+            for (let i = 0; i < object.length; i++) result.push(object[i]);
         } else if (object instanceof String) {
             result = String(object).toString();
-        } else if (typeof object == 'object') {
+        } else if (typeof object === 'object') {
             for (let property in object) {
                 if (object.hasOwnProperty(property)
-                    && !FREEZE_NODE_METHODS.includes(property)
-                    && !FREEZE_NODE_ARRAY_METHODS.includes(property)
+                    && !(FREEZE_NODE_METHODS.indexOf(property) !== -1)
+                    && !(FREEZE_NODE_ARRAY_METHODS.indexOf(property) !== -1)
                     && property !== '__$ImmutableOptions'
                 ) {
                     result[property] = (typeof object[property] === 'object' && Object.isFrozen(object[property]))
@@ -115,7 +116,7 @@ class ImmutableArray extends Array {
         this.__$ImmutableOptions = options;
 
         if ((typeof array === 'object' && array instanceof Array)) {
-            array.forEach((value, key) => this[key] = value);
+            for (let i = 0; i < array.length; i++) this[i] = array[i];
         }
     }
 

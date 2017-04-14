@@ -20,12 +20,16 @@ export default class SystemConsole {
     };
 
     logSystem(message, link) {
-        return console.log("%c %c %c %s %c %c %c %c%s",
-            this.css('#5C6166'), this.css('#4F5357'),
-            this.css('#313335'), message,
-            this.css('#4F5357'), this.css('#5C6166'),
-            this.link('none'), this.link('none'), link
-        );
+        if (navigator.userAgent.toLowerCase().indexOf('chrome') > -1
+            || navigator.userAgent.toLowerCase().indexOf('firefox') > -1
+        ) {
+            return console.log("%c %c %c %s %c %c %c %c%s",
+                this.css('#5C6166'), this.css('#4F5357'),
+                this.css('#313335'), message,
+                this.css('#4F5357'), this.css('#5C6166'),
+                this.link('none'), this.link('none'), link
+            );
+        } else return console.log(message, link);
     }
 
     log(message, level) {
@@ -55,7 +59,12 @@ export default class SystemConsole {
                 level = 'DEBUG';
                 css = 'background: #ADADAD; color: #fff; padding: 1px 4px';
         }
-        return console.log("%c%s", css, level, message);
+
+        if (navigator.userAgent.toLowerCase().indexOf('chrome') > -1
+            || navigator.userAgent.toLowerCase().indexOf('firefox') > -1
+        ) {
+            return window.console.log("%c%s", css, level, message);
+        } else return window.console.log(message);
     };
 }
 

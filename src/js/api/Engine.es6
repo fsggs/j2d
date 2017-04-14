@@ -15,7 +15,7 @@ export default class Engine extends PrototypeObject {
     constructor(id) {
         super();
 
-        if (!Engine._$classPreInitialize.includes(id)) {
+        if (!(Engine._$classPreInitialize.indexOf(id) !== -1)) {
             throw new RuntimeException(`The constructor is private. Please use static ${this.constructor.name}.init()`);
         } else Engine._$classPreInitialize.splice(Engine._$classPreInitialize.indexOf(id), 1);
     }

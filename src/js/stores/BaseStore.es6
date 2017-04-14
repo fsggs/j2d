@@ -29,7 +29,6 @@ export default class BaseStore extends Handler {
         let oldState = this.state;
         this.state = new Immutable(Mutable.extend(true, {}, oldState.toJS(), state));
 
-
         if (this.events) {
             this.events.trigger('update', {
                 newState: this.state,

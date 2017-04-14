@@ -28,25 +28,28 @@ export default class EngineJ2D extends Engine {
     /** @type {boolean} */
     static PluginInit = false;
 
-    /** @type {{id: string, pause: boolean, components: {
-        * EventHandler: IEngineComponent|EngineComponent|EventHandler,
-        * FrameHandler: IEngineComponent|EngineComponent|FrameHandler,
-        * InputHandler: IEngineComponent|EngineComponent|InputHandler,
-        * MediaHandler: IEngineComponent,
-        * TweenHandler: IEngineComponent,
-        * SceneHandler: IEngineComponent|EngineComponent|SceneHandler
+    /**
+     * Call setter to 'null/false' to disable components, or 'true' to auto load default implementation.
+     *
+     * @type {{id: string, pause: boolean, components: {
+        * EventHandler: IEngineComponent|EngineComponent|EventHandler|boolean|null,
+        * FrameHandler: IEngineComponent|EngineComponent|FrameHandler|boolean|null,
+        * InputHandler: IEngineComponent|EngineComponent|InputHandler|boolean|null,
+        * MediaHandler: IEngineComponent|EngineComponent|boolean|null,
+        * TweenHandler: IEngineComponent|EngineComponent|boolean|null,
+        * SceneHandler: IEngineComponent|EngineComponent|SceneHandler|boolean|null
         * }}}
      */
     static defaults = {
         id: '',
         pause: false,
         components: {
-            EventHandler: null,
-            FrameHandler: null,
-            InputHandler: null,
-            MediaHandler: null,
-            TweenHandler: null,
-            SceneHandler: null
+            EventHandler: true,
+            FrameHandler: true,
+            InputHandler: false,
+            MediaHandler: false,
+            TweenHandler: false,
+            SceneHandler: true
         }
     };
 
@@ -65,8 +68,10 @@ export default class EngineJ2D extends Engine {
     /** @type {EngineJ2D.defaults|{}} */
     _data = {};
 
-    /** @type {function|null} */
-    _state = null;
+    /** @type {function} */ // TODO:: temporary hack!
+    update = (timestamp) => {
+        // console.info(timestamp);
+    };
 
     /** @type {Device} */
     device = new Device();
@@ -79,16 +84,10 @@ export default class EngineJ2D extends Engine {
 
         this._element = element;
         this._data = data;
-
-        this.log(this._data.components);
     }
 
     get guid() {
         return this._data.id;
-    }
-
-    set state(state) {
-        return this._state = state;
     }
 
     /* +Handlers */
@@ -97,90 +96,167 @@ export default class EngineJ2D extends Engine {
         return this.EventHandler;
     }
 
+    /**
+     * @return {IEngineComponent|EngineComponent|EventHandler|boolean|null}
+     */
     get EventHandler() {
-        return this._data.components.EventHandler;
+        if (typeof this._data.components.EventHandler === 'boolean') {
+            return null;
+        } else return this._data.components.EventHandler;
     }
 
+    /**
+     * @param {IEngineComponent|EngineComponent|EventHandler|boolean|null} handler
+     */
     set EventHandler(handler) {
-        if (!handler.instanceOf(IEngineComponent))
+        if ((typeof handler === 'boolean' && handler === false) || handler === null) {
+            this._data.components.EventHandler = false;
+            return;
+        } else if (typeof handler === 'object' && !handler.instanceOf(IEngineComponent)) {
             throw new InvalidArgumentException('Handler not implements IEngineComponent');
-        return this._data.components.EventHandler = handler;
+        }
+
+        this._data.components.EventHandler = handler;
     }
 
     get frame() {
         return this.FrameHandler;
     }
 
+    /**
+     * @return {IEngineComponent|EngineComponent|FrameHandler|boolean|null}
+     */
     get FrameHandler() {
-        return this._data.components.FrameHandler;
+        if (typeof this._data.components.FrameHandler === 'boolean') {
+            return null;
+        } else return this._data.components.FrameHandler;
     }
 
+    /**
+     * @param {IEngineComponent|EngineComponent|FrameHandler|boolean|null} handler
+     */
     set FrameHandler(handler) {
-        if (!handler.instanceOf(IEngineComponent))
+        if ((typeof handler === 'boolean' && handler === false) || handler === null) {
+            this._data.components.FrameHandler = false;
+            return;
+        } else if (typeof handler === 'object' && !handler.instanceOf(IEngineComponent)) {
             throw new InvalidArgumentException('Handler not implements IEngineComponent');
-        return this._data.components.FrameHandler = handler;
+        }
+
+        this._data.components.FrameHandler = handler;
     }
 
     get io() {
         return this.InputHandler;
     }
 
+    /**
+     * @return {IEngineComponent|EngineComponent|InputHandler|boolean|null}
+     */
     get InputHandler() {
-        return this._data.components.InputHandler;
+        if (typeof this._data.components.InputHandler === 'boolean') {
+            return null;
+        } else return this._data.components.InputHandler;
     }
 
+    /**
+     * @param {IEngineComponent|EngineComponent|InputHandler|boolean|null} handler
+     */
     set InputHandler(handler) {
-        if (!handler.instanceOf(IEngineComponent))
+        if ((typeof handler === 'boolean' && handler === false) || handler === null) {
+            this._data.components.InputHandler = false;
+            return;
+        } else if (typeof handler === 'object' && !handler.instanceOf(IEngineComponent)) {
             throw new InvalidArgumentException('Handler not implements IEngineComponent');
-        return this._data.components.InputHandler = handler;
+        }
+
+        this._data.components.InputHandler = handler;
     }
 
     get media() {
         return this.MediaHandler;
     }
 
+    /**
+     * @return {IEngineComponent|EngineComponent|MediaHandler|boolean|null}
+     */
     get MediaHandler() {
-        return this._data.components.MediaHandler;
+        if (typeof this._data.components.MediaHandler === 'boolean') {
+            return null;
+        } else return this._data.components.MediaHandler;
     }
 
+    /**
+     * @param {IEngineComponent|EngineComponent|MediaHandler|boolean|null} handler
+     */
     set MediaHandler(handler) {
-        if (!handler.instanceOf(IEngineComponent))
+        if ((typeof handler === 'boolean' && handler === false) || handler === null) {
+            this._data.components.MediaHandler = false;
+            return;
+        } else if (typeof handler === 'object' && !handler.instanceOf(IEngineComponent)) {
             throw new InvalidArgumentException('Handler not implements IEngineComponent');
-        return this._data.components.MediaHandler = handler;
+        }
+
+        this._data.components.MediaHandler = handler;
     }
 
     get tweens() {
         return this.TweenHandler;
     }
 
+    /**
+     * @return {IEngineComponent|EngineComponent|TweenHandler|boolean|null}
+     */
     get TweenHandler() {
-        return this._data.components.TweenHandler;
+        if (typeof this._data.components.TweenHandler === 'boolean') {
+            return null;
+        } else return this._data.components.TweenHandler;
     }
 
+    /**
+     * @param {IEngineComponent|EngineComponent|TweenHandler|boolean|null} handler
+     */
     set TweenHandler(handler) {
-        if (!handler.instanceOf(IEngineComponent))
+        if ((typeof handler === 'boolean' && handler === false) || handler === null) {
+            this._data.components.TweenHandler = false;
+            return;
+        } else if (typeof handler === 'object' && !handler.instanceOf(IEngineComponent)) {
             throw new InvalidArgumentException('Handler not implements IEngineComponent');
-        return this._data.components.TweenHandler = handler;
+        }
+
+        this._data.components.TweenHandler = handler;
     }
 
     get scene() {
         return this.SceneHandler;
     }
 
+    /**
+     * @return {IEngineComponent|EngineComponent|SceneHandler|boolean|null}
+     */
     get SceneHandler() {
-        return this._data.components.SceneHandler;
+        if (typeof this._data.components.SceneHandler === 'boolean') {
+            return null;
+        } else return this._data.components.SceneHandler;
     }
 
+    /**
+     * @param {IEngineComponent|EngineComponent|SceneHandler|boolean|null} handler
+     */
     set SceneHandler(handler) {
-        if (!handler.instanceOf(IEngineComponent))
+        if ((typeof handler === 'boolean' && handler === false) || handler === null) {
+            this._data.components.SceneHandler = false;
+            return;
+        } else if (typeof handler === 'object' && !handler.instanceOf(IEngineComponent)) {
             throw new InvalidArgumentException('Handler not implements IEngineComponent');
-        return this._data.components.SceneHandler = handler;
+        }
+
+        this._data.components.SceneHandler = handler;
     }
 
     /* -Handlers */
 
     /* +GameEngine */
-
     start() {
         if (!this._initialized) this.tryLoadComponents();
         this.enable();
@@ -218,10 +294,6 @@ export default class EngineJ2D extends Engine {
         this.events.trigger('resume');
     };
 
-    update(timestamp) {
-        if (this._state) this._state.bind(this, timestamp)();
-    }
-
     /* -GameEngine **/
 
     /* +System **/
@@ -232,49 +304,75 @@ export default class EngineJ2D extends Engine {
 
     tryLoadComponents() {
         if (this._initialized) return;
+
+        let COMPONENT = this._data.components;
+
         // EventHandler
-        if (this.EventHandler === null) {
-            this.EventHandler = new EventHandler();
+        if (typeof COMPONENT.EventHandler === 'boolean' && COMPONENT.EventHandler === true) {
+            COMPONENT.EventHandler = new EventHandler();
         }
-        this.EventHandler.enable();
+
+        if (typeof COMPONENT.EventHandler === 'object' && COMPONENT.EventHandler instanceof IEngineComponent) {
+            COMPONENT.EventHandler.enable();
+        }
+
 
         // InputHandler
-        if (this.InputHandler === null) {
-            this.InputHandler = new InputHandler();
-            this.InputHandler.init(this.EventHandler, [
+        if (typeof COMPONENT.InputHandler === 'boolean' && COMPONENT.InputHandler === true) {
+            COMPONENT.InputHandler = new InputHandler();
+            COMPONENT.InputHandler.init(COMPONENT.EventHandler, [
                 InputHandler.IO.KEYBOARD,
                 InputHandler.IO.MOUSE
             ], {
                 cursor: 'default'
             });
         }
-        this.InputHandler.enable();
+
+        if (typeof COMPONENT.InputHandler === 'object' && COMPONENT.InputHandler instanceof IEngineComponent) {
+            COMPONENT.InputHandler.enable();
+        }
 
         // SceneHandler
-        if (this.SceneHandler === null) {
-            this.SceneHandler = new SceneHandler();
-            this.SceneHandler.init(this.EventHandler, this, {
+        if (typeof COMPONENT.SceneHandler === 'boolean' && COMPONENT.SceneHandler === true) {
+            COMPONENT.SceneHandler = new SceneHandler();
+            COMPONENT.SceneHandler.init(COMPONENT.EventHandler, this, {
                 width: 640,
                 height: 360,
                 backgroundColor: 'black'
             });
 
-            this.SceneHandler.LayersHandler = new LayersHandler();
-            this.SceneHandler.LayersHandler.init(this.EventHandler);
+            COMPONENT.SceneHandler.LayersHandler = new LayersHandler();
+            COMPONENT.SceneHandler.LayersHandler.init(COMPONENT.EventHandler);
 
-            this.SceneHandler.ViewportHandler = new ViewportHandler();
-            this.SceneHandler.ViewportHandler.init(this.EventHandler);
+            COMPONENT.SceneHandler.ViewportHandler = new ViewportHandler();
+            COMPONENT.SceneHandler.ViewportHandler.init(COMPONENT.EventHandler);
         }
-        this.SceneHandler.LayersHandler.enable();
-        this.SceneHandler.ViewportHandler.enable();
-        this.SceneHandler.enable();
+
+        if (typeof COMPONENT.SceneHandler.LayersHandler === 'object'
+            && COMPONENT.SceneHandler.LayersHandler instanceof IEngineComponent
+        ) {
+            COMPONENT.SceneHandler.LayersHandler.enable();
+        }
+
+        if (typeof COMPONENT.SceneHandler.ViewportHandler === 'object'
+            && COMPONENT.SceneHandler.ViewportHandler instanceof IEngineComponent
+        ) {
+            COMPONENT.SceneHandler.ViewportHandler.enable();
+        }
+
+        if (typeof COMPONENT.EventHandler === 'object' && COMPONENT.EventHandler instanceof IEngineComponent) {
+            COMPONENT.SceneHandler.enable();
+        }
 
         // FrameHandler
-        if (this.FrameHandler === null) {
-            this.FrameHandler = FrameHandler.init();
-            this.FrameHandler.init(this.EventHandler);
+        if (typeof COMPONENT.FrameHandler === 'boolean' && COMPONENT.FrameHandler === true) {
+            COMPONENT.FrameHandler = FrameHandler.init();
+            COMPONENT.FrameHandler.init(COMPONENT.EventHandler);
         }
-        this.FrameHandler.enable();
+
+        if (typeof COMPONENT.FrameHandler === 'object' && COMPONENT.FrameHandler instanceof IEngineComponent) {
+            COMPONENT.FrameHandler.enable();
+        }
 
         this._initialized = true;
     }
@@ -286,7 +384,7 @@ export default class EngineJ2D extends Engine {
      * @static
      *
      * @param {string|jQuery} selected
-     * @param {EngineJ2D.defaults|Object} options
+     * @param {EngineJ2D.defaults|Object} [options]
      *
      * @returns {EngineJ2D|EngineJ2D[]|Array.<EngineJ2D>}
      */
@@ -305,54 +403,54 @@ export default class EngineJ2D extends Engine {
 
         let inactiveNodes = [];
 
-        nodes.forEach(node => {
-            if (!node.hasAttribute('guid')) inactiveNodes.push(node)
-        });
+        for (let i = 0; i < nodes.length; i++) {
+            if (!nodes[i].hasAttribute('guid')) inactiveNodes.push(nodes[i])
+        }
 
-        inactiveNodes.forEach((element) => {
+        for (let i = 0; i < inactiveNodes.length; i++) {
             options.id = UUID.generate();
 
-            element.setAttribute('guid', options.id);
+            inactiveNodes[i].setAttribute('guid', options.id);
 
-            let id = element.getAttribute('id');
+            let id = inactiveNodes[i].getAttribute('id');
             if (id === undefined || id === null) {
-                element.setAttribute('guid', options.id);
+                inactiveNodes[i].setAttribute('guid', options.id);
             }
 
-            let tabIndex = element.getAttribute('tabindex');
+            let tabIndex = inactiveNodes[i].getAttribute('tabindex');
             if (tabIndex === undefined || tabIndex === null || tabIndex === false) {
-                element.setAttribute('tabindex', '-1');
+                inactiveNodes[i].setAttribute('tabindex', '-1');
             }
 
-            if (!element.classList.contains('j2d')) {
-                element.classList.add('j2d');
+            if (!inactiveNodes[i].classList.contains('j2d')) {
+                inactiveNodes[i].classList.add('j2d');
             }
 
             Engine._$classPreInitialize.push(options.id);
-            EngineJ2D.stack[options.id] = new EngineJ2D(element, options);
+            EngineJ2D.stack[options.id] = new EngineJ2D(inactiveNodes[i], options);
             EngineJ2D.stack.push(options.id);
 
-            element.click();
-            element.focus();
-        });
+            inactiveNodes[i].click();
+            inactiveNodes[i].focus();
+        }
 
         let resumeBind = (current) => {
             let nodes, engine;
             nodes = window.document.querySelectorAll('div.canvas[guid]:not(.pause-disable):not(:focus)');
-            Array.prototype.forEach.call(nodes, (node) => {
-                if (current !== node) {
-                    node.classList.remove('active');
-                    engine = EngineJ2D.stack[node.getAttribute('guid')] || null;
+            for (let i = 0; i < nodes.length; i++) {
+                if (current !== nodes[i]) {
+                    nodes[i].classList.remove('active');
+                    engine = EngineJ2D.stack[nodes[i].getAttribute('guid')] || null;
                     if (engine) engine.pause();
                 }
-            });
+            }
 
             nodes = window.document.querySelectorAll('div.canvas[guid].active.pause-disable:not(:focus)');
-            Array.prototype.forEach.call(nodes, (node) => {
-                if (current !== node) {
-                    node.classList.remove('active');
+            for (let i = 0; i < nodes.length; i++) {
+                if (current !== nodes[i]) {
+                    nodes[i].classList.remove('active');
                 }
-            });
+            }
         };
 
         function resumeEventListener() {
@@ -373,12 +471,12 @@ export default class EngineJ2D extends Engine {
 
         let activeNodes = [];
         nodes = window.document.querySelectorAll('.j2d[guid]');
-        Array.prototype.forEach.call(nodes, (node) => {
-            activeNodes.push(EngineJ2D.stack[node.getAttribute('guid')] || null);
-            node.addEventListener('click', resumeEventListener);
-            node.addEventListener('touch', resumeEventListener);
-            node.addEventListener('mouseenter', resumeEventListener);
-        });
+        for (let i = 0; i < nodes.length; i++) {
+            activeNodes.push(EngineJ2D.stack[nodes[i].getAttribute('guid')] || null);
+            nodes[i].addEventListener('click', resumeEventListener);
+            nodes[i].addEventListener('touch', resumeEventListener);
+            nodes[i].addEventListener('mouseenter', resumeEventListener);
+        }
         return (1 === activeNodes.length) ? activeNodes[0] : activeNodes;
     }
 
@@ -418,23 +516,65 @@ export default class EngineJ2D extends Engine {
 
         return EngineJ2D._jQuery;
     }
+
+    /**
+     * @return {boolean}
+     */
+    static CompatibilityCheck() {
+        let check = false;
+
+        // Disable IE < 11
+        if (Device.browser === 'MSIE' && Device.version < 11) {
+            let message = 'j2D Error: Please install normal modern browser, IE 11 supported.';
+            alert(message);
+            console.error(message);
+
+            check = true;
+        }
+
+        // Fix IE 11
+        if (Device.browser === 'IE' && Device.version >= 11) {
+            (() => {
+                let CustomEvent = (event, params) => {
+                    params = params || {bubbles: false, cancelable: false, detail: undefined};
+                    /** @type {Event|CustomEvent}*/
+                    let customEvent = document.createEvent('CustomEvent');
+                    customEvent.initCustomEvent(event, params.bubbles, params.cancelable, params.detail);
+                    customEvent.preventDefault = function () {
+                        Object.defineProperty(this, 'defaultPrevented', {
+                            get: () => {
+                                return true;
+                            }
+                        });
+                    };
+                    customEvent.preventDefault();
+                    return customEvent;
+                };
+                CustomEvent.prototype = window.Event.prototype;
+                window.CustomEvent = CustomEvent;
+            })();
+        }
+
+        return check;
+    }
 }
 
 /* ------------------------------ Plugin ------------------------------ */
 (EngineJ2D.initPlugin = () => {
-    if (EngineJ2D.PluginInit) return true;
+    if (EngineJ2D.PluginInit || EngineJ2D.CompatibilityCheck()) return true;
 
-    (new SystemConsole()).logSystem('j2D v.' + EngineJ2D.VERSION, 'https://github.com/fsggs/j2d');
-
-    let firefox = window.navigator.userAgent.match(/Firefox\/([0-9]+)\./);
-    let version = firefox ? parseInt(firefox[2], 10) : false;
+    (new SystemConsole()).logSystem(
+        `j2D v.${EngineJ2D.VERSION} | Browser ${Device.browser} v.${Device.version}`, 'https://github.com/fsggs/j2d'
+    );
 
     let isFullScreen = () => {
         //noinspection JSUnresolvedVariable
         return !!(window.document.webkitFullscreenElement
             || window.document.webkitCurrentFullScreenElement
-            || (version && version < 47) ? window.document.mozFullScreenElement : window.document.fullscreenElement
-                || window.document.msFullscreenElement
+            || (Device.browser === 'Firefox' && Device.version < 47
+                ? window.document.mozFullScreenElement
+                : window.document.fullscreenElement)
+            || window.document.msFullscreenElement
         );
     };
 
@@ -470,16 +610,16 @@ export default class EngineJ2D extends Engine {
         window.addEventListener('blur', () => {
             let nodes, engine;
             nodes = window.document.querySelectorAll('.j2d[guid]:not(.pause-disable)');
-            nodes.forEach(node => {
-                if (node) engine = EngineJ2D.stack[node.getAttribute('guid')] || null;
+            for (let i = 0; i < nodes.length; i++) {
+                if (nodes[i]) engine = EngineJ2D.stack[nodes[i].getAttribute('guid')] || null;
                 if (engine) engine.pause();
-            });
+            }
         });
 
         window.addEventListener('resize', () => {
-            EngineJ2D.stack.forEach(guid => {
-                EngineJ2D.stack[guid].device.onResize();
-            });
+            for (let i = 0; i < EngineJ2D.stack.length; i++) {
+                EngineJ2D.stack[EngineJ2D.stack[i]].device.onResize();
+            }
 
             let fullScreen = isFullScreen();
             if (fullScreen) {

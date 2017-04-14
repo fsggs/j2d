@@ -60,45 +60,39 @@ requirejs.config({
     }
 });
 
-define('Test', (require) => {
-    // let $ = require('jquery');
-    // let EngineJ2D = require('j2d');
-    // let Layer = require('layers/Layer').default;
-    // let GroupNode = require('nodes/GroupNode');
-    //
-    // EngineJ2D.jQuery($);
-    //
-    // EngineJ2D.ready(() => {
-    //     /** @type EngineJ2D|Array.<EngineJ2D> */
-    //         //let j2d = EngineJ2D.init('#j2d'); // JS
-    //     let j2d = $('#j2d').j2d(); // jQuery
-    //
-    //     // j2d.state = ((timestamp) => {
-    //     //     console.log(timestamp);
-    //     // });
-    //
-    //     j2d.start();
-    //
-    //     let lm = j2d.scene.layers;
-    //
-    //     let backgroundLayer = new Layer('background');
-    //     let group1 = new GroupNode('logo');
-    //     let group2 = new GroupNode('ui');
-    //
-    //     lm.add(backgroundLayer, -1);
-    //
-    //     //group1.add(backgroundLayer);
-    //
-    //     lm.add(group1);
-    //     lm.add(group2);
-    //
-    //     //console.log(lm);
-    // });
+define('Test', function (require) {
+    //let $ = require('jquery');
+    var EngineJ2D = require('j2d');
+    var Layer = require('layers/Layer').default;
+    var GroupNode = require('nodes/GroupNode');
 
-    const Immutable = require('objects/Immutable');
+    //EngineJ2D.jQuery($);
 
-    window.a = new Immutable({a: 1, b: 2, c: [0, 1, 2, 3]});
-    console.info(a.c.concat(3, 4, 5));
-    console.log(a);
+    EngineJ2D.ready(function () {
+        /** @type EngineJ2D|Array.<EngineJ2D> */
+        var j2d = EngineJ2D.init('#j2d'); // JS
+        //let j2d = $('#j2d').j2d(); // jQuery
+
+        // j2d.state = ((timestamp) => {
+        //     console.log(timestamp);
+        // });
+
+        j2d.start();
+
+        var layers = j2d.scene.layers;
+
+        var backgroundLayer = new Layer('background');
+        var group1 = new GroupNode('logo');
+        var group2 = new GroupNode('ui');
+
+        layers.add(backgroundLayer, -1);
+
+        //group1.add(backgroundLayer);
+
+        layers.add(group1);
+        layers.add(group2);
+
+        console.log(layers);
+    });
 });
 require(['Test']);

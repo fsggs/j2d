@@ -273,7 +273,7 @@ export default class SceneManager {
                     callback: function () {
                         sceneManager.frameManager.start(sceneManager.j2d.data.id, newGameState, {
                             j2d: sceneManager.j2d,
-                            frameLimit: sceneManager.data.frameLimit
+                            frameLimit: FrameHandler.frameLimit
                         });
 
                         sceneManager.j2d.trigger('changedGameState');
@@ -321,7 +321,7 @@ export default class SceneManager {
                     callback: function () {
                         sceneManager.frameManager.start(sceneManager.j2d.data.id, newGameState, {
                             j2d: sceneManager.j2d,
-                            frameLimit: sceneManager.data.frameLimit
+                            frameLimit: FrameHandler.frameLimit
                         });
 
                         sceneManager.j2d.trigger('afterStart');

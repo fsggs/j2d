@@ -1,8 +1,8 @@
 import InputHandlerCodes from "io/InputHandlerCodes";
 import Keyboard from "io/devices/Keyboard";
-import Joystick from "io/devices/Joystick";
+// import Joystick from "io/devices/Joystick";
 import Mouse from "io/devices/Mouse";
-import Touch from "io/devices/Touch";
+// import Touch from "io/devices/Touch";
 import Device from "api/Device";
 import EngineComponent from "api/EngineComponent";
 
@@ -17,16 +17,16 @@ export default class InputHandler extends EngineComponent {
 
     static IO = {
         KEYBOARD: 'keyboard',
-        JOYSTICK: 'joystick',
+        // JOYSTICK: 'joystick',
         MOUSE: 'mouse',
-        TOUCH: 'touch'
+        // TOUCH: 'touch'
     };
 
     defaultIO = {
         KEYBOARD: Keyboard,
-        JOYSTICK: Joystick,
+        // JOYSTICK: Joystick,
         MOUSE: Mouse,
-        TOUCH: Touch
+        // TOUCH: Touch
     };
 
     static KEY = InputHandlerCodes;
@@ -55,7 +55,7 @@ export default class InputHandler extends EngineComponent {
         this.data = {};
 
         this.keyCodeMap = {
-            //DEBUG_INFO: [[InputHandler.KEY.KEY_CTRL, InputHandler.KEY.KEY_F1], 'j2d.debug.toggleScreen', {}],
+            DEBUG_INFO: [[InputHandler.KEY.KEY_CTRL, InputHandler.KEY.KEY_F1], 'j2d.scene.debug.toggleScreen', {}],
             FULLSCREEN: [[InputHandler.KEY.KEY_CTRL, InputHandler.KEY.KEY_F11], 'j2d.scene.toggleFullScreen', {}]
         };
     }
@@ -143,7 +143,9 @@ export default class InputHandler extends EngineComponent {
         }
         if (io && typeof io === 'object' && io instanceof Array) {
             this.IO = [];
-            io.map(function (device) {
+            for (let i = 0; i < io.length; i++) {
+                let device = io[i];
+
                 if (typeof device === 'string' && InputHandler.IO[device.toUpperCase()] !== undefined) {
                     device = new (this.defaultIO[device.toUpperCase()])();
                     this.IO[device.toString()] = device;
@@ -160,7 +162,7 @@ export default class InputHandler extends EngineComponent {
                 } else {
                     throw new Error('Error. Unknown IO device "' + device.toString() + '" is not supported yet.');
                 }
-            }.bind(this));
+            }
         }
         return this;
     }
@@ -174,11 +176,6 @@ export default class InputHandler extends EngineComponent {
     disable() {
         super.disable();
         this.unBindListeners();
-        return this;
-    }
-
-    toggle(status) {
-        super.toggle(status);
         return this;
     }
 }

@@ -54,9 +54,9 @@ export default class GroupNode extends BaseNode {
 
     render(context, viewport, layers, data) {
         if (this._nodes.length !== 0) {
-            this._nodes.forEach(node => {
-                node.render(context, viewport, layers, data);
-            });
+            for (let i = 0; i < this._nodes.length; i++) {
+                this._nodes[i].render(context, viewport, layers, data);
+            }
         }
     }
 }

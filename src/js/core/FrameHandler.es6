@@ -1,4 +1,3 @@
-import Handler from "api/Handler";
 import EngineComponent from "api/EngineComponent";
 
 /**
@@ -8,8 +7,8 @@ import EngineComponent from "api/EngineComponent";
 export default class FrameHandler extends EngineComponent {
     static instance;
 
-    static timestamp = 0;
-    static frameLimit = 60;
+    static _timestamp = 0;
+    static _frameLimit = 60;
 
     static _breakAnimationFrame = false;
 
@@ -35,11 +34,11 @@ export default class FrameHandler extends EngineComponent {
         super();
     }
 
-    set frameLimit(value) {
+    static set frameLimit(value) {
         if (value <= 60 && value > 0) {
-            FrameHandler.frameLimit = value
+            FrameHandler._frameLimit = value
         }
-        return FrameHandler.frameLimit || value;
+        return FrameHandler._frameLimit || value;
     }
 
     get isStarted() {
@@ -71,7 +70,8 @@ export default class FrameHandler extends EngineComponent {
             if (!engine._data.pause) {
                 if (engine.io) engine.io.update();
 
-                if (engine._state && typeof engine._state === 'function') engine.update(timestamp);
+                // TODO:: temporary hack!
+                if (engine.update && typeof engine.update === 'function') engine.update(timestamp);
 
                 //let data = engine.data.render;
 
@@ -110,7 +110,7 @@ export default class FrameHandler extends EngineComponent {
             this._engineStack[engineHandler.guid] = engineHandler;
             this._engineStack.push(engineHandler);
         }
-        if (!this._data.start) this.loop(Date.now() - FrameHandler.timestamp);
+        if (!this._data.start) this.loop(Date.now() - FrameHandler._timestamp);
         return this;
     }
 
@@ -156,14 +156,17 @@ export const RequestAnimationFrame = (() => {
         window.msRequestAnimationFrame ||
         ((callback) => {
             if (!FrameHandler._breakAnimationFrame) {
-                if (FrameHandler.timestamp >= Number.MAX_SAFE_INTEGER - 1) FrameHandler.timestamp = 0;
-                if (FrameHandler.timestamp === 0) FrameHandler.timestamp = window.performance === undefined
+                if (FrameHandler._timestamp >= Number.MAX_SAFE_INTEGER - 1) FrameHandler._timestamp = 0;
+                if (FrameHandler._timestamp === 0) FrameHandler._timestamp = window.performance === undefined
                     ? Date.now()
                     : window.performance.now();
+
+                // The probability of operation of this polyfill is so small that use of .bind() won't affect working
+                // capacity, at the same time such approach guarantees correctness of operation of a method.
                 window.setTimeout(callback.bind(this, window.performance === undefined
-                    ? Date.now() - FrameHandler.timestamp
-                    : window.performance.now() - FrameHandler.timestamp
-                ), 1000.0 / FrameHandler.frameLimit);
+                    ? Date.now() - FrameHandler._timestamp
+                    : window.performance.now() - FrameHandler._timestamp
+                ), 1000.0 / FrameHandler._frameLimit);
             } else {
                 FrameHandler._breakAnimationFrame = false
             }

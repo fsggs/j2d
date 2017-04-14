@@ -1,4 +1,4 @@
-import Vector2dInteger from "utils/Vector2dInteger";
+import Vector2d from "utils/Vector2d";
 /**
  * Class utility for get system browser window size
  *
@@ -8,6 +8,19 @@ import Vector2dInteger from "utils/Vector2dInteger";
  * @constructor
  */
 export default class Device {
+    static _browser;
+    static _version;
+
+    static get browser() {
+        if (!Device._browser) Device.getVersion();
+        return Device._browser;
+    };
+
+    static get version() {
+        if (!Device._version) Device.getVersion();
+        return Device._version;
+    };
+
     constructor() {
         let documentWidth = parseInt(Math.max(
             document.documentElement['clientWidth'],
@@ -56,6 +69,35 @@ export default class Device {
      * @returns {Vector2d}
      */
     getSize() {
-        return new Vector2dInteger(this.width, this.height);
+        return new Vector2d(this.width, this.height);
     }
+
+    static getVersion = () => {
+        let userAgent = navigator.userAgent, temp,
+            match = userAgent.match(/(vivaldi|opera|chrome|safari|firefox|msie|edge(?=\/)|trident(?=\/))\/?\s*(\d+)/i)
+                || [];
+        if (/trident/i.test(match[1]) || /edge/i.test(match[1])) {
+            temp = /\brv[ :]+(\d+)/g.exec(userAgent) || [];
+
+            Device._browser = 'IE';
+            Device._version = parseFloat(temp[1] || '');
+            return ['IE', temp[1] || ''];
+        }
+
+        if (match[1] === 'Chrome') {
+            temp = userAgent.match(/\b(OPR|Edge|Vivaldi)\/(\d+(\.\d+))/);
+            if (temp !== null) {
+                Device._browser = temp[1].replace('OPR', 'Opera');
+                Device._version = parseFloat(temp[2]);
+                return [temp[1].replace('OPR', 'Opera'), temp[2]];
+            }
+        }
+        match = match[2] ? [match[1], match[2]] : [navigator.appName, navigator.appVersion, '-?'];
+        if ((temp = userAgent.match(/version\/(\d+)/i)) !== null) match.splice(1, 1, temp[1]);
+
+        Device._browser = match[0];
+        Device._version = parseFloat(match[1]);
+
+        return [match[0], match[1]];
+    };
 }
