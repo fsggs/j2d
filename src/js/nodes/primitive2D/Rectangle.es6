@@ -12,14 +12,14 @@ export default class Rectangle extends BaseNode {
         super({
             position: [x || 0.0, y || 0.0],
             size: [width || 0.0, height || 0.0],
-            angle: MathUtil.degree2Radian(33),
+            angle: MathUtil.degree2Radian(0),
             scale: [1.0, 1.0],
             center: [0.0, 0.0],
             color: [Math.random(), Math.random(), Math.random(), 1.0],
             opacity: 1.0
         });
 
-        this._colorRGB = MathUtil.vectorColorToRGBA(this._data.color);
+        this._colorRGBA = MathUtil.vectorColorToRGBA(this._data.color);
 
         this.toCenter();
     }
@@ -88,15 +88,15 @@ export default class Rectangle extends BaseNode {
 
                 context.translate(this._data.position[0], this._data.position[1]);
                 context.rotate(this._data.angle);
-                context.translate(-this._data.position[0], -this._data.position[1]);
+                context.translate(-(this._data.position[0]), -(this._data.position[1]));
             }
 
-            context.fillStyle = this._colorRGB;
+            context.fillStyle = this._colorRGBA;
             context.lineWidth = 0;
 
             context.fillRect(
-                this._data.position[0],
-                this._data.position[1],
+                this._data.position[0] - this._data.size[0] / 2,
+                this._data.position[1] - this._data.size[1] / 2,
                 this._data.size[0] * this._data.scale[0],
                 this._data.size[1] * this._data.scale[1]
             );
@@ -121,6 +121,8 @@ export default class Rectangle extends BaseNode {
 
     // language=GLSL
     static VertexShader = `
+        precision lowp float;
+
         attribute vec2 aPosition;
         uniform vec2 uResolution;
         uniform vec2 uPosition;
@@ -148,8 +150,8 @@ export default class Rectangle extends BaseNode {
             float s = sin(uAngle);
             float c = cos(uAngle);
             return m * mat3(
-                c, -s, 0.0,
-                s, c, 0.0,
+                c, s, 0.0,
+                -s, c, 0.0,
                 0.0, 0.0, 1.0
             );
         }
@@ -170,9 +172,8 @@ export default class Rectangle extends BaseNode {
             );
         }
 
-        void main() {      
-            mat3 uMatrix = center(scale(rotate(translate(projection()))));
-            gl_Position = vec4((uMatrix * vec3(aPosition, 1)).xy, 0, 1);
+        void main() {
+            gl_Position = vec4((center(scale(rotate(translate(projection())))) * vec3(aPosition, 1)).xy, 0, 1);
         }
     `;
 

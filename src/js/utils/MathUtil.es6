@@ -39,9 +39,9 @@ export default class MathUtil {
 
     static vectorColorToRGBA(vector4) {
         return 'rgba('
-            + parseInt(vector4[0] * 100) + ', '
-            + parseInt(vector4[1] * 100) + ', '
-            + parseInt(vector4[2] * 100) + ', '
+            + parseInt(vector4[0] / (1 / 255)) + ', '
+            + parseInt(vector4[1] / (1 / 255)) + ', '
+            + parseInt(vector4[2] / (1 / 255)) + ', '
             + vector4[3] + ')';
     }
 
@@ -53,7 +53,7 @@ export default class MathUtil {
      */
     static random(min, max, omitZero) {
         let random = (Math.floor(Math.random() * (max - min + 1) + min));
-        return (omitZero && random == 0)
+        return (omitZero && random === 0)
             ? MathUtil.random(min, max, omitZero)
             : random;
     }

@@ -52,7 +52,6 @@ requirejs.config({
             'stores/BaseStore',
             'utils/Device',
             'utils/Events',
-            'utils/Matrix3',
             'utils/MathUtil',
             'utils/ObjectUtil',
             'utils/SystemConsole',
@@ -90,7 +89,7 @@ define('Test', function (require) {
         scene.registerNodeShaders(Rectangle);
 
         var rect1 = new Rectangle(100, 100, 50, 50);
-        var rect2 = new Rectangle(10, 10, 10, 10);
+        var rect2 = new Rectangle(0, 0, 30, 30);
         var rect3 = new Rectangle(200, 200, 30, 30);
 
         scene.add(rect1);
