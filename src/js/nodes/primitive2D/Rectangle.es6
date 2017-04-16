@@ -1,5 +1,4 @@
 import BaseNode from "nodes/BaseNode";
-import Matrix3 from "utils/Matrix3";
 import MathUtil from "utils/MathUtil";
 
 /**
@@ -13,7 +12,7 @@ export default class Rectangle extends BaseNode {
         super({
             position: [x || 0.0, y || 0.0],
             size: [width || 0.0, height || 0.0],
-            angle: MathUtil.degree2Radian(0),
+            angle: MathUtil.degree2Radian(33),
             scale: [1.0, 1.0],
             center: [0.0, 0.0],
             color: [Math.random(), Math.random(), Math.random(), 1.0],
@@ -29,7 +28,7 @@ export default class Rectangle extends BaseNode {
         if (cx === undefined) cx = this._data.size[0] / 2;
         if (cy === undefined) cy = this._data.size[1] / 2;
 
-        this._data.center = [cx, cy];
+        this._data.center = [-cx, -cy];
     }
 
     draw(context, viewport, data) {
@@ -42,7 +41,11 @@ export default class Rectangle extends BaseNode {
             let attributes = {
                 aPosition: gl.getAttribLocation(Rectangle._shaderProgram, 'aPosition'),
                 uColor: gl.getUniformLocation(Rectangle._shaderProgram, 'uColor'),
-                uMatrix: gl.getUniformLocation(Rectangle._shaderProgram, 'uMatrix')
+                uResolution: gl.getUniformLocation(Rectangle._shaderProgram, 'uResolution'),
+                uPosition: gl.getUniformLocation(Rectangle._shaderProgram, 'uPosition'),
+                uAngle: gl.getUniformLocation(Rectangle._shaderProgram, 'uAngle'),
+                uScale: gl.getUniformLocation(Rectangle._shaderProgram, 'uScale'),
+                uCenter: gl.getUniformLocation(Rectangle._shaderProgram, 'uCenter')
             };
             gl.enableVertexAttribArray(attributes.aPosition);
 
@@ -63,14 +66,13 @@ export default class Rectangle extends BaseNode {
 
             gl.uniform4fv(attributes.uColor, new Float32Array(this._data.color));
 
-            let matrix = Matrix3.projection(gl.canvas.clientWidth, gl.canvas.clientHeight);
-            matrix = Matrix3.translate(matrix, this._data.position[0], this._data.position[1]);
-            matrix = Matrix3.rotate(matrix, this._data.angle);
-            matrix = Matrix3.scale(matrix, this._data.scale[0], this._data.scale[1]);
-            matrix = Matrix3.centerTo(matrix, -this._data.center[0], -this._data.center[1]);
+            gl.uniform2fv(attributes.uResolution, new Float32Array([gl.canvas.clientWidth, gl.canvas.clientHeight]));
+            gl.uniform2fv(attributes.uPosition, new Float32Array(this._data.position));
+            gl.uniform1f(attributes.uAngle, this._data.angle);
+            gl.uniform2fv(attributes.uScale, new Float32Array(this._data.scale));
+            gl.uniform2fv(attributes.uCenter, new Float32Array(this._data.center));
 
             gl.vertexAttribPointer(attributes.aPosition, 2, gl.FLOAT, false, 0, 0);
-            gl.uniformMatrix3fv(attributes.uMatrix, false, matrix);
             gl.drawArrays(gl.TRIANGLES, 0, 6);
         } else {
             // Canvas2D Render
@@ -120,16 +122,68 @@ export default class Rectangle extends BaseNode {
     // language=GLSL
     static VertexShader = `
         attribute vec2 aPosition;
-        uniform mat3 uMatrix;
+        uniform vec2 uResolution;
+        uniform vec2 uPosition;
+        uniform float uAngle;
+        uniform vec2 uScale;
+        uniform vec2 uCenter;
+        
+        mat3 projection () {
+            return mat3(
+                2.0 / uResolution[0], 0.0, 0.0,
+                0.0, -2.0 / uResolution[1], 0.0,
+                -1.0, 1.0, 1.0
+            );
+        }
+        
+        mat3 translate (mat3 m) {
+            return m * mat3(
+                1.0, 0.0, 0.0,
+                0.0, 1.0, 0.0,
+                uPosition[0], uPosition[1], 1.0
+            );
+        }
+        
+         mat3 rotate (mat3 m) {
+            float s = sin(uAngle);
+            float c = cos(uAngle);
+            return m * mat3(
+                c, -s, 0.0,
+                s, c, 0.0,
+                0.0, 0.0, 1.0
+            );
+        }
+        
+        mat3 scale (mat3 m) {
+            return m * mat3(
+                uScale[0], 0.0, 0.0,
+                0.0, uScale[1], 0.0,
+                0.0, 0.0, 1.0
+            );
+        }
+        
+        mat3 center (mat3 m) {
+            return m * mat3(
+                1.0, 0.0, 0.0,
+                0.0, 1.0, 0.0,
+                uCenter[0], uCenter[1], 1.0
+            );
+        }
 
-        void main() {
+        void main() {      
+            mat3 uMatrix = center(scale(rotate(translate(projection()))));
             gl_Position = vec4((uMatrix * vec3(aPosition, 1)).xy, 0, 1);
         }
     `;
 
     // language=GLSL
     static FragmentShader = `
-        precision mediump float;
+        #ifdef GL_FRAGMENT_PRECISION_HIGH
+            precision highp float;
+        #else
+            precision mediump float;
+        #endif
+        
         uniform vec4 uColor;
         
         void main() {
