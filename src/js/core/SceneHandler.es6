@@ -45,6 +45,7 @@ export default class SceneHandler extends EngineComponent {
      */
     _data = {
         render: 'auto',
+        // render: 'canvas2d',
         isLostContext: false,
         components: {
             LayersHandler: true,
@@ -214,10 +215,12 @@ export default class SceneHandler extends EngineComponent {
         let gl = this._context;
 
         gl.viewport(0, 0, gl.canvas.width, gl.canvas.height);
-        gl.clearColor(0.0, 0.0, 0.0, 1.0);
+        gl.enable(gl.CULL_FACE);
+        gl.cullFace(gl.FRONT);
         gl.enable(gl.DEPTH_TEST);
         gl.depthFunc(gl.LEQUAL);
-        gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
+        gl.enable(gl.BLEND);
+        gl.blendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA);
     }
 
     onWebGLContextLost = (e) => {
@@ -324,9 +327,20 @@ export default class SceneHandler extends EngineComponent {
         }
     }
 
+    clear() {
+        if (this._data.render.startsWith('webgl')) {
+            let gl = this._context;
+            gl.clearColor(0.0, 0.0, 0.0, 1.0);
+            gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
+        } else {
+            this._context.clearRect(0, 0, this._element.width, this._element.height);
+        }
+    }
+
     render(data) {
         if (data.components.SceneHandler._data.isLostContext) return;
 
+        this.clear();
         this.layers.render(this._context, this.viewport, data || {})
     }
 }

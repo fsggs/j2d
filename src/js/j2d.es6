@@ -77,7 +77,9 @@ export default class EngineJ2D extends Engine {
 
     /** @type {function} */ // TODO:: temporary hack!
     render = (deltaTime, timestamp) => {
-        if (this._data.components.SceneHandler) this._data.components.SceneHandler.render(this._data);
+        if (this._data.components.SceneHandler) {
+            this._data.components.SceneHandler.render(this._data);
+        }
     };
 
     /** @type {Device} */

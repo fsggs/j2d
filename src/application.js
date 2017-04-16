@@ -46,6 +46,7 @@ requirejs.config({
             'nodes/BaseNode',
             'nodes/CameraNode',
             'nodes/primitive2D/Rectangle',
+            'nodes/primitive2D/Sprite',
             'nodes/GroupNode',
             'objects/Immutable',
             'objects/Mutable',
@@ -67,8 +68,13 @@ define('Test', function (require) {
     var Layer = require('layers/Layer').default;
     var GroupNode = require('nodes/GroupNode');
     var Rectangle = require('nodes/primitive2D/Rectangle');
+    var Sprite = require('nodes/primitive2D/Sprite');
 
     //EngineJ2D.jQuery($);
+
+    let random = (min, max) => {
+        return (Math.floor(Math.random() * (max - min + 1) + min));
+    };
 
     EngineJ2D.ready(function () {
         /** @type EngineJ2D|Array.<EngineJ2D> */
@@ -87,14 +93,28 @@ define('Test', function (require) {
         scene.add(backgroundLayer, -1);
 
         scene.registerNodeShaders(Rectangle);
+        scene.registerNodeShaders(Sprite);
 
         var rect1 = new Rectangle(100, 100, 50, 50);
         var rect2 = new Rectangle(0, 0, 30, 30);
-        var rect3 = new Rectangle(200, 200, 30, 30);
 
-        scene.add(rect1);
-        scene.add(rect2);
-        scene.add(rect3);
+
+        var sprite = new Sprite(200, 200, 222 / 4, 256 / 4);
+
+        setTimeout(()=>{
+            var bigLayer = new Layer('big');
+            for (let i = 0; i < 2000; i++) {
+                let pos = [random(0, 640), random(0, 360)];
+                let size = [random(10, 100), random(10, 100)];
+                bigLayer.add(new Rectangle(pos[0], pos[1], size[0], size[1]));
+            }
+            scene.add(bigLayer);
+        }, 5000);
+
+        //scene.add(rect1);
+        //scene.add(rect2);
+        scene.add(sprite);
+
     });
 });
 require(['Test']);

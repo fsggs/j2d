@@ -39,6 +39,7 @@
   "nodes/CameraNode": "j2d.nodes.CameraNode",
   "nodes/GroupNode": "j2d.nodes.GroupNode",
   "nodes/primitive2D/Rectangle": "j2d.nodes.primitive2D.Rectangle",
+  "nodes/primitive2D/Sprite": "j2d.nodes.primitive2D.Sprite",
   "objects/Immutable": "j2d.objects.Immutable",
   "objects/Mutable": "j2d.objects.Mutable",
   "stores/BaseStore": "j2d.stores.BaseStore",

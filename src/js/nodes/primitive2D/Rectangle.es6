@@ -8,11 +8,13 @@ import MathUtil from "utils/MathUtil";
  * @property {BaseNode._data|{position: Array.<number>, size: Array.<number>}} _data
  */
 export default class Rectangle extends BaseNode {
+    positionBuffer = null;
+
     constructor(x, y, width, height) {
         super({
             position: [x || 0.0, y || 0.0],
             size: [width || 0.0, height || 0.0],
-            angle: MathUtil.degree2Radian(0),
+            angle: MathUtil.degree2Radian(45),
             scale: [1.0, 1.0],
             center: [0.0, 0.0],
             color: [Math.random(), Math.random(), Math.random(), 1.0],
@@ -31,12 +33,28 @@ export default class Rectangle extends BaseNode {
         this._data.center = [-cx, -cy];
     }
 
+    bindPositionBuffer(gl) {
+        this.positionBuffer = gl.createBuffer();
+        gl.bindBuffer(gl.ARRAY_BUFFER, this.positionBuffer);
+
+        let x = [0, this._data.size[0]];
+        let y = [0, this._data.size[1]];
+
+        gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([
+            x[0], y[0],
+            x[1], y[0],
+            x[0], y[1],
+            x[0], y[1],
+            x[1], y[0],
+            x[1], y[1],
+        ]), gl.STATIC_DRAW);
+    }
+
     draw(context, viewport, data) {
         let gl = context, scene = data.components.SceneHandler;
 
         if (Rectangle._shaderProgram && scene._data.render.startsWith('webgl')) {
             // WebGL Render
-            gl.useProgram(Rectangle._shaderProgram);
 
             let attributes = {
                 aPosition: gl.getAttribLocation(Rectangle._shaderProgram, 'aPosition'),
@@ -47,24 +65,14 @@ export default class Rectangle extends BaseNode {
                 uScale: gl.getUniformLocation(Rectangle._shaderProgram, 'uScale'),
                 uCenter: gl.getUniformLocation(Rectangle._shaderProgram, 'uCenter')
             };
+
+            if (this.positionBuffer === null) this.bindPositionBuffer(gl);
+
+            gl.useProgram(Rectangle._shaderProgram);
+
             gl.enableVertexAttribArray(attributes.aPosition);
-
-            let buffer = gl.createBuffer();
-            gl.bindBuffer(gl.ARRAY_BUFFER, buffer);
-
-            let x = [0, this._data.size[0]];
-            let y = [0, this._data.size[1]];
-
-            gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([
-                x[0], y[0],
-                x[1], y[0],
-                x[0], y[1],
-                x[0], y[1],
-                x[1], y[0],
-                x[1], y[1],
-            ]), gl.STATIC_DRAW);
-
-            gl.uniform4fv(attributes.uColor, new Float32Array(this._data.color));
+            gl.bindBuffer(gl.ARRAY_BUFFER, this.positionBuffer);
+            gl.vertexAttribPointer(attributes.aPosition, 2, gl.FLOAT, false, 0, 0);
 
             gl.uniform2fv(attributes.uResolution, new Float32Array([gl.canvas.clientWidth, gl.canvas.clientHeight]));
             gl.uniform2fv(attributes.uPosition, new Float32Array(this._data.position));
@@ -72,7 +80,8 @@ export default class Rectangle extends BaseNode {
             gl.uniform2fv(attributes.uScale, new Float32Array(this._data.scale));
             gl.uniform2fv(attributes.uCenter, new Float32Array(this._data.center));
 
-            gl.vertexAttribPointer(attributes.aPosition, 2, gl.FLOAT, false, 0, 0);
+            gl.uniform4fv(attributes.uColor, new Float32Array(this._data.color));
+
             gl.drawArrays(gl.TRIANGLES, 0, 6);
         } else {
             // Canvas2D Render
@@ -121,7 +130,7 @@ export default class Rectangle extends BaseNode {
 
     // language=GLSL
     static VertexShader = `
-        precision lowp float;
+        precision mediump float;
 
         attribute vec2 aPosition;
         uniform vec2 uResolution;
@@ -129,6 +138,9 @@ export default class Rectangle extends BaseNode {
         uniform float uAngle;
         uniform vec2 uScale;
         uniform vec2 uCenter;
+        
+        attribute vec2 aTexture;
+        varying vec2 vTexture;
         
         mat3 projection () {
             return mat3(
@@ -174,16 +186,13 @@ export default class Rectangle extends BaseNode {
 
         void main() {
             gl_Position = vec4((center(scale(rotate(translate(projection())))) * vec3(aPosition, 1)).xy, 0, 1);
+            vTexture = aTexture;
         }
     `;
 
     // language=GLSL
     static FragmentShader = `
-        #ifdef GL_FRAGMENT_PRECISION_HIGH
-            precision highp float;
-        #else
-            precision mediump float;
-        #endif
+        precision mediump float;
         
         uniform vec4 uColor;
         
