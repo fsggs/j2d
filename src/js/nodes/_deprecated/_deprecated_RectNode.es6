@@ -7,11 +7,11 @@ import MathUtil from "../../utils/MathUtil";
  * @exports module:nodes/RectNode
  *
  * @constructor
- * @extends nodes/AnimatedNode
+ * @extends nodes/_deprecated_AnimatedNode
  * @param {BaseNode.defaults|AnimatedNode.defaults|RectNode.defaults|Object} [data]
  * @property {BaseNode.defaults|AnimatedNode.defaults|RectNode.defaults} data
  */
-export default class RectNode extends AnimatedNode {
+export default class _deprecated_RectNode extends _deprecated_AnimatedNode {
     static defaults = {
         type: 'RectNode',
         color: '#000000'
@@ -42,7 +42,7 @@ export default class RectNode extends AnimatedNode {
     /**
      * @param {CanvasRenderingContext2D} context
      * @param {{offset: {x: number, y: number}, size: {x: number, y: number}, scale: number, angle: number}} viewport
-     * @param {CollectionNode} collection
+     * @param {_deprecated_CollectionNode} collection
      * @param {object} data
      * @returns {null}
      */
@@ -94,9 +94,9 @@ export default class RectNode extends AnimatedNode {
      *
      * @param {CanvasRenderingContext2D} context
      * @param {{offset: {x: number, y: number}, size: {x: number, y: number}, scale: number, angle: number}} viewport
-     * @param {CollectionNode} collection
+     * @param {_deprecated_CollectionNode} collection
      * @param {object} data
-     * @returns {BaseNode|AnimatedNode|RectNode}
+     * @returns {BaseNode|AnimatedNode|_deprecated_RectNode}
      */
     render(context, viewport, collection, data) {
         this.draw(context, viewport, collection, data);

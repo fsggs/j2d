@@ -45,12 +45,14 @@ requirejs.config({
             'layers/LayersHandler',
             'nodes/BaseNode',
             'nodes/CameraNode',
+            'nodes/primitive2D/Rectangle',
             'nodes/GroupNode',
             'objects/Immutable',
             'objects/Mutable',
             'stores/BaseStore',
             'utils/Device',
             'utils/Events',
+            'utils/Matrix3',
             'utils/MathUtil',
             'utils/ObjectUtil',
             'utils/SystemConsole',
@@ -65,6 +67,7 @@ define('Test', function (require) {
     var EngineJ2D = require('j2d');
     var Layer = require('layers/Layer').default;
     var GroupNode = require('nodes/GroupNode');
+    var Rectangle = require('nodes/primitive2D/Rectangle');
 
     //EngineJ2D.jQuery($);
 
@@ -79,20 +82,20 @@ define('Test', function (require) {
 
         j2d.start();
 
-        var layers = j2d.scene.layers;
+        var scene = j2d.scene;
 
         var backgroundLayer = new Layer('background');
-        var group1 = new GroupNode('logo');
-        var group2 = new GroupNode('ui');
+        scene.add(backgroundLayer, -1);
 
-        layers.add(backgroundLayer, -1);
+        scene.registerNodeShaders(Rectangle);
 
-        //group1.add(backgroundLayer);
+        var rect1 = new Rectangle(100, 100, 50, 50);
+        var rect2 = new Rectangle(10, 10, 10, 10);
+        var rect3 = new Rectangle(200, 200, 30, 30);
 
-        layers.add(group1);
-        layers.add(group2);
-
-        console.log(layers);
+        scene.add(rect1);
+        scene.add(rect2);
+        scene.add(rect3);
     });
 });
 require(['Test']);

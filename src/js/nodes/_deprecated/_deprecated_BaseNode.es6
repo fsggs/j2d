@@ -12,7 +12,7 @@ import Vector2d from "../../utils/Vector2d";
  * @property {BaseNode.defaults} data
  */
 
-export default class BaseNode {
+export default class _deprecated_BaseNode {
     static defaults = {
         /** @type {string|null} */
         id: null,

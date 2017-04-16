@@ -5,10 +5,6 @@ export default class GroupNode extends BaseNode {
     /** @type {Array.<BaseNode|GroupNode>} */
     _nodes = [];
 
-    constructor(data) {
-        super(data);
-    }
-
     get(guid) {
         return this._nodes[guid] || null;
     }
@@ -52,10 +48,12 @@ export default class GroupNode extends BaseNode {
         return this;
     }
 
-    render(context, viewport, layers, data) {
+    render(context, viewport, data) {
+        if (data.components.SceneHandler._data.isLostContext) return;
+
         if (this._nodes.length !== 0) {
             for (let i = 0; i < this._nodes.length; i++) {
-                this._nodes[i].render(context, viewport, layers, data);
+                this._nodes[i].render(context, viewport, data);
             }
         }
     }

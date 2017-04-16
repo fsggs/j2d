@@ -6,11 +6,11 @@ import AnimatedNode from "nodes/AnimatedNode";
  * @exports module:nodes/CameraNode
  *
  * @constructor
- * @extends nodes/AnimatedNode
+ * @extends nodes/_deprecated_AnimatedNode
  * @param {BaseNode.defaults|AnimatedNode.defaults|CameraNode.defaults|Object} [data]
  * @property {BaseNode.defaults|AnimatedNode.defaults|CameraNode.defaults} data
  */
-export default class CameraNode extends AnimatedNode {
+export default class _deprecated_CameraNode extends _deprecated_AnimatedNode {
     static defaults = {
         type: 'CameraNode'
     };
@@ -40,7 +40,7 @@ export default class CameraNode extends AnimatedNode {
      *
      * @param {CanvasRenderingContext2D} context
      * @param {{offset: {x: number, y: number}, size: {x: number, y: number}, scale: number, angle: number}} viewport
-     * @param {CollectionNode} collection
+     * @param {_deprecated_CollectionNode} collection
      * @param {object} data
      * @returns {BaseNode|AnimatedNode|CameraNode}
      */

@@ -45,6 +45,7 @@ export default class SceneHandler extends EngineComponent {
      */
     _data = {
         render: 'auto',
+        isLostContext: false,
         components: {
             LayersHandler: true,
             ViewportHandler: true
@@ -53,8 +54,16 @@ export default class SceneHandler extends EngineComponent {
 
     _engine;
 
+    /** @type {HTMLCanvasElement} */
     _element;
+
+    /** @type {CanvasRenderingContext2D|WebGLRenderingContext} */
     _context;
+
+    _shaders = {
+        vertex: [],
+        fragment: []
+    };
 
     constructor() {
         super();
@@ -129,6 +138,8 @@ export default class SceneHandler extends EngineComponent {
 
     initCanvas() {
         const $ = `.j2d[guid="${this._engine.guid}"]`;
+
+        /** @type {Element|HTMLCanvasElement} */
         let node = document.querySelector($);
         if (node !== null) {
             if (node.nodeName === 'DIV') {
@@ -181,14 +192,16 @@ export default class SceneHandler extends EngineComponent {
                     return;
                 }
 
-                if (this._context.hasOwnProperty('viewportWidth')) this._context.viewportWidth = this._data.width;
-                if (this._context.hasOwnProperty('viewportHeight')) this._context.viewportHeight = this._data.height;
-
                 if (!this._data.smoothing) {
                     SceneHandler.disableSmoothing(this._context);
                 }
 
                 this._context.shadowColor = 'rgba(0, 0, 0, 0)';
+
+                if (this._data.render === 'webgl2' || this._data.render === 'webgl') {
+                    this.bindWebGLListeners(node);
+                    this.onWebGLInit();
+                }
 
                 this._element = node;
 
@@ -196,6 +209,103 @@ export default class SceneHandler extends EngineComponent {
             }
         }
     }
+
+    onWebGLInit() {
+        let gl = this._context;
+
+        gl.viewport(0, 0, gl.canvas.width, gl.canvas.height);
+        gl.clearColor(0.0, 0.0, 0.0, 1.0);
+        gl.enable(gl.DEPTH_TEST);
+        gl.depthFunc(gl.LEQUAL);
+        gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
+    }
+
+    onWebGLContextLost = (e) => {
+        e.preventDefault();
+        this._data.isLostContext = true;
+        // cancelRequestAnimationFrame(requestId);
+    };
+
+    onWebGLContextRestored = (e) => {
+        e.preventDefault();
+        this.onWebGLInit();
+        this._data.isLostContext = false;
+    };
+
+    bindWebGLListeners(node) {
+        node.addEventListener('webglcontextlost', this.onWebGLContextLost, false);
+        node.addEventListener('webglcontextrestored', this.onWebGLContextRestored, false);
+    }
+
+    unBindWebGLListeners(node) {
+        node.removeEventListener('webglcontextlost', this.onWebGLContextLost, false);
+        node.removeEventListener('webglcontextrestored', this.onWebGLContextRestored, false);
+    }
+
+    destructor() {
+        if ((this._data.render === 'webgl2' || this._data.render === 'webgl') && this._context.isContextLost()) {
+            this._context.getExtension('WEBGL_lose_context').loseContext();
+        }
+    }
+
+    registerNodeShaders(nodePrototype) {
+        let gl = this._context;
+        if (this._data.render === 'webgl2' || this._data.render === 'webgl') {
+            if (nodePrototype.VertexShader && nodePrototype.FragmentShader) {
+                nodePrototype._shaderProgram = gl.createProgram();
+
+                nodePrototype._vertextShader = SceneHandler.compileShader(gl,
+                    gl.createShader(gl.VERTEX_SHADER),
+                    nodePrototype.VertexShader
+                );
+                nodePrototype._fragmentShader = SceneHandler.compileShader(gl,
+                    gl.createShader(gl.FRAGMENT_SHADER),
+                    nodePrototype.FragmentShader
+                );
+
+                gl.attachShader(nodePrototype._shaderProgram, nodePrototype._vertextShader);
+                gl.attachShader(nodePrototype._shaderProgram, nodePrototype._fragmentShader);
+
+                gl.linkProgram(nodePrototype._shaderProgram);
+
+                if (!gl.getProgramParameter(nodePrototype._shaderProgram, gl.LINK_STATUS)) {
+                    console.info('Could not initialise shaders');
+                }
+            }
+        }
+    }
+
+    static compileShader(gl, shader, source) {
+        gl.shaderSource(shader, source);
+        gl.compileShader(shader);
+
+        if (!gl.getShaderParameter(shader, gl.COMPILE_STATUS)) {
+            console.info(gl.getShaderInfoLog(shader));
+            return null;
+        }
+
+        return shader;
+    }
+
+    // +SceneMainLayer Hack
+
+    get(key) {
+        this.layers.get(key);
+    }
+
+    has(key) {
+        this.layers.has(key);
+    }
+
+    add(node, index) {
+        this.layers.add(node, index);
+    }
+
+    remove(node) {
+        this.layers.remove(node);
+    }
+
+    // -SceneMainLayer Hack
 
     static disableSmoothing(context) {
         let chrome = window.navigator.userAgent.match(/Chrom(e|ium)\/([0-9]+)\./);
@@ -215,8 +325,8 @@ export default class SceneHandler extends EngineComponent {
     }
 
     render(data) {
-        for (let i = 0; i < this.layers.length; i++) {
-            this.layers[i].render(this._context, this.viewport, this.layers, data || {})
-        }
+        if (data.components.SceneHandler._data.isLostContext) return;
+
+        this.layers.render(this._context, this.viewport, data || {})
     }
 }

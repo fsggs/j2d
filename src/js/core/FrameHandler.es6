@@ -24,7 +24,12 @@ export default class FrameHandler extends EngineComponent {
      */
     _data = {
         start: false,
-        pause: false
+        pause: false,
+
+        now: Date.now(),
+        lastTime: Date.now(),
+        deltaTime: 0,
+        interval: 1000.0 / FrameHandler._frameLimit
     };
 
     /** @private */
@@ -70,35 +75,25 @@ export default class FrameHandler extends EngineComponent {
             if (!engine._data.pause) {
                 if (engine.io) engine.io.update();
 
-                // TODO:: temporary hack!
-                if (engine.update && typeof engine.update === 'function') engine.update(timestamp);
+                this._data.now = Date.now();
+                this._data.deltaTime = (this._data.now - this._data.lastTime) / 100.0;
 
-                //let data = engine.data.render;
+                if ((this._data.deltaTime * 100.0) > this._data.interval) {
+                    this._data.lastTime = this._data.now - ((this._data.deltaTime * 100.0) % this._data.interval);
 
-                //data.now = Date.now();
-                //data.deltaTime = (data.now - data.lastTime) / 100.0;
+                    engine._data.timestamp = timestamp;
+                    engine._data.deltaTime = this._data.deltaTime;
 
-                // if (engine.update !== undefined && 'function' === typeof engine.update) {
-                //     if (engine.data.asyncUpdate) {
-                //         setTimeout(engine.update.bind(engine, timestamp, data), 0);
-                //         setTimeout(engine.tweens.update.bind(engine, timestamp), 0);
-                //     } else {
-                //         engine.update(timestamp, data);
-                //         engine.tweens.update(timestamp);
-                //     }
-                // }
+                    // TODO:: temporary hack!
+                    if (engine.update && typeof engine.update === 'function') {
+                        engine.update(this._data.deltaTime, timestamp);
+                    }
 
-                // if ((data.deltaTime * 100.0) > data.interval) {
-                //     data.lastTime = data.now - ((data.deltaTime * 100.0) % data.interval);
-                //
-                //     if (engine.render !== undefined && 'function' === typeof engine.render) {
-                //         if (data.asyncRender) {
-                //             setTimeout(engine.render.bind(engine, timestamp, data), 0);
-                //         } else {
-                //             engine.render(timestamp, data);
-                //         }
-                //     }
-                // }
+                    // TODO:: temporary hack!
+                    if (engine.render && typeof engine.render === 'function') {
+                        engine.render(this._data.deltaTime, timestamp);
+                    }
+                }
 
                 if (engine.io) engine.io.clear();
             }

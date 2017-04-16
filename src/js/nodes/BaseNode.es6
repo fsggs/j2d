@@ -2,6 +2,9 @@ import PrototypeObject from "api/PrototypeObject";
 import UUID from "utils/UUID";
 import Mutable from "objects/Mutable";
 
+/**
+ * @property {BaseNode.defaults|{}} _data
+ */
 export default class BaseNode extends PrototypeObject {
     static NodeName = 'BaseNode';
     static isSpecial = false;
@@ -11,7 +14,6 @@ export default class BaseNode extends PrototypeObject {
         id: null
     };
 
-    /** @type {BaseNode.defaults|{}} */
     _data;
 
     constructor(data) {

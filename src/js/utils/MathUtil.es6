@@ -37,6 +37,14 @@ export default class MathUtil {
             + opacity + ')';
     }
 
+    static vectorColorToRGBA(vector4) {
+        return 'rgba('
+            + parseInt(vector4[0] * 100) + ', '
+            + parseInt(vector4[1] * 100) + ', '
+            + parseInt(vector4[2] * 100) + ', '
+            + vector4[3] + ')';
+    }
+
     /**
      * @param {number} min
      * @param {number} max

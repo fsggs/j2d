@@ -31,7 +31,7 @@ export default class EngineJ2D extends Engine {
     /**
      * Call setter to 'null/false' to disable components, or 'true' to auto load default implementation.
      *
-     * @type {{id: string, pause: boolean, components: {
+     * @type {{id: string, pause: boolean, deltaTime: number, timestamp: number, components: {
         * EventHandler: IEngineComponent|EngineComponent|EventHandler|boolean|null,
         * FrameHandler: IEngineComponent|EngineComponent|FrameHandler|boolean|null,
         * InputHandler: IEngineComponent|EngineComponent|InputHandler|boolean|null,
@@ -43,6 +43,8 @@ export default class EngineJ2D extends Engine {
     static defaults = {
         id: '',
         pause: false,
+        deltaTime: 0,
+        timestamp: 0,
         components: {
             EventHandler: true,
             FrameHandler: true,
@@ -69,8 +71,13 @@ export default class EngineJ2D extends Engine {
     _data = {};
 
     /** @type {function} */ // TODO:: temporary hack!
-    update = (timestamp) => {
+    update = (deltaTime, timestamp) => {
         // console.info(timestamp);
+    };
+
+    /** @type {function} */ // TODO:: temporary hack!
+    render = (deltaTime, timestamp) => {
+        if (this._data.components.SceneHandler) this._data.components.SceneHandler.render(this._data);
     };
 
     /** @type {Device} */
