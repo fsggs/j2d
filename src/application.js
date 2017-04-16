@@ -93,17 +93,17 @@ define('Test', function (require) {
         scene.add(backgroundLayer, -1);
 
         scene.registerNodeShaders(Rectangle);
-        scene.registerNodeShaders(Sprite);
+        //scene.registerNodeShaders(Sprite);
 
         var rect1 = new Rectangle(100, 100, 50, 50);
         var rect2 = new Rectangle(0, 0, 30, 30);
 
 
-        var sprite = new Sprite(200, 200, 222 / 4, 256 / 4);
+        //var sprite = new Sprite(200, 200, 222 / 4, 256 / 4);
 
         setTimeout(()=>{
             var bigLayer = new Layer('big');
-            for (let i = 0; i < 2000; i++) {
+            for (let i = 0; i < 20000; i++) {
                 let pos = [random(0, 640), random(0, 360)];
                 let size = [random(10, 100), random(10, 100)];
                 bigLayer.add(new Rectangle(pos[0], pos[1], size[0], size[1]));
@@ -113,7 +113,7 @@ define('Test', function (require) {
 
         //scene.add(rect1);
         //scene.add(rect2);
-        scene.add(sprite);
+        //scene.add(sprite);
 
     });
 });

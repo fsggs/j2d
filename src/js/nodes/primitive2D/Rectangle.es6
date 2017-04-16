@@ -8,7 +8,11 @@ import MathUtil from "utils/MathUtil";
  * @property {BaseNode._data|{position: Array.<number>, size: Array.<number>}} _data
  */
 export default class Rectangle extends BaseNode {
-    positionBuffer = null;
+    _webGLCache = {
+        positionBuffer: null,
+        attributes: [],
+        cacheData: null
+    };
 
     constructor(x, y, width, height) {
         super({
@@ -23,6 +27,7 @@ export default class Rectangle extends BaseNode {
 
         this._colorRGBA = MathUtil.vectorColorToRGBA(this._data.color);
 
+        this.setWebGLCache();
         this.toCenter();
     }
 
@@ -31,11 +36,22 @@ export default class Rectangle extends BaseNode {
         if (cy === undefined) cy = this._data.size[1] / 2;
 
         this._data.center = [-cx, -cy];
+        this._webGLCache.cacheData.uCenter = new Float32Array([-cx, -cy])
+    }
+
+    setWebGLCache() {
+        this._webGLCache.cacheData = {
+            uResolution: null,
+            uPosition: new Float32Array(this._data.position),
+            uScale: new Float32Array(this._data.scale),
+            uCenter: new Float32Array(this._data.center),
+            uColor: new Float32Array(this._data.color)
+        };
     }
 
     bindPositionBuffer(gl) {
-        this.positionBuffer = gl.createBuffer();
-        gl.bindBuffer(gl.ARRAY_BUFFER, this.positionBuffer);
+        this._webGLCache.positionBuffer = gl.createBuffer();
+        gl.bindBuffer(gl.ARRAY_BUFFER, this._webGLCache.positionBuffer);
 
         let x = [0, this._data.size[0]];
         let y = [0, this._data.size[1]];
@@ -50,37 +66,46 @@ export default class Rectangle extends BaseNode {
         ]), gl.STATIC_DRAW);
     }
 
+    bindAttributes(gl) {
+        this._webGLCache.attributes = {
+            aPosition: gl.getAttribLocation(Rectangle._shaderProgram, 'aPosition'),
+            uColor: gl.getUniformLocation(Rectangle._shaderProgram, 'uColor'),
+            uResolution: gl.getUniformLocation(Rectangle._shaderProgram, 'uResolution'),
+            uPosition: gl.getUniformLocation(Rectangle._shaderProgram, 'uPosition'),
+            uAngle: gl.getUniformLocation(Rectangle._shaderProgram, 'uAngle'),
+            uScale: gl.getUniformLocation(Rectangle._shaderProgram, 'uScale'),
+            uCenter: gl.getUniformLocation(Rectangle._shaderProgram, 'uCenter')
+        };
+    }
+
     draw(context, viewport, data) {
         let gl = context, scene = data.components.SceneHandler;
 
         if (Rectangle._shaderProgram && scene._data.render.startsWith('webgl')) {
             // WebGL Render
 
-            let attributes = {
-                aPosition: gl.getAttribLocation(Rectangle._shaderProgram, 'aPosition'),
-                uColor: gl.getUniformLocation(Rectangle._shaderProgram, 'uColor'),
-                uResolution: gl.getUniformLocation(Rectangle._shaderProgram, 'uResolution'),
-                uPosition: gl.getUniformLocation(Rectangle._shaderProgram, 'uPosition'),
-                uAngle: gl.getUniformLocation(Rectangle._shaderProgram, 'uAngle'),
-                uScale: gl.getUniformLocation(Rectangle._shaderProgram, 'uScale'),
-                uCenter: gl.getUniformLocation(Rectangle._shaderProgram, 'uCenter')
-            };
+            if (this._webGLCache.attributes.length === 0) this.bindAttributes(gl);
+            if (this._webGLCache.positionBuffer === null) this.bindPositionBuffer(gl);
+            if (this._webGLCache.cacheData.uResolution === null) {
+                this._webGLCache.cacheData.uResolution = new Float32Array([gl.canvas.clientWidth, gl.canvas.clientHeight]);
+            }
 
-            if (this.positionBuffer === null) this.bindPositionBuffer(gl);
+            if(scene._data.program === undefined || scene._data.program !== 'RECTANGLE') {
+                gl.useProgram(Rectangle._shaderProgram);
+                scene._data.program = 'RECTANGLE';
+            }
 
-            gl.useProgram(Rectangle._shaderProgram);
+            gl.enableVertexAttribArray(this._webGLCache.attributes.aPosition);
+            gl.bindBuffer(gl.ARRAY_BUFFER, this._webGLCache.positionBuffer);
+            gl.vertexAttribPointer(this._webGLCache.attributes.aPosition, 2, gl.FLOAT, false, 0, 0);
 
-            gl.enableVertexAttribArray(attributes.aPosition);
-            gl.bindBuffer(gl.ARRAY_BUFFER, this.positionBuffer);
-            gl.vertexAttribPointer(attributes.aPosition, 2, gl.FLOAT, false, 0, 0);
+            gl.uniform2fv(this._webGLCache.attributes.uResolution, this._webGLCache.cacheData.uResolution);
+            gl.uniform2fv(this._webGLCache.attributes.uPosition, this._webGLCache.cacheData.uPosition);
+            gl.uniform1f(this._webGLCache.attributes.uAngle, this._data.angle);
+            gl.uniform2fv(this._webGLCache.attributes.uScale, this._webGLCache.cacheData.uScale);
+            gl.uniform2fv(this._webGLCache.attributes.uCenter, this._webGLCache.cacheData.uCenter);
 
-            gl.uniform2fv(attributes.uResolution, new Float32Array([gl.canvas.clientWidth, gl.canvas.clientHeight]));
-            gl.uniform2fv(attributes.uPosition, new Float32Array(this._data.position));
-            gl.uniform1f(attributes.uAngle, this._data.angle);
-            gl.uniform2fv(attributes.uScale, new Float32Array(this._data.scale));
-            gl.uniform2fv(attributes.uCenter, new Float32Array(this._data.center));
-
-            gl.uniform4fv(attributes.uColor, new Float32Array(this._data.color));
+            gl.uniform4fv(this._webGLCache.attributes.uColor, this._webGLCache.cacheData.uColor);
 
             gl.drawArrays(gl.TRIANGLES, 0, 6);
         } else {

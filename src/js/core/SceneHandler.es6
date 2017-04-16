@@ -171,11 +171,12 @@ export default class SceneHandler extends EngineComponent {
                 node.style.backgroundColor = this._data.backgroundColor;
 
                 try {
-                    if ((this._data.render === 'auto' || this._data.render === 'webgl2')
-                        && (this._context = node.getContext('webgl2') || node.getContext('experimental-webgl2'))
-                    ) {
-                        this._data.render = 'webgl2';
-                    } else if ((this._data.render === 'auto' || this._data.render === 'webgl')
+                    // if ((this._data.render === 'auto' || this._data.render === 'webgl2')
+                    //     && (this._context = node.getContext('webgl2') || node.getContext('experimental-webgl2'))
+                    // ) {
+                    //     this._data.render = 'webgl2';
+                    // } else
+                    if ((this._data.render === 'auto' || this._data.render === 'webgl')
                         && (this._context = node.getContext('webgl') || node.getContext('experimental-webgl'))
                     ) {
                         this._data.render = 'webgl';
@@ -215,10 +216,10 @@ export default class SceneHandler extends EngineComponent {
         let gl = this._context;
 
         gl.viewport(0, 0, gl.canvas.width, gl.canvas.height);
-        gl.enable(gl.CULL_FACE);
-        gl.cullFace(gl.FRONT);
+        //gl.enable(gl.CULL_FACE);
+        //gl.cullFace(gl.FRONT);
         gl.enable(gl.DEPTH_TEST);
-        gl.depthFunc(gl.LEQUAL);
+        //gl.depthFunc(gl.LEQUAL);
         gl.enable(gl.BLEND);
         gl.blendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA);
     }
